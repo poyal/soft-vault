@@ -22,6 +22,7 @@ void main() {
     );
     MediaKit.ensureInitialized();
     await windowManager.ensureInitialized();
+    await prepareNativeSurface(tester);
     final player = Player();
     final playback = Playback(NativePlayback(player));
     final starts = <double>[];

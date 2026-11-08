@@ -21,6 +21,7 @@ void main() {
     (tester) async {
       MediaKit.ensureInitialized();
       await windowManager.ensureInitialized();
+      await prepareNativeSurface(tester);
       await windowManager.setTitle('Soft Vault · E2E - catalog_flow_test');
       final root = await Directory(
         await Directory.systemTemp.resolveSymbolicLinks(),

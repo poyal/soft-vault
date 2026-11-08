@@ -22,6 +22,7 @@ void main() {
   ) async {
     MediaKit.ensureInitialized();
     await windowManager.ensureInitialized();
+    await prepareNativeSurface(tester);
     await windowManager.setTitle('Soft Vault · E2E - app_playback_test');
     const fixture = String.fromEnvironment('VIDEO_FIXTURE');
     final root = await Directory(

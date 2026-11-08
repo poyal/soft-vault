@@ -19,6 +19,7 @@ void main() {
     (tester) async {
       MediaKit.ensureInitialized();
       await windowManager.ensureInitialized();
+      await prepareNativeSurface(tester);
       final root = await Directory(
         await Directory.systemTemp.resolveSymbolicLinks(),
       ).createTemp('soft-vault-e2e-');

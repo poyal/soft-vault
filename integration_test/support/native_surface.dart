@@ -1,6 +1,12 @@
 import 'dart:ui' as ui;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:soft_vault/native_playback.dart';
+
+Future<void> prepareNativeSurface(WidgetTester tester) async {
+  await restoreNativeWindow(tester);
+  await setNativeFullscreen(false);
+}
 
 /// A minimized macOS window has no vsync; pumping a frame can wait forever.
 Future<void> waitNativeMinimized(WidgetTester tester) async {

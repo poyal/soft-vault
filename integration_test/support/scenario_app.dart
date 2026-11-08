@@ -65,6 +65,7 @@ class ScenarioApp {
   }) async {
     MediaKit.ensureInitialized();
     await windowManager.ensureInitialized();
+    await prepareNativeSurface(tester);
     final root = await Directory(
       await Directory.systemTemp.resolveSymbolicLinks(),
     ).createTemp('vault-ui-scenario-');

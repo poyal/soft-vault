@@ -10,7 +10,7 @@
 | everything-download | `docs/release.md`, `docs/releases/v1.0.11/AGENTS.md` | 검증한 동일 바이트 배포, 두 OS 출처 확인, 실패를 그대로 기록하고 성공으로 바꾸지 않기 |
 | passport | `docs/release.md` | 소스·버전·해시 대응, 소스 GUI와 설치본 검사 구분, 게시 재개와 컴퓨터 간 작업 순서 |
 | perilog | `docs/release.md`, `docs/README-작성-가이드.md` | 업그레이드 전후 ID·필드 비교, 빌드와 후속 문서 커밋 구분, 실제 버튼 이름으로 사용자 안내 |
-| tempos | `docs/local-release-guide.md`, `design-guide.md`, `validation/release-v0.1.2.md` | 기존 바이너리 패키징, 실제 설치·목업 범위 구분, DPI·픽셀·실측 성능 기록 |
+| tempos | `docs/local-release-guide.md`, `design-guide.md`, `validation/release-v0.1.2.md`, `README-작성-가이드.md` | 기존 바이너리 패키징, 실제 설치·목업 범위 구분, DPI·픽셀·실측 성능 기록, 사용자 작업 순서에 맞춘 스크린샷 안내 |
 | yeobaek | `docs/README.md`, `release.md`, `e2e.md` | 공통 절차와 버전 결과 분리, 동일 조건 성능 비교, 미실행·중단·작은 표본의 정직한 표시 |
 
 위 자료에서 이름·명령·검사 숫자를 복사하지 않고 Flutter·SQLite·media_kit·Windows ZIP 구조로 다시 작성했다. 근거는 Soft Vault의 실제 코드·스크립트·현재 보고서와 대조했다.
@@ -19,7 +19,7 @@
 
 - Android APK·서명 키·versionCode·에뮬레이터·SAF와 Electron/Qt/NSIS 전용 명령은 가져오지 않았다.
 - 다른 프로젝트의 실사이트 검사·2시간 부하·원격 게시 예외·필수 승인 절차를 Soft Vault의 기존 요구로 해석하지 않는다.
-- 다른 프로젝트의 자동 manifest·게시 잠금·설치본 전체 E2E가 Soft Vault에도 있다고 쓰지 않는다. 필요한 부분은 후속 구현 항목으로 남긴다.
+- 다른 프로젝트의 자동 manifest·게시 잠금·설치본 전체 E2E가 Soft Vault에도 있다고 쓰지 않는다. 실제로 추가한 소스 지문·Mac 설치 검사 도구는 해당 파일과 검증 기록으로 확인한다.
 - 일부 프로젝트의 종료 즉시 모든 중간 자료 삭제 규칙은 그대로 적용하지 않는다. 현재 Soft Vault는 로컬 패키지를 직접 사용하며 공개 재다운로드 보장이 없다. 유일한 검증 파일·복구 근거·실행 중인 앱을 먼저 보존한다.
 - 릴리즈 결과를 `AGENTS.md`에 저장하는 관례는 따르지 않는다. Soft Vault에서는 결과를 `VERIFICATION.md` 또는 날짜별 검증 문서로 구분해 실행 지시와 혼동하지 않는다.
 

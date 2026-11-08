@@ -20,6 +20,7 @@ void main() {
     (tester) async {
       MediaKit.ensureInitialized();
       await windowManager.ensureInitialized();
+      await prepareNativeSurface(tester);
       await windowManager.setTitle('Soft Vault · E2E - design_parity_test');
       const repo = String.fromEnvironment('REPO_ROOT');
       const fixture = String.fromEnvironment('VIDEO_FIXTURE');
@@ -200,11 +201,15 @@ void main() {
           final client = native.physicalSize / native.devicePixelRatio;
           final scaffold = tester.getRect(find.byType(Scaffold).first);
           expect(scaffold, Offset.zero & client);
-          final sidebar = tester.getRect(
-            find.byKey(const ValueKey('library-sidebar')),
-          );
-          expect(sidebar.right, scaffold.right);
-          expect(sidebar.bottom, scaffold.bottom);
+          final sidebarFinder = find.byKey(const ValueKey('library-sidebar'));
+          if (await windowManager.isFullScreen()) {
+            // Native fullscreen events now update the app layout as well.
+            expect(sidebarFinder, findsNothing);
+          } else {
+            final sidebar = tester.getRect(sidebarFinder);
+            expect(sidebar.right, scaffold.right);
+            expect(sidebar.bottom, scaffold.bottom);
+          }
           expect(tester.takeException(), isNull);
         }
       } finally {

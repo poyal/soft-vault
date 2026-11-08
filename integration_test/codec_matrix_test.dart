@@ -1,3 +1,4 @@
+import 'support/native_surface.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ void main() {
     expect(root.isNotEmpty && Directory(root).existsSync(), isTrue);
     MediaKit.ensureInitialized();
     await windowManager.ensureInitialized();
+    await prepareNativeSurface(tester);
     final player = Player();
     final playback = Playback(NativePlayback(player));
     final results = <Map<String, Object?>>[];
