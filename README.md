@@ -37,6 +37,8 @@ Soft Vault는 컴퓨터에 보관한 **영상을 찾아보고, 재생하고, 정
 
 EXE와 함께 들어 있는 `data`, `tools`, DLL 파일이 필요합니다. EXE만 따로 옮기지 마세요. 앱 사용에는 Flutter, Visual Studio, 개발자 모드 또는 별도 코덱 팩을 설치할 필요가 없습니다.
 
+현재 Windows 배포본에는 코드 서명이 없습니다. 다운로드 파일의 SHA-256은 릴리즈의 `SHA256SUMS.txt`에서 확인할 수 있습니다.
+
 ### Mac
 
 1. 릴리즈에서 **macOS arm64 ZIP**을 내려받아 압축을 풉니다. Apple Silicon용입니다.

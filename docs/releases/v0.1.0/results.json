@@ -1,0 +1,711 @@
+{
+    "version":  "0.1.0+1",
+    "generatedAt":  "2026-11-09T01:09:34.2942532+09:00",
+    "applicationSource":  "ca353a8ce571ca20891364c885f0b84b50f3e838",
+    "finalTestSource":  "def5b1f40145c2e9e777bbcfa8bbf9054f476fdf",
+    "sourceSHA256":  "2599bbd6d9668ec728df5168a126dfab65da281a0d330088852f1b954d5c4120",
+    "changesAfterWindowsBuild":  [
+                                     "integration_test/stress_flow_test.dart",
+                                     "test/stress_scenarios_test.dart"
+                                 ],
+    "platforms":  {
+                      "windows":  {
+                                      "generated":  "2026-11-09T01:00:13.7074161+09:00",
+                                      "testCount":  99,
+                                      "profileTestRuns":  4,
+                                      "suites":  [
+                                                     {
+                                                         "Suite":  "unit",
+                                                         "Tests":  56,
+                                                         "Skipped":  1,
+                                                         "Passed":  true,
+                                                         "Log":  "unit.log",
+                                                         "Modified":  "2026-11-09T00:42:31.9598435+09:00"
+                                                     },
+                                                     {
+                                                         "Suite":  "stress",
+                                                         "Tests":  9,
+                                                         "Skipped":  0,
+                                                         "Passed":  true,
+                                                         "Log":  "stress.log",
+                                                         "Modified":  "2026-11-09T01:00:13.6283284+09:00"
+                                                     },
+                                                     {
+                                                         "Suite":  "performance",
+                                                         "Tests":  2,
+                                                         "Skipped":  0,
+                                                         "Passed":  true,
+                                                         "Log":  "performance.log",
+                                                         "Modified":  "2026-11-09T00:51:16.9809438+09:00"
+                                                     },
+                                                     {
+                                                         "Suite":  "library-e2e",
+                                                         "Tests":  1,
+                                                         "Skipped":  0,
+                                                         "Passed":  true,
+                                                         "Log":  "library-e2e.log",
+                                                         "Modified":  "2026-11-09T00:42:53.1799143+09:00"
+                                                     },
+                                                     {
+                                                         "Suite":  "catalog-e2e",
+                                                         "Tests":  1,
+                                                         "Skipped":  0,
+                                                         "Passed":  true,
+                                                         "Log":  "catalog-e2e.log",
+                                                         "Modified":  "2026-11-09T00:43:30.2328267+09:00"
+                                                     },
+                                                     {
+                                                         "Suite":  "playback-e2e",
+                                                         "Tests":  1,
+                                                         "Skipped":  0,
+                                                         "Passed":  true,
+                                                         "Log":  "playback-e2e.log",
+                                                         "Modified":  "2026-11-09T00:43:50.9055591+09:00"
+                                                     },
+                                                     {
+                                                         "Suite":  "app-playback-e2e",
+                                                         "Tests":  1,
+                                                         "Skipped":  0,
+                                                         "Passed":  true,
+                                                         "Log":  "app-playback-e2e.log",
+                                                         "Modified":  "2026-11-09T00:44:59.5876693+09:00"
+                                                     },
+                                                     {
+                                                         "Suite":  "extended-e2e",
+                                                         "Tests":  1,
+                                                         "Skipped":  0,
+                                                         "Passed":  true,
+                                                         "Log":  "extended-e2e.log",
+                                                         "Modified":  "2026-11-09T00:46:16.9183179+09:00"
+                                                     },
+                                                     {
+                                                         "Suite":  "design-e2e",
+                                                         "Tests":  1,
+                                                         "Skipped":  0,
+                                                         "Passed":  true,
+                                                         "Log":  "design-e2e.log",
+                                                         "Modified":  "2026-11-09T00:46:50.4332404+09:00"
+                                                     },
+                                                     {
+                                                         "Suite":  "codec-e2e",
+                                                         "Tests":  1,
+                                                         "Skipped":  0,
+                                                         "Passed":  true,
+                                                         "Log":  "codec-e2e.log",
+                                                         "Modified":  "2026-11-09T00:47:13.2050731+09:00"
+                                                     },
+                                                     {
+                                                         "Suite":  "ui-scenarios",
+                                                         "Tests":  19,
+                                                         "Skipped":  0,
+                                                         "Passed":  true,
+                                                         "Log":  "ui-scenarios.log",
+                                                         "Modified":  "2026-11-09T00:49:56.4377197+09:00"
+                                                     },
+                                                     {
+                                                         "Suite":  "native-stress",
+                                                         "Tests":  3,
+                                                         "Skipped":  0,
+                                                         "Passed":  true,
+                                                         "Log":  "native-stress.log",
+                                                         "Modified":  "2026-11-09T00:58:10.0800330+09:00"
+                                                     },
+                                                     {
+                                                         "Suite":  "privacy-e2e",
+                                                         "Tests":  3,
+                                                         "Skipped":  0,
+                                                         "Passed":  true,
+                                                         "Log":  "privacy-e2e.log",
+                                                         "Modified":  "2026-11-09T00:50:37.5098933+09:00"
+                                                     }
+                                                 ],
+                                      "uiProfile":  {
+                                                        "mode":  "profile",
+                                                        "framePolicy":  "fullyLive",
+                                                        "records":  4,
+                                                        "phases":  [
+                                                                       {
+                                                                           "phase":  "navigation",
+                                                                           "frames":  299,
+                                                                           "buildP95Ms":  2.058,
+                                                                           "rasterP95Ms":  0.908,
+                                                                           "totalP95Ms":  3.559,
+                                                                           "overBudgetFrames":  0,
+                                                                           "refreshHz":  60.0
+                                                                       },
+                                                                       {
+                                                                           "phase":  "search-dialog",
+                                                                           "frames":  152,
+                                                                           "buildP95Ms":  1.36,
+                                                                           "rasterP95Ms":  0.972,
+                                                                           "totalP95Ms":  3.151,
+                                                                           "overBudgetFrames":  1,
+                                                                           "refreshHz":  60.0
+                                                                       },
+                                                                       {
+                                                                           "phase":  "detail-dialog",
+                                                                           "frames":  151,
+                                                                           "buildP95Ms":  0.553,
+                                                                           "rasterP95Ms":  1.018,
+                                                                           "totalP95Ms":  2.753,
+                                                                           "overBudgetFrames":  0,
+                                                                           "refreshHz":  60.0
+                                                                       },
+                                                                       {
+                                                                           "phase":  "video-playback",
+                                                                           "frames":  242,
+                                                                           "buildP95Ms":  1.0,
+                                                                           "rasterP95Ms":  0.975,
+                                                                           "totalP95Ms":  3.211,
+                                                                           "overBudgetFrames":  0,
+                                                                           "refreshHz":  60.0
+                                                                       }
+                                                                   ]
+                                                    },
+                                      "stressProfile":  {
+                                                            "value":  [
+                                                                          {
+                                                                              "name":  "NATIVE-STRESS-01 rapid file switching ends on the requested video at zero volume",
+                                                                              "mode":  "windows profile integration",
+                                                                              "passed":  true,
+                                                                              "opens":  40,
+                                                                              "ms":  8570
+                                                                          },
+                                                                          {
+                                                                              "name":  "NATIVE-STRESS-02 repeated fullscreen, panic and restore retains safe playback state",
+                                                                              "mode":  "windows profile integration",
+                                                                              "passed":  true,
+                                                                              "cycles":  12,
+                                                                              "rssGrowthBytes":  7524352,
+                                                                              "ms":  33846
+                                                                          },
+                                                                          {
+                                                                              "name":  "NATIVE-LOAD-01 10000 rows remain virtualized through scrolling, search and resizing",
+                                                                              "mode":  "windows profile integration",
+                                                                              "passed":  true,
+                                                                              "startupMs":  2254,
+                                                                              "searchP95Ms":  20,
+                                                                              "maxBuiltTiles":  8,
+                                                                              "scrollGestures":  80,
+                                                                              "rssGrowthBytes":  -26472448,
+                                                                              "records":  10000,
+                                                                              "frameBuildP95Ms":  1.713,
+                                                                              "frameRasterP95Ms":  1.083,
+                                                                              "displayRefreshHz":  60.0,
+                                                                              "overBudgetFrames":  3,
+                                                                              "frameSamples":  764,
+                                                                              "profileFrameP95Ms":  3.65,
+                                                                              "ms":  20100
+                                                                          }
+                                                                      ],
+                                                            "Count":  3
+                                                        },
+                                      "load10000":  {
+                                                        "files":  10000,
+                                                        "mode":  "Dart test service benchmark",
+                                                        "label":  "optimized-10000",
+                                                        "os":  "\"Windows 11 Pro\" 10.0 (Build 26300)",
+                                                        "rssStart":  142303232,
+                                                        "fixtureMs":  13945,
+                                                        "coldScanMs":  3474,
+                                                        "warmScanMs":  669,
+                                                        "listMs":  26,
+                                                        "searchP50Ms":  4.104,
+                                                        "searchP95Ms":  4.641,
+                                                        "batch1000Ms":  561,
+                                                        "backupMs":  96,
+                                                        "restoreMs":  768,
+                                                        "rssEnd":  218521600,
+                                                        "maxRss":  236634112,
+                                                        "budgetsMs":  {
+                                                                          "coldScanMs":  60000,
+                                                                          "warmScanMs":  15000,
+                                                                          "searchP95Ms":  500,
+                                                                          "batch1000Ms":  10000,
+                                                                          "restoreMs":  30000
+                                                                      },
+                                                        "passed":  true
+                                                    },
+                                      "catalog50000":  {
+                                                           "records":  50000,
+                                                           "mode":  "SQLite synthetic catalog; no video decoding",
+                                                           "passed":  true,
+                                                           "seedMs":  604,
+                                                           "listMs":  139,
+                                                           "searchP50Ms":  18.768,
+                                                           "searchP95Ms":  19.413,
+                                                           "collectionMs":  162,
+                                                           "duplicatesMs":  163,
+                                                           "backupMs":  351,
+                                                           "backupBytes":  24062388,
+                                                           "rss":  278073344,
+                                                           "maxRss":  307867648,
+                                                           "budgetsMs":  {
+                                                                             "searchP95Ms":  500,
+                                                                             "listMs":  5000,
+                                                                             "collectionMs":  5000,
+                                                                             "duplicatesMs":  5000,
+                                                                             "backupMs":  10000
+                                                                         }
+                                                       },
+                                      "installed":  {
+                                                        "passed":  true,
+                                                        "privacyLock":  {
+                                                                            "setup":  true,
+                                                                            "restartPersistence":  true,
+                                                                            "rejectWrongPassword":  true,
+                                                                            "unlock":  true,
+                                                                            "authenticatedDisable":  true
+                                                                        },
+                                                        "extendedFeatures":  {
+                                                                                 "resume":  true,
+                                                                                 "bookmarks":  true,
+                                                                                 "collections":  true,
+                                                                                 "customThumbnail":  true,
+                                                                                 "animatedPreview":  true,
+                                                                                 "nfo":  true,
+                                                                                 "ruleMove":  true
+                                                                             },
+                                                        "codecs":  [
+                                                                       {
+                                                                           "file":  "av1-flac.mkv",
+                                                                           "width":  320,
+                                                                           "height":  180,
+                                                                           "volume":  0.0
+                                                                       },
+                                                                       {
+                                                                           "file":  "embedded-subtitle.mkv",
+                                                                           "width":  320,
+                                                                           "height":  180,
+                                                                           "volume":  0.0
+                                                                       },
+                                                                       {
+                                                                           "file":  "h264-aac.mp4",
+                                                                           "width":  320,
+                                                                           "height":  180,
+                                                                           "volume":  0.0
+                                                                       },
+                                                                       {
+                                                                           "file":  "h264-ac3.ts",
+                                                                           "width":  320,
+                                                                           "height":  180,
+                                                                           "volume":  0.0
+                                                                       },
+                                                                       {
+                                                                           "file":  "h264-dts.mkv",
+                                                                           "width":  320,
+                                                                           "height":  180,
+                                                                           "volume":  0.0
+                                                                       },
+                                                                       {
+                                                                           "file":  "h264-pcm.mov",
+                                                                           "width":  320,
+                                                                           "height":  180,
+                                                                           "volume":  0.0
+                                                                       },
+                                                                       {
+                                                                           "file":  "hevc10-eac3.mkv",
+                                                                           "width":  320,
+                                                                           "height":  180,
+                                                                           "volume":  0.0
+                                                                       },
+                                                                       {
+                                                                           "file":  "hevc4k-hdr.mkv",
+                                                                           "width":  3840,
+                                                                           "height":  2160,
+                                                                           "volume":  0.0
+                                                                       },
+                                                                       {
+                                                                           "file":  "mpeg4-mp3.avi",
+                                                                           "width":  320,
+                                                                           "height":  180,
+                                                                           "volume":  0.0
+                                                                       },
+                                                                       {
+                                                                           "file":  "vc1.wmv",
+                                                                           "width":  1440,
+                                                                           "height":  576,
+                                                                           "volume":  0.0
+                                                                       },
+                                                                       {
+                                                                           "file":  "vp9-opus.webm",
+                                                                           "width":  320,
+                                                                           "height":  180,
+                                                                           "volume":  0.0
+                                                                       }
+                                                                   ],
+                                                        "database":  true,
+                                                        "verifiedCopyMove":  true,
+                                                        "ffprobe":  true,
+                                                        "thumbnail":  true,
+                                                        "nativePlayback":  true,
+                                                        "volume":  0.0,
+                                                        "nativeMinimizeRestore":  true,
+                                                        "packageHashesVerified":  43,
+                                                        "pathContainsDevelopmentTools":  false,
+                                                        "developmentSqliteUnavailable":  true,
+                                                        "packageSHA256":  "A5461A4DC4440FFCD1B13A9824F65EE504216737440F7296B1BFCE0FD640E73F",
+                                                        "verifiedAtUTC":  "2026-11-08T15:56:00.5013586Z"
+                                                    },
+                                      "resourceSample":  {
+                                                             "Label":  "remote-final-profile-stress",
+                                                             "DurationSeconds":  30.2,
+                                                             "Samples":  15,
+                                                             "CpuAveragePercent":  4.8,
+                                                             "CpuPeakPercent":  12,
+                                                             "GpuAverageBusiestEnginePercent":  9.9,
+                                                             "GpuPeakBusiestEnginePercent":  24,
+                                                             "MinimumAvailableGiB":  21.1,
+                                                             "Applications":  [
+                                                                                  {
+                                                                                      "Samples":  15,
+                                                                                      "CpuAveragePercent":  1.34,
+                                                                                      "CpuPeakPercent":  7.5,
+                                                                                      "PrivateWorkingPeakMiB":  232.6,
+                                                                                      "GpuPeakEnginePercent":  3,
+                                                                                      "GpuSharedPeakMiB":  26.3
+                                                                                  }
+                                                                              ],
+                                                             "Note":  "CPU is normalized across all logical processors. GPU percentages use the busiest engine, not the sum of different engines. Windows formatted counters are sampled approximately every 2 seconds. Private working memory excludes shared pages."
+                                                         }
+                                  },
+                      "macos":  {
+                                    "generated":  "2026-11-08T16:03:04.499237+00:00",
+                                    "testCount":  100,
+                                    "profileTestRuns":  4,
+                                    "suites":  [
+                                                   {
+                                                       "Suite":  "unit",
+                                                       "Tests":  57,
+                                                       "Skipped":  0,
+                                                       "Passed":  true,
+                                                       "Modified":  "2026-11-08T15:46:48.925711+00:00"
+                                                   },
+                                                   {
+                                                       "Suite":  "stress",
+                                                       "Tests":  9,
+                                                       "Skipped":  0,
+                                                       "Passed":  true,
+                                                       "Modified":  "2026-11-08T15:59:33.691879+00:00"
+                                                   },
+                                                   {
+                                                       "Suite":  "performance",
+                                                       "Tests":  2,
+                                                       "Skipped":  0,
+                                                       "Passed":  true,
+                                                       "Modified":  "2026-11-08T15:59:42.076618+00:00"
+                                                   },
+                                                   {
+                                                       "Suite":  "library-e2e",
+                                                       "Tests":  1,
+                                                       "Skipped":  0,
+                                                       "Passed":  true,
+                                                       "Modified":  "2026-11-08T15:47:13.964645+00:00"
+                                                   },
+                                                   {
+                                                       "Suite":  "catalog-e2e",
+                                                       "Tests":  1,
+                                                       "Skipped":  0,
+                                                       "Passed":  true,
+                                                       "Modified":  "2026-11-08T15:48:08.933900+00:00"
+                                                   },
+                                                   {
+                                                       "Suite":  "playback-e2e",
+                                                       "Tests":  1,
+                                                       "Skipped":  0,
+                                                       "Passed":  true,
+                                                       "Modified":  "2026-11-08T15:48:28.927748+00:00"
+                                                   },
+                                                   {
+                                                       "Suite":  "app-playback-e2e",
+                                                       "Tests":  1,
+                                                       "Skipped":  0,
+                                                       "Passed":  true,
+                                                       "Modified":  "2026-11-08T15:49:51.067859+00:00"
+                                                   },
+                                                   {
+                                                       "Suite":  "extended-e2e",
+                                                       "Tests":  1,
+                                                       "Skipped":  0,
+                                                       "Passed":  true,
+                                                       "Modified":  "2026-11-08T15:51:24.558078+00:00"
+                                                   },
+                                                   {
+                                                       "Suite":  "design-e2e",
+                                                       "Tests":  1,
+                                                       "Skipped":  0,
+                                                       "Passed":  true,
+                                                       "Modified":  "2026-11-08T15:52:20.412864+00:00"
+                                                   },
+                                                   {
+                                                       "Suite":  "codec-e2e",
+                                                       "Tests":  1,
+                                                       "Skipped":  0,
+                                                       "Passed":  true,
+                                                       "Modified":  "2026-11-08T15:52:42.553684+00:00"
+                                                   },
+                                                   {
+                                                       "Suite":  "ui-scenarios-e2e",
+                                                       "Tests":  19,
+                                                       "Skipped":  0,
+                                                       "Passed":  true,
+                                                       "Modified":  "2026-11-08T15:45:28.116009+00:00"
+                                                   },
+                                                   {
+                                                       "Suite":  "privacy-e2e",
+                                                       "Tests":  3,
+                                                       "Skipped":  0,
+                                                       "Passed":  true,
+                                                       "Modified":  "2026-11-08T15:54:01.899281+00:00"
+                                                   },
+                                                   {
+                                                       "Suite":  "native-stress-e2e",
+                                                       "Tests":  3,
+                                                       "Skipped":  0,
+                                                       "Passed":  true,
+                                                       "Modified":  "2026-11-08T15:58:03.460487+00:00"
+                                                   }
+                                               ],
+                                    "uiProfile":  {
+                                                      "mode":  "profile",
+                                                      "framePolicy":  "fullyLive",
+                                                      "records":  4,
+                                                      "phases":  [
+                                                                     {
+                                                                         "phase":  "navigation",
+                                                                         "frames":  301,
+                                                                         "buildP95Ms":  6.277,
+                                                                         "rasterP95Ms":  2.677,
+                                                                         "totalP95Ms":  9.541,
+                                                                         "overBudgetFrames":  0,
+                                                                         "refreshHz":  60.0
+                                                                     },
+                                                                     {
+                                                                         "phase":  "search-dialog",
+                                                                         "frames":  150,
+                                                                         "buildP95Ms":  3.268,
+                                                                         "rasterP95Ms":  3.643,
+                                                                         "totalP95Ms":  8.144,
+                                                                         "overBudgetFrames":  0,
+                                                                         "refreshHz":  60.0
+                                                                     },
+                                                                     {
+                                                                         "phase":  "detail-dialog",
+                                                                         "frames":  152,
+                                                                         "buildP95Ms":  2.324,
+                                                                         "rasterP95Ms":  3.596,
+                                                                         "totalP95Ms":  8.532,
+                                                                         "overBudgetFrames":  0,
+                                                                         "refreshHz":  60.0
+                                                                     },
+                                                                     {
+                                                                         "phase":  "video-playback",
+                                                                         "frames":  257,
+                                                                         "buildP95Ms":  3.49,
+                                                                         "rasterP95Ms":  2.686,
+                                                                         "totalP95Ms":  6.849,
+                                                                         "overBudgetFrames":  0,
+                                                                         "refreshHz":  60.0
+                                                                     }
+                                                                 ]
+                                                  },
+                                    "stressProfile":  {
+                                                          "value":  [
+                                                                        {
+                                                                            "name":  "NATIVE-STRESS-01 rapid file switching ends on the requested video at zero volume",
+                                                                            "mode":  "macos profile integration",
+                                                                            "passed":  true,
+                                                                            "opens":  40,
+                                                                            "ms":  9595
+                                                                        },
+                                                                        {
+                                                                            "name":  "NATIVE-STRESS-02 repeated fullscreen, panic and restore retains safe playback state",
+                                                                            "mode":  "macos profile integration",
+                                                                            "passed":  true,
+                                                                            "cycles":  12,
+                                                                            "rssGrowthBytes":  28082176,
+                                                                            "ms":  39888
+                                                                        },
+                                                                        {
+                                                                            "name":  "NATIVE-LOAD-01 10000 rows remain virtualized through scrolling, search and resizing",
+                                                                            "mode":  "macos profile integration",
+                                                                            "passed":  true,
+                                                                            "startupMs":  2292,
+                                                                            "searchP95Ms":  141,
+                                                                            "maxBuiltTiles":  8,
+                                                                            "scrollGestures":  80,
+                                                                            "rssGrowthBytes":  10829824,
+                                                                            "records":  10000,
+                                                                            "frameBuildP95Ms":  3.686,
+                                                                            "frameRasterP95Ms":  3.635,
+                                                                            "displayRefreshHz":  60.0,
+                                                                            "overBudgetFrames":  6,
+                                                                            "frameSamples":  835,
+                                                                            "profileFrameP95Ms":  8.897,
+                                                                            "ms":  21138
+                                                                        }
+                                                                    ],
+                                                          "Count":  3
+                                                      },
+                                    "load10000":  {
+                                                      "files":  10000,
+                                                      "mode":  "Dart test service benchmark",
+                                                      "label":  "macos-10000",
+                                                      "os":  "Version 27.0.1 (Build 26A434)",
+                                                      "rssStart":  155746304,
+                                                      "fixtureMs":  1011,
+                                                      "coldScanMs":  1848,
+                                                      "warmScanMs":  381,
+                                                      "listMs":  20,
+                                                      "searchP50Ms":  3.018,
+                                                      "searchP95Ms":  3.113,
+                                                      "batch1000Ms":  558,
+                                                      "backupMs":  66,
+                                                      "restoreMs":  738,
+                                                      "rssEnd":  248938496,
+                                                      "maxRss":  269156352,
+                                                      "budgetsMs":  {
+                                                                        "coldScanMs":  60000,
+                                                                        "warmScanMs":  15000,
+                                                                        "searchP95Ms":  500,
+                                                                        "batch1000Ms":  10000,
+                                                                        "restoreMs":  30000
+                                                                    },
+                                                      "passed":  true
+                                                  },
+                                    "catalog50000":  {
+                                                         "records":  50000,
+                                                         "mode":  "SQLite synthetic catalog; no video decoding",
+                                                         "passed":  true,
+                                                         "seedMs":  509,
+                                                         "listMs":  105,
+                                                         "searchP50Ms":  14.268,
+                                                         "searchP95Ms":  14.455,
+                                                         "collectionMs":  122,
+                                                         "duplicatesMs":  121,
+                                                         "backupMs":  260,
+                                                         "backupBytes":  25512388,
+                                                         "rss":  373587968,
+                                                         "maxRss":  374112256,
+                                                         "budgetsMs":  {
+                                                                           "searchP95Ms":  500,
+                                                                           "listMs":  5000,
+                                                                           "collectionMs":  5000,
+                                                                           "duplicatesMs":  5000,
+                                                                           "backupMs":  10000
+                                                                       }
+                                                     },
+                                    "installed":  {
+                                                      "passed":  true,
+                                                      "privacyLock":  {
+                                                                          "setup":  true,
+                                                                          "restartPersistence":  true,
+                                                                          "rejectWrongPassword":  true,
+                                                                          "unlock":  true,
+                                                                          "authenticatedDisable":  true
+                                                                      },
+                                                      "extendedFeatures":  {
+                                                                               "resume":  true,
+                                                                               "bookmarks":  true,
+                                                                               "collections":  true,
+                                                                               "customThumbnail":  true,
+                                                                               "animatedPreview":  true,
+                                                                               "nfo":  true,
+                                                                               "ruleMove":  true
+                                                                           },
+                                                      "codecs":  [
+                                                                     {
+                                                                         "file":  "h264-dts.mkv",
+                                                                         "width":  320,
+                                                                         "height":  180,
+                                                                         "volume":  0.0
+                                                                     },
+                                                                     {
+                                                                         "file":  "vc1.wmv",
+                                                                         "width":  1440,
+                                                                         "height":  576,
+                                                                         "volume":  0.0
+                                                                     },
+                                                                     {
+                                                                         "file":  "h264-ac3.ts",
+                                                                         "width":  320,
+                                                                         "height":  180,
+                                                                         "volume":  0.0
+                                                                     },
+                                                                     {
+                                                                         "file":  "av1-flac.mkv",
+                                                                         "width":  320,
+                                                                         "height":  180,
+                                                                         "volume":  0.0
+                                                                     },
+                                                                     {
+                                                                         "file":  "h264-aac.mp4",
+                                                                         "width":  320,
+                                                                         "height":  180,
+                                                                         "volume":  0.0
+                                                                     },
+                                                                     {
+                                                                         "file":  "vp9-opus.webm",
+                                                                         "width":  320,
+                                                                         "height":  180,
+                                                                         "volume":  0.0
+                                                                     },
+                                                                     {
+                                                                         "file":  "embedded-subtitle.mkv",
+                                                                         "width":  320,
+                                                                         "height":  180,
+                                                                         "volume":  0.0
+                                                                     },
+                                                                     {
+                                                                         "file":  "h264-pcm.mov",
+                                                                         "width":  320,
+                                                                         "height":  180,
+                                                                         "volume":  0.0
+                                                                     },
+                                                                     {
+                                                                         "file":  "hevc4k-hdr.mkv",
+                                                                         "width":  3840,
+                                                                         "height":  2160,
+                                                                         "volume":  0.0
+                                                                     },
+                                                                     {
+                                                                         "file":  "hevc10-eac3.mkv",
+                                                                         "width":  320,
+                                                                         "height":  180,
+                                                                         "volume":  0.0
+                                                                     },
+                                                                     {
+                                                                         "file":  "mpeg4-mp3.avi",
+                                                                         "width":  320,
+                                                                         "height":  180,
+                                                                         "volume":  0.0
+                                                                     }
+                                                                 ],
+                                                      "database":  true,
+                                                      "verifiedCopyMove":  true,
+                                                      "ffprobe":  true,
+                                                      "thumbnail":  true,
+                                                      "nativePlayback":  true,
+                                                      "volume":  0.0,
+                                                      "nativeMinimizeRestore":  true,
+                                                      "packageSHA256":  "64acb25818d66e4c9f08f22e218de1225329c827003c359a59e2daaabf721a3d",
+                                                      "verifiedAtUTC":  "2026-11-08T16:03:38.447470+00:00",
+                                                      "pathContainsDevelopmentTools":  false,
+                                                      "signature":  "ad-hoc; not notarized"
+                                                  },
+                                    "launchServicesPassed":  true
+                                }
+                  },
+    "packages":  [
+                     {
+                         "sha256":  "64acb25818d66e4c9f08f22e218de1225329c827003c359a59e2daaabf721a3d",
+                         "file":  "SoftVault-0.1.0-macos-arm64.zip",
+                         "bytes":  83308912
+                     },
+                     {
+                         "sha256":  "a5461a4dc4440ffcd1b13a9824f65ee504216737440f7296b1bfce0fd640e73f",
+                         "file":  "SoftVault-0.1.0-windows-x64.zip",
+                         "bytes":  113814352
+                     }
+                 ]
+}

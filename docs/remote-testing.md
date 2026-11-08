@@ -1,6 +1,6 @@
 # Mac·Windows 원격 실기 검증
 
-이 문서는 연결과 향후 검사 절차를 정리한다. SSH 인증 성공, 로그인된 데스크톱 존재, 앱 테스트 통과를 구분한다. 아래 환경은 2026-11-08에 확인한 값이다.
+이 문서는 연결과 검사 절차를 정리한다. SSH 인증 성공, 로그인된 데스크톱 존재, 앱 테스트 통과를 구분한다. 환경 준비는 2026-11-08, 두 OS 앱·설치본 검증은 2026-11-09에 수행했다. 상세 결과는 [0.1.0 검증 기록](releases/v0.1.0/VERIFICATION.md)에 있다.
 
 ## 연결 정보의 관리
 
@@ -16,8 +16,8 @@ ssh windows-test
 | 환경 | 확인한 내용 | 아직 확인하지 않은 것 |
 | --- | --- | --- |
 | 기존 Windows 개발 PC | i7-8700B, UHD 630, RAM 63.8GiB; 기존 앱 검사 근거 있음 | 깨끗한 OS 신규 환경, 실제 HDR 출력 |
-| Mac mini M4 | arm64, macOS 27.0.1/26A434, SSH·로그인 데스크톱 계정 확인 | 앱 빌드·UI·패키지·코덱·성능 |
-| 별도 Windows | Windows 11 Pro/26300, Ryzen 7 9700X, RTX 4070 Ti, RAM 31.7GiB, V32UE·ASUS MB16AC | 앱 설치·E2E·HDR 활성화/출력·성능 |
+| Mac mini M4 | arm64, macOS 27.0.1/26A434, 빌드·UI·ZIP·코덱·profile·LaunchServices 실행 통과 | 물리 HDR 출력, Gatekeeper 첫 실행 실기 |
+| 별도 Windows | Windows 11 Pro/26300, Ryzen 7 9700X, RTX 4070 Ti, RAM 31.7GiB, 빌드·UI·ZIP 설치·코덱·profile 통과 | 물리 HDR 출력, 깨끗한 계정의 첫 실행 경고 |
 
 최초 조회 때 Mac은 Command Line Tools를 선택하고 있었고 Xcode 다운로드가 진행 중이었다. 이후 사용자가 Xcode 27.2와 초기 설정, CocoaPods 1.17.0 설치를 완료했다. 양쪽 격리 작업 폴더에 Flutter 3.47.9를 준비했다. Windows는 VS 2022 BuildTools를 사용한다. PATH 조회 실패를 기기 전체에 도구가 없다는 증거로 삼지 않는다.
 

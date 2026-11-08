@@ -44,6 +44,6 @@ CPU는 전체 논리 프로세서 기준 비율, GPU는 수집한 엔진 사용�
 
 [diagnose-ui-windows.ps1](../scripts/diagnose-ui-windows.ps1)은 렌더러·아이콘 합성·팝업 등 원인 분리 검사에 사용한다. `-Trace`의 타임라인은 `tool/summarize-timeline.cjs`로 요약한다. 조사 반복을 독립 회귀 테스트 수에 더하지 않는다.
 
-UHD 630 개발 PC에서 확인한 Skia·SVG 수정의 결과는 [검증 기록](verification/2026-11-08-windows.md)에 있다. RTX Windows와 M4 Mac의 성능은 아직 측정하지 않았다.
+UHD 630 개발 PC에서 확인한 Skia·SVG 수정의 결과는 [이전 검증 기록](verification/2026-11-08-windows.md)에 있다. RTX Windows와 M4 Mac의 실제 부하·profile 측정은 [0.1.0 검증 기록](releases/v0.1.0/VERIFICATION.md)에 있다. 서로 다른 기기의 수치를 개선 배수로 계산하지 않는다.
 
 장시간 검사는 별도 계획으로 영상 길이·코덱·해상도·전환 횟수·실측 시간을 정하고 시작/중간/종료의 메모리·자원·응답·드롭 프레임을 기록한다. 현재 2시간 전용 자동화나 합격 결과는 없다. 4K HDR 지속 재생은 [원격 실기 검증](remote-testing.md)의 실제 출력 확인과 함께 진행한다.
