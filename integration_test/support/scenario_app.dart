@@ -102,8 +102,7 @@ class ScenarioApp {
     await windowManager.setTitle(
       'Soft Vault · E2E - ${tester.testDescription}',
     );
-    await setNativeFullscreen(false);
-    await windowManager.restore();
+    await prepareNativeSurface(tester);
     await resizeNativeSurface(tester, const Size(1280, 800));
     await tester.pumpWidget(VaultApp(library: library));
     await settle(15);
@@ -181,8 +180,7 @@ class ScenarioApp {
       tester.widget<PlaybackControls>(find.byType(PlaybackControls)).player;
   Future<void> close() async {
     FileSelectorPlatform.instance = previousPicker;
-    await setNativeFullscreen(false);
-    await windowManager.restore();
+    await prepareNativeSurface(tester);
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pumpAndSettle();
     await library.close();

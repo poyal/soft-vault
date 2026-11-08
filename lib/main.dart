@@ -256,10 +256,16 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   });
 
   @override
-  void onWindowEnterFullScreen() => update(() => expanded = true);
+  void onWindowEnterFullScreen() => syncNativeFullscreen();
 
   @override
-  void onWindowLeaveFullScreen() => update(() => expanded = false);
+  void onWindowLeaveFullScreen() => syncNativeFullscreen();
+
+  Future<void> syncNativeFullscreen() async {
+    nativeFullscreen.value = await windowManager.isFullScreen();
+  }
+
+  void fullscreenChanged() => update(() => expanded = nativeFullscreen.value);
 
   @override
   void onWindowClose() async {
@@ -272,6 +278,8 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     super.initState();
     video = VideoController(player);
     windowManager.addListener(this);
+    nativeFullscreen.addListener(fullscreenChanged);
+    syncNativeFullscreen();
     HardwareKeyboard.instance.addHandler(onKey);
     initialize();
   }
@@ -279,6 +287,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   @override
   void dispose() {
     windowManager.removeListener(this);
+    nativeFullscreen.removeListener(fullscreenChanged);
     progressTimer?.cancel();
     HardwareKeyboard.instance.removeHandler(onKey);
     poll?.cancel();

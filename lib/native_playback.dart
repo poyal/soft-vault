@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:window_manager/window_manager.dart';
@@ -32,10 +33,25 @@ class NativePlayback implements PlaybackPort {
   }
 }
 
-Future<void> setNativeFullscreen(bool value) async {
-  if (await windowManager.isFullScreen() == value) return;
+final nativeFullscreen = ValueNotifier<bool>(false);
+Future<void> _fullscreenQueue = Future<void>.value();
+
+Future<void> setNativeFullscreen(bool value) {
+  final transition = _fullscreenQueue.then((_) => _setNativeFullscreen(value));
+  // A failed request must not prevent subsequent requests from recovering.
+  _fullscreenQueue = transition.then<void>((_) {}, onError: (Object _) {});
+  return transition;
+}
+
+Future<void> _setNativeFullscreen(bool value) async {
+  if (await windowManager.isFullScreen() == value) {
+    nativeFullscreen.value = value;
+    return;
+  }
   if (!Platform.isMacOS) {
     await windowManager.setFullScreen(value);
+    // Windows does not emit leave-full-screen when returning to maximized.
+    nativeFullscreen.value = await windowManager.isFullScreen();
     return;
   }
   final listener = _FullscreenTransitionListener(value);
@@ -43,6 +59,7 @@ Future<void> setNativeFullscreen(bool value) async {
   try {
     await windowManager.setFullScreen(value);
     await listener.completed.future.timeout(const Duration(seconds: 5));
+    nativeFullscreen.value = await windowManager.isFullScreen();
   } finally {
     windowManager.removeListener(listener);
   }

@@ -5,7 +5,7 @@ import 'package:soft_vault/native_playback.dart';
 
 Future<void> prepareNativeSurface(WidgetTester tester) async {
   await restoreNativeWindow(tester);
-  await setNativeFullscreen(false);
+  await tester.runAsync(() => setNativeFullscreen(false));
 }
 
 /// A minimized macOS window has no vsync; pumping a frame can wait forever.
