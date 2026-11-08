@@ -227,7 +227,7 @@ void main() {
           'cache',
           'dart-sdk',
           'bin',
-          'dart.exe',
+          Platform.isWindows ? 'dart.exe' : 'dart',
         );
         final process = await Process.run(dart, [
           'run',
