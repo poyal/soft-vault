@@ -39,7 +39,15 @@ EXE와 함께 들어 있는 `data`, `tools`, DLL 파일이 필요합니다. EXE�
 
 ### Mac
 
-Mac 배포 파일의 제공 여부와 설치 방법은 릴리즈 노트를 기준으로 확인해 주세요. Apple Silicon 빌드·설치 검증이 끝난 뒤 해당 파일을 제공합니다. 소스에 macOS 프로젝트가 있다는 것만으로 설치본 검증이 완료된 것은 아닙니다.
+1. 릴리즈에서 **macOS arm64 ZIP**을 내려받아 압축을 풉니다. Apple Silicon용입니다.
+2. `Soft Vault.app`을 **응용 프로그램** 폴더로 복사합니다.
+3. 앱을 실행하고 시작 비밀번호를 설정하거나 **나중에 설정**을 선택합니다. 별도 Flutter나 FFmpeg 설치는 필요하지 않습니다.
+
+현재 Mac 배포본은 로컬 서명이며 Apple Developer ID 서명·공증은 받지 않았습니다. 실행이 차단되면 릴리즈 출처와 체크섬을 확인한 뒤 **시스템 설정 → 개인정보 보호 및 보안 → 확인 없이 열기**를 사용할 수 있습니다. [Apple의 앱 실행 안내](https://support.apple.com/102445)를 참고해 주세요.
+
+[![Apple Silicon Mac에서 실제 영상 재생](docs/screenshots/macos-playback.png)](docs/screenshots/macos-playback.png)
+
+*Mac mini M4에서 촬영한 재생 화면입니다. 검증한 OS 버전과 세부 범위는 릴리즈 노트에 기록합니다.*
 
 ## 영상 폴더 연결
 

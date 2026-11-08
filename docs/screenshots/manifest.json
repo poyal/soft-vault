@@ -1,4 +1,4 @@
-﻿[
+[
     {
         "file":  "library.png",
         "source":  "build/e2e/design-library-1280.png",
@@ -70,5 +70,14 @@
         "mode":  "Flutter native integration test, debug",
         "data":  "Synthetic test catalog and sample video",
         "sha256":  "A3107B73F0CFED824EB2982637F2AD3FCC733D56545CB3F1F9DD060199328DDD"
+    },
+    {
+        "file":  "macos-playback.png",
+        "source":  "mac-mini-m4:build/e2e/02-player-1280.png",
+        "capturedAt":  "2026-11-09T00:22:50.0000000+09:00",
+        "platform":  "macOS 27.0.1 / Apple M4",
+        "mode":  "Flutter native integration test, debug",
+        "data":  "Synthetic catalog and Sintel sample video",
+        "sha256":  "F43C303E1142EC10C970DDD41C83E1340FC35355402DB76FD024278AFC9F7FAC"
     }
 ]

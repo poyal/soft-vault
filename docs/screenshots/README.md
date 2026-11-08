@@ -1,6 +1,6 @@
 # 사용자 매뉴얼 스크린샷
 
-README의 이미지는 샘플 자료를 사용하는 실제 Windows 네이티브 Flutter 앱에서 캡처했다. HTML 디자인 시안을 앱 실행 화면으로 사용하지 않았다. 1280 × 800 클라이언트 영역이며 창 테두리는 포함하지 않는다. 촬영 날짜는 2026-11-08이고, 파일별 시각·원본 경로·SHA-256은 [manifest.json](manifest.json)에 보존한다.
+README의 이미지는 샘플 자료를 사용하는 실제 Windows·Mac 네이티브 Flutter 앱에서 캡처했다. HTML 디자인 시안을 앱 실행 화면으로 사용하지 않았다. 1280 × 800 클라이언트 영역이며 창 테두리는 포함하지 않는다. Windows 촬영일은 2026-11-08, Mac 촬영일은 2026-11-09이다. 파일별 시각·원본 경로·SHA-256은 [manifest.json](manifest.json)에 보존한다.
 
 | 파일 | 화면 | 생성 테스트 |
 | --- | --- | --- |
@@ -8,6 +8,7 @@ README의 이미지는 샘플 자료를 사용하는 실제 Windows 네이티브
 | settings-library.png | 라이브러리 설정 | design_parity_test |
 | actors.png | 배우 전체와 목록 | design_parity_test |
 | playback.png | 실제 영상 재생 | app_playback_test |
+| macos-playback.png | Mac mini M4 실제 영상 재생 | app_playback_test |
 | details.png | 상세정보 읽기 화면 | design_parity_test |
 | scenes.png | 장면 북마크 | extended_flow_test |
 | privacy.png | 사생활 보호 설정 | privacy_flow_test |
