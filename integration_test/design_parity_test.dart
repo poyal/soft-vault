@@ -188,8 +188,8 @@ void main() {
           // 100% Windows DPI), without fitting a fake 1000x700 canvas into it.
           () => windowManager.setSize(const Size(1000, 700)),
           () => windowManager.maximize(),
-          () => windowManager.setFullScreen(true),
-          () => windowManager.setFullScreen(false),
+          () => setNativeFullscreen(true),
+          () => setNativeFullscreen(false),
           () => windowManager.restore(),
         ]) {
           await change();
@@ -208,7 +208,7 @@ void main() {
           expect(tester.takeException(), isNull);
         }
       } finally {
-        await windowManager.setFullScreen(false);
+        await setNativeFullscreen(false);
         await windowManager.restore();
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pumpAndSettle();

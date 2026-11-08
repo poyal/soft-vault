@@ -1,3 +1,4 @@
+import 'support/native_surface.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -56,16 +57,16 @@ void main() {
       await playback.open(fixture);
       expect(player.state.volume, 0);
       await playback.panic();
-      await tester.pump(const Duration(milliseconds: 500));
+      await waitNativeMinimized(tester);
       expect(await windowManager.isMinimized(), isTrue);
       final playing = player.state.playing;
-      await windowManager.restore();
+      await restoreNativeWindow(tester);
       await tester.pump(const Duration(milliseconds: 500));
       expect(player.state.volume, 0);
       expect(player.state.playing, playing);
       expect(tester.takeException(), isNull);
     } finally {
-      await windowManager.restore();
+      await restoreNativeWindow(tester);
       await subscription.cancel();
       await tester.pumpWidget(const SizedBox.shrink());
       await player.dispose();

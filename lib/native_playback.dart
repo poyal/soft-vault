@@ -25,24 +25,40 @@ class NativePlayback implements PlaybackPort {
       if (Platform.isMacOS && await windowManager.isFullScreen()) {
         // AppKit cannot miniaturize a window while it belongs to a fullscreen
         // Space. Wait for the native transition, rather than only its request.
-        final listener = _FullscreenExitListener();
-        windowManager.addListener(listener);
-        try {
-          await windowManager.setFullScreen(false);
-          await listener.exited.future.timeout(const Duration(seconds: 5));
-        } finally {
-          windowManager.removeListener(listener);
-        }
+        await setNativeFullscreen(false);
       }
       await windowManager.minimize();
     }
   }
 }
 
-class _FullscreenExitListener with WindowListener {
-  final exited = Completer<void>();
+Future<void> setNativeFullscreen(bool value) async {
+  if (await windowManager.isFullScreen() == value) return;
+  if (!Platform.isMacOS) {
+    await windowManager.setFullScreen(value);
+    return;
+  }
+  final listener = _FullscreenTransitionListener(value);
+  windowManager.addListener(listener);
+  try {
+    await windowManager.setFullScreen(value);
+    await listener.completed.future.timeout(const Duration(seconds: 5));
+  } finally {
+    windowManager.removeListener(listener);
+  }
+}
+
+class _FullscreenTransitionListener with WindowListener {
+  final bool entering;
+  _FullscreenTransitionListener(this.entering);
+  final completed = Completer<void>();
+  @override
+  void onWindowEnterFullScreen() {
+    if (entering && !completed.isCompleted) completed.complete();
+  }
+
   @override
   void onWindowLeaveFullScreen() {
-    if (!exited.isCompleted) exited.complete();
+    if (!entering && !completed.isCompleted) completed.complete();
   }
 }

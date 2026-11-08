@@ -61,9 +61,9 @@ void main() {
         await tester.pumpAndSettle();
         await tester.enterText(find.byType(TextField).first, '수정한 제목');
         await tester.sendKeyEvent(LogicalKeyboardKey.escape);
-        await tester.pump(const Duration(milliseconds: 500));
+        await waitNativeMinimized(tester);
         expect(await windowManager.isMinimized(), isTrue);
-        await windowManager.restore();
+        await restoreNativeWindow(tester);
         await tester.pumpAndSettle();
         expect(find.text('수정한 제목'), findsOneWidget);
         await tester.tap(find.text('저장'));

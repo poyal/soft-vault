@@ -101,7 +101,7 @@ class ScenarioApp {
     await windowManager.setTitle(
       'Soft Vault · E2E - ${tester.testDescription}',
     );
-    await windowManager.setFullScreen(false);
+    await setNativeFullscreen(false);
     await windowManager.restore();
     await resizeNativeSurface(tester, const Size(1280, 800));
     await tester.pumpWidget(VaultApp(library: library));
@@ -144,7 +144,11 @@ class ScenarioApp {
       LogicalKeyboardKey.escape: PhysicalKeyboardKey.escape,
     };
     await tester.sendKeyEvent(value, physicalKey: physical[value]);
-    await settle();
+    if (value == LogicalKeyboardKey.escape) {
+      await waitNativeMinimized(tester);
+    } else {
+      await settle();
+    }
   }
 
   Future<void> enterText(Finder field, String text) async {
@@ -176,7 +180,7 @@ class ScenarioApp {
       tester.widget<PlaybackControls>(find.byType(PlaybackControls)).player;
   Future<void> close() async {
     FileSelectorPlatform.instance = previousPicker;
-    await windowManager.setFullScreen(false);
+    await setNativeFullscreen(false);
     await windowManager.restore();
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pumpAndSettle();

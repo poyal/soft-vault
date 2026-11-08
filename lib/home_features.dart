@@ -333,7 +333,7 @@ extension _HomeFeatures on _VaultHomeState {
         return;
       case 'help':
         if (expanded) {
-          await windowManager.setFullScreen(false);
+          await setNativeFullscreen(false);
           expanded = false;
         }
         update(() => view = 'settings');
@@ -382,7 +382,7 @@ extension _HomeFeatures on _VaultHomeState {
         update(() => muted = !muted);
       case 'fullscreen':
         final nextFullscreen = !await windowManager.isFullScreen();
-        await windowManager.setFullScreen(nextFullscreen);
+        await setNativeFullscreen(nextFullscreen);
         update(() => expanded = nextFullscreen);
       case 'slower':
         await player.setRate((player.state.rate - .25).clamp(.25, 3));

@@ -2,6 +2,23 @@ import 'dart:ui' as ui;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:window_manager/window_manager.dart';
 
+/// A minimized macOS window has no vsync; pumping a frame can wait forever.
+Future<void> waitNativeMinimized(WidgetTester tester) async {
+  await tester.runAsync(() async {
+    for (var i = 0; i < 70 && !await windowManager.isMinimized(); i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+    expect(await windowManager.isMinimized(), isTrue);
+  });
+}
+
+Future<void> restoreNativeWindow(WidgetTester tester) async {
+  await tester.runAsync(() async {
+    await windowManager.restore();
+    await Future<void>.delayed(const Duration(milliseconds: 500));
+  });
+}
+
 /// Resize the real client area, accounting for the Windows title bar/borders.
 /// setSurfaceSize would fit a fake canvas into that area and add letterboxing.
 Future<void> resizeNativeSurface(

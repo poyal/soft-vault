@@ -13,9 +13,9 @@ function Read-Result([string]$Relative, [switch]$Optional) {
 $runs = @('unit','stress','performance','library-e2e','catalog-e2e','playback-e2e','app-playback-e2e','extended-e2e','design-e2e','codec-e2e','ui-scenarios','native-stress','privacy-e2e') | ForEach-Object {
     $path = Join-Path $folder "$_.log"
     $log = Get-Content -LiteralPath $path -Raw -Encoding UTF8
-    $matches = [regex]::Matches($log, '\+(\d+): All tests passed!')
+    $matches = [regex]::Matches($log, '\+(\d+)(?:\s+~(\d+))?: All tests passed!')
     if ($matches.Count -eq 0) { throw "No passing completion: $_" }
-    [PSCustomObject]@{ Suite=$_; Tests=[int]$matches[$matches.Count-1].Groups[1].Value; Passed=$true; Log="$_.log"; Modified=(Get-Item $path).LastWriteTime.ToString('o') }
+    [PSCustomObject]@{ Suite=$_; Tests=[int]$matches[$matches.Count-1].Groups[1].Value; Skipped=[int]$matches[$matches.Count-1].Groups[2].Value; Passed=$true; Log="$_.log"; Modified=(Get-Item $path).LastWriteTime.ToString('o') }
 }
 $report = [ordered]@{
     Generated = (Get-Date).ToString('o')

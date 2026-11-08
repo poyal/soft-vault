@@ -38,8 +38,15 @@ void main() {
     }
 
     Future<void> key(LogicalKeyboardKey value) async {
+      debugPrint('E2E key start: ${value.keyLabel}');
       await tester.sendKeyEvent(value);
-      await settle();
+      debugPrint('E2E key dispatched: ${value.keyLabel}');
+      if (value == LogicalKeyboardKey.escape) {
+        await waitNativeMinimized(tester);
+      } else {
+        await settle();
+      }
+      debugPrint('E2E key complete: ${value.keyLabel}');
     }
 
     Future<void> shot(String name) async {
@@ -65,6 +72,8 @@ void main() {
     }
 
     try {
+      await restoreNativeWindow(tester);
+      await setNativeFullscreen(false);
       await resizeNativeSurface(tester, const Size(1280, 800));
       await tester.pumpWidget(
         RepaintBoundary(
@@ -130,11 +139,7 @@ void main() {
       expect(find.byTooltip('연결 폴더 관리'), findsNothing);
       await shot('02-fullscreen');
       await key(LogicalKeyboardKey.escape);
-      for (var i = 0; i < 50 && !await windowManager.isMinimized(); i++) {
-        await tester.pump(const Duration(milliseconds: 100));
-      }
-      expect(await windowManager.isMinimized(), isTrue);
-      await windowManager.restore();
+      await restoreNativeWindow(tester);
       await settle();
       expect(await windowManager.isFullScreen(), !Platform.isMacOS);
       expect(player.state.volume, 0);
@@ -169,7 +174,7 @@ void main() {
       expect((await library.items()).single['rating'], 5);
       await key(LogicalKeyboardKey.escape);
       expect(await windowManager.isMinimized(), isTrue);
-      await windowManager.restore();
+      await restoreNativeWindow(tester);
       await settle();
       if (find.text('한글 입력 123').evaluate().isEmpty) {
         await shot('edit-panic-failure');
@@ -187,8 +192,9 @@ void main() {
       await shot('11-offline');
       expect((await library.items()).single['online'], 0);
     } finally {
-      await windowManager.setFullScreen(false);
-      await windowManager.restore();
+      debugPrint('E2E playback cleanup');
+      await setNativeFullscreen(false);
+      await restoreNativeWindow(tester);
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();
       await library.close();

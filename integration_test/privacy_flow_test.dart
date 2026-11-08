@@ -43,7 +43,7 @@ void main() {
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();
       await privacy.close();
-      await windowManager.setFullScreen(false);
+      await setNativeFullscreen(false);
       await windowManager.restore();
       await windowManager.setPreventClose(false);
       await windowManager.setTitle('Soft Vault · E2E - $name');

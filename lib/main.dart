@@ -250,7 +250,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     await playback.silence();
     await player.pause();
     await persistProgress();
-    await windowManager.setFullScreen(false);
+    await setNativeFullscreen(false);
     await windowManager.setPreventClose(false);
     if (mounted) widget.lockNow?.call();
   });
