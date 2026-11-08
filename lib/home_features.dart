@@ -1,0 +1,934 @@
+part of 'main.dart';
+
+extension _HomeFeatures on _VaultHomeState {
+  Future<void> relinkFile() => guard(() async {
+    final item = current;
+    if (item == null) return;
+    final file = await openFile();
+    if (file == null || !mounted) return;
+    final duplicates = await widget.library.db.query(
+      'media',
+      where: 'path = ? AND id != ?',
+      whereArgs: [file.path, item['id']],
+    );
+    var replace = false;
+    if (duplicates.isNotEmpty) {
+      replace =
+          await showDeckDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('파일 연결 교체'),
+              content: const Text(
+                '선택한 경로가 이미 등록되어 있습니다. 해당 경로의 목록 항목을 현재 파일의 기록으로 교체합니다. 실제 파일은 삭제하지 않습니다.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('취소'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('기록 교체'),
+                ),
+              ],
+            ),
+          ) ??
+          false;
+      if (!replace) return;
+    }
+    await prepareFileWork();
+    await widget.library.relink(
+      item['id'] as int,
+      file.path,
+      replaceIndexEntry: replace,
+    );
+    update(() => current = null);
+    await refresh();
+    await watchFolders();
+  });
+  Future<void> externalSubtitle() => guard(() async {
+    final file = await openFile(
+      acceptedTypeGroups: [
+        const XTypeGroup(label: '자막', extensions: ['srt', 'ass', 'ssa', 'smi']),
+      ],
+    );
+    if (file != null)
+      await player.setSubtitleTrack(SubtitleTrack.uri(file.path));
+  });
+  Future<void> decoderSettings() async {
+    await showDeckDialog<void>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, update) => AlertDialog(
+          title: const Text('디코더 · 싱크'),
+          content: SizedBox(
+            width: 440,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButtonFormField<String>(
+                  initialValue: player.state.track.audio.id,
+                  decoration: const InputDecoration(labelText: '음성 트랙'),
+                  items: player.state.tracks.audio
+                      .map(
+                        (track) => DropdownMenuItem(
+                          value: track.id,
+                          child: Text(
+                            track.title ?? track.language ?? track.id,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (id) {
+                    if (id != null)
+                      player.setAudioTrack(
+                        player.state.tracks.audio.firstWhere(
+                          (track) => track.id == id,
+                        ),
+                      );
+                  },
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  initialValue:
+                      player.state.tracks.subtitle.any(
+                        (track) => track.id == player.state.track.subtitle.id,
+                      )
+                      ? player.state.track.subtitle.id
+                      : null,
+                  decoration: const InputDecoration(labelText: '자막 트랙'),
+                  items: player.state.tracks.subtitle
+                      .map(
+                        (track) => DropdownMenuItem(
+                          value: track.id,
+                          child: Text(
+                            track.title ?? track.language ?? track.id,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (id) {
+                    if (id != null)
+                      player.setSubtitleTrack(
+                        player.state.tracks.subtitle.firstWhere(
+                          (track) => track.id == id,
+                        ),
+                      );
+                  },
+                ),
+                TextButton(
+                  onPressed: externalSubtitle,
+                  child: const Text('외부 자막 열기'),
+                ),
+                SwitchListTile(
+                  title: const Text('소프트웨어 디코딩'),
+                  subtitle: const Text('하드웨어 가속 오류 시 사용'),
+                  value: softwareDecoding,
+                  onChanged: (value) async {
+                    await (player.platform as NativePlayer).setProperty(
+                      'hwdec',
+                      value ? 'no' : 'auto',
+                    );
+                    update(() => softwareDecoding = value);
+                  },
+                ),
+                Text('자막 지연 ${subtitleDelay.toStringAsFixed(1)}초'),
+                Slider(
+                  value: subtitleDelay,
+                  min: -5,
+                  max: 5,
+                  divisions: 100,
+                  onChanged: (value) {
+                    update(() => subtitleDelay = value);
+                    guard(
+                      () => (player.platform as NativePlayer).setProperty(
+                        'sub-delay',
+                        '$value',
+                      ),
+                    );
+                  },
+                ),
+                Text('음성 지연 ${audioDelay.toStringAsFixed(1)}초'),
+                Slider(
+                  value: audioDelay,
+                  min: -5,
+                  max: 5,
+                  divisions: 100,
+                  onChanged: (value) {
+                    update(() => audioDelay = value);
+                    guard(
+                      () => (player.platform as NativePlayer).setProperty(
+                        'audio-delay',
+                        '$value',
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('닫기'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<int> get targets => selected.isNotEmpty
+      ? selected.toList()
+      : [if (current != null) current!['id'] as int];
+  Future<void> initialize() => guard(() async {
+    await windowManager.setPreventClose(true);
+    await keys.load();
+    await jobs.recover();
+    await refresh();
+    await watchFolders();
+    playerEvents.add(player.stream.playing.listen((_) => update(() {})));
+    playerEvents.add(player.stream.tracks.listen((_) => update(() {})));
+    playerEvents.add(
+      player.stream.error.listen((message) => update(() => error = message)),
+    );
+    poll = Timer.periodic(const Duration(seconds: 30), (_) => rescanLibrary());
+    progressTimer = Timer.periodic(
+      const Duration(seconds: 3),
+      (_) => guard(persistProgress),
+    );
+    playerEvents.add(
+      player.stream.completed.listen((completed) {
+        if (completed) guard(() => persistProgress(completed: true));
+      }),
+    );
+    await rescanLibrary();
+    if (mounted &&
+        folders.isEmpty &&
+        items.isEmpty &&
+        await widget.library.readSetting('welcome_seen') != true) {
+      await widget.library.setting('welcome_seen', true);
+      if (!mounted) return;
+      final start = await showDeckDialog<bool>(
+        context: context,
+        builder: (_) => const WelcomeDialog(),
+      );
+      if (start == true) await connect();
+    }
+  });
+  Future<void> watchFolders() async {
+    for (final watcher in watchers) {
+      await watcher.cancel();
+    }
+    watchers.clear();
+    for (final root in await widget.library.folders()) {
+      if (!await Directory(root).exists()) continue;
+      try {
+        watchers.add(
+          Directory(root).watch(recursive: true).listen((_) {
+            debounce?.cancel();
+            debounce = Timer(const Duration(milliseconds: 800), rescanLibrary);
+          }, onError: (_) {}),
+        );
+      } on FileSystemException {
+        /* Periodic scanning remains available. */
+      }
+    }
+  }
+
+  Future<void> rescanLibrary() async {
+    if (scanFuture != null || jobs.running || !mounted) return;
+    final work = guard(() async {
+      for (final root in await widget.library.folders()) {
+        await widget.library.scan(root);
+      }
+      await mediaTools.enrich();
+      await rules.runAutomatic(
+        skipIds: {if (playbackMediaId != null) playbackMediaId!},
+      );
+      await refresh();
+    });
+    scanFuture = work;
+    try {
+      await work;
+    } finally {
+      scanFuture = null;
+    }
+  }
+
+  Future<void> openMedia(
+    Map<String, Object?> item, {
+    bool fromStart = false,
+    Duration? position,
+  }) => guard(() async {
+    await persistProgress();
+    item = await widget.library.mediaById(item['id'] as int);
+    if (item['online'] == 0 || !await File(item['path'] as String).exists())
+      throw FileSystemException('오프라인 파일입니다.', item['path'] as String);
+    if (item['type'] != 'video') throw StateError('영상 파일만 재생할 수 있습니다.');
+    playbackMediaId = null;
+    final resume =
+        position ??
+        (fromStart
+            ? Duration.zero
+            : Duration(milliseconds: item['resume_ms'] as int));
+    await playback.open(item['path'] as String, start: resume);
+    playbackMediaId = item['id'] as int;
+    await (player.platform as NativePlayer).setProperty('mute', 'no');
+    update(() {
+      current = item;
+      playingView = true;
+      view = 'files';
+      muted = false;
+    });
+  });
+  Future<void> rateTargets(int? value) => guard(() async {
+    await widget.library.batchEdit(targets, rating: value, setRating: true);
+    await refresh();
+  });
+  Future<void> seekBy(int seconds) async {
+    previousSeek = player.state.position;
+    final ms = (previousSeek.inMilliseconds + seconds * 1000).clamp(
+      0,
+      player.state.duration.inMilliseconds,
+    );
+    await player.seek(Duration(milliseconds: ms));
+  }
+
+  Future<void> changeVolume(double value) async {
+    final raising = value > player.state.volume;
+    await playback.setVolume(value);
+    if (raising) {
+      await (player.platform as NativePlayer).setProperty('mute', 'no');
+      update(() => muted = false);
+    }
+  }
+
+  Future<void> command(String command) => guard(() async {
+    if (view != 'files' && !['search', 'help'].contains(command)) return;
+    if (command.startsWith('rate')) {
+      await rateTargets(int.parse(command.substring(4)));
+      return;
+    }
+    switch (command) {
+      case 'clearRating':
+        await rateTargets(null);
+        return;
+      case 'search':
+        await search();
+        return;
+      case 'move':
+        await moveFiles();
+        return;
+      case 'detail':
+      case 'actors':
+        await edit();
+        return;
+      case 'tags':
+        if (selected.isNotEmpty) {
+          await batchTags();
+        } else {
+          await edit();
+        }
+        return;
+      case 'help':
+        if (expanded) {
+          await windowManager.setFullScreen(false);
+          expanded = false;
+        }
+        update(() => view = 'settings');
+        return;
+    }
+    if (view != 'files' || current == null) return;
+    if (command == 'next' || command == 'previous') {
+      final index = items.indexWhere((item) => item['id'] == current!['id']);
+      final next = index + (command == 'next' ? 1 : -1);
+      if (next >= 0 && next < items.length) {
+        if (playingView) {
+          await openMedia(items[next]);
+        } else {
+          await select(items[next]);
+        }
+      }
+      return;
+    }
+    if (current!['type'] != 'video') return;
+    if (command == 'pause' && !playingView) {
+      await openMedia(current!);
+      return;
+    }
+    if (!playingView) return;
+    switch (command) {
+      case 'pause':
+        await player.playOrPause();
+        await persistProgress();
+      case 'back':
+        await seekBy(-5);
+      case 'forward':
+        await seekBy(5);
+      case 'preciseBack':
+        await seekBy(-1);
+      case 'preciseForward':
+        await seekBy(1);
+      case 'volumeUp':
+        await changeVolume(player.state.volume + 5);
+      case 'volumeDown':
+        await changeVolume(player.state.volume - 5);
+      case 'mute':
+        await (player.platform as NativePlayer).setProperty(
+          'mute',
+          muted ? 'no' : 'yes',
+        );
+        update(() => muted = !muted);
+      case 'fullscreen':
+        final nextFullscreen = !await windowManager.isFullScreen();
+        await windowManager.setFullScreen(nextFullscreen);
+        update(() => expanded = nextFullscreen);
+      case 'slower':
+        await player.setRate((player.state.rate - .25).clamp(.25, 3));
+      case 'faster':
+        await player.setRate((player.state.rate + .25).clamp(.25, 3));
+      case 'normalSpeed':
+        await player.setRate(1);
+      case 'undoSeek':
+        final position = previousSeek;
+        previousSeek = player.state.position;
+        await player.seek(position);
+    }
+  });
+  bool handleKey(KeyEvent event) {
+    if (event is! KeyDownEvent && event is! KeyRepeatEvent) return false;
+    if (event.logicalKey == LogicalKeyboardKey.escape) {
+      if (event is KeyDownEvent) guard(playback.panic);
+      return true;
+    }
+    if (capturing) return false;
+    final focus = FocusManager.instance.primaryFocus?.context;
+    if (focus?.widget is EditableText ||
+        focus?.findAncestorStateOfType<EditableTextState>() != null)
+      return false;
+    if ([
+          LogicalKeyboardKey.digit0,
+          LogicalKeyboardKey.numpad0,
+        ].contains(event.logicalKey) &&
+        !HardwareKeyboard.instance.isShiftPressed) {
+      guard(playback.silence);
+      return true;
+    }
+    final action = keys.resolve(event);
+    if (action == null) return false;
+    if (event is KeyRepeatEvent &&
+        ![
+          'back',
+          'forward',
+          'preciseBack',
+          'preciseForward',
+          'volumeUp',
+          'volumeDown',
+        ].contains(action))
+      return true;
+    command(action);
+    return true;
+  }
+
+  Future<void> moveFiles({
+    String? destination,
+    bool rename = false,
+    List<int>? ids,
+  }) async {
+    await showFileJobs(
+      context,
+      widget.library,
+      jobs,
+      ids ?? targets,
+      target: destination,
+      rename: rename,
+      prepare: () async {
+        await scanFuture;
+        await persistProgress();
+        playbackMediaId = null;
+        await playback.silence();
+        await player.stop();
+        update(() => playingView = false);
+      },
+      changed: () async {
+        if (current != null) {
+          final row = await widget.library.db.query(
+            'media',
+            where: 'id = ?',
+            whereArgs: [current!['id']],
+          );
+          update(() => current = row.isEmpty ? null : row.single);
+        }
+        await refresh();
+      },
+    );
+  }
+
+  Future<void> batchTags() async {
+    final controller = TextEditingController();
+    var remove = false;
+    final save = await showDeckDialog<bool>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, update) => AlertDialog(
+          title: Text('태그 일괄 편집 · ${targets.length}개 파일'),
+          content: SizedBox(
+            width: 450,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: controller,
+                  autofocus: true,
+                  decoration: const InputDecoration(labelText: '태그 · 쉼표로 구분'),
+                ),
+                SwitchListTile(
+                  value: remove,
+                  onChanged: (value) => update(() => remove = value),
+                  title: const Text('입력한 태그 제거'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('취소'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('적용'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (save == true)
+      await guard(() async {
+        update(() => busy = true);
+        try {
+          await widget.library.batchEdit(
+            targets,
+            tags: controller.text,
+            removeTags: remove,
+          );
+          await refresh();
+        } finally {
+          update(() => busy = false);
+        }
+      });
+  }
+
+  Future<void> filters() async {
+    var rating = minimumRating;
+    var onlyUnrated = unrated;
+    final result = await showDeckDialog<bool>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, update) => AlertDialog(
+          title: const Text('라이브러리 필터'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButton<int>(
+                value: rating ?? 0,
+                items: [
+                  for (var value = 0; value <= 5; value++)
+                    DropdownMenuItem(
+                      value: value,
+                      child: Text(value == 0 ? '모든 평점' : '$value점 이상'),
+                    ),
+                ],
+                onChanged: (value) =>
+                    update(() => rating = value == 0 ? null : value),
+              ),
+              CheckboxListTile(
+                value: onlyUnrated,
+                onChanged: (value) => update(() => onlyUnrated = value!),
+                title: const Text('미평가만'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('취소'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('적용'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (result == true) {
+      minimumRating = onlyUnrated ? null : rating;
+      unrated = onlyUnrated;
+      selected.clear();
+      await refresh();
+    }
+  }
+
+  Future<void> exportBackup() => guard(() async {
+    final location = await getSaveLocation(
+      suggestedName: 'soft-vault-backup.json',
+    );
+    if (location != null) await widget.library.exportTo(File(location.path));
+  });
+  Future<void> restoreBackup() => guard(() async {
+    if (jobs.running) throw StateError('파일 작업이 끝난 뒤 복원하세요.');
+    final file = await openFile(
+      acceptedTypeGroups: [
+        const XTypeGroup(label: '백업', extensions: ['json']),
+      ],
+    );
+    if (file == null || !mounted) return;
+    final confirmed = await showDeckDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('라이브러리 백업 복원'),
+        content: const Text(
+          '현재 메타데이터를 백업 내용으로 교체합니다. 현재 기록은 자동 백업하며 원본 미디어 파일은 변경하지 않습니다.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('취소'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('복원'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    await prepareFileWork();
+    await widget.library.exportTo(
+      File(
+        p.join(
+          p.dirname(widget.library.db.path),
+          'before-restore-${DateTime.now().millisecondsSinceEpoch}.json',
+        ),
+      ),
+    );
+    await widget.library.restoreFrom(File(file.path));
+    update(() {
+      current = null;
+      selected.clear();
+      playingView = false;
+    });
+    await refresh();
+    await watchFolders();
+  });
+  Future<void> openExternal() => guard(() async {
+    if (current == null) return;
+    final path = current!['path'] as String;
+    if (!await File(path).exists())
+      throw FileSystemException('파일이 오프라인입니다.', path);
+    // A file URI is handled by the desktop shell; no command text is constructed.
+    if (Platform.isWindows) {
+      await Process.run('rundll32.exe', [
+        'url.dll,FileProtocolHandler',
+        Uri.file(path).toString(),
+      ]);
+    } else {
+      await Process.run('open', [path]);
+    }
+  });
+  Widget get navigation => Container(
+    padding: const EdgeInsets.fromLTRB(16, 0, 16, 15),
+    decoration: const BoxDecoration(
+      border: Border(bottom: BorderSide(color: Color(0xff303c48))),
+    ),
+    child: Row(
+      children: [
+        for (final entry in {
+          'files': ('파일', 'film'),
+          'actors': ('배우', 'person'),
+          'tags': ('태그', 'tag'),
+        }.entries)
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 7),
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(0, 34),
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  backgroundColor: view == entry.key
+                      ? const Color(0xff2a3b4b)
+                      : Colors.transparent,
+                  foregroundColor: view == entry.key
+                      ? const Color(0xffa9cbe1)
+                      : const Color(0xff8498a9),
+                ),
+                onPressed: () => update(() => view = entry.key),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    DesignIcon(
+                      entry.value.$2,
+                      size: 15,
+                      color: view == entry.key
+                          ? const Color(0xffa9cbe1)
+                          : const Color(0xff8498a9),
+                    ),
+                    const SizedBox(width: 7),
+                    Text(entry.value.$1, style: const TextStyle(fontSize: 11)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        DeckIconButton('search', tooltip: '검색', onPressed: search, size: 16),
+      ],
+    ),
+  );
+  Widget get toolbar => Padding(
+    padding: const EdgeInsets.fromLTRB(19, 3, 19, 12),
+    child: Column(
+      children: [
+        if (activeCriteria != null)
+          InputChip(
+            label: Text(
+              collectionName ?? '스마트 컬렉션',
+              style: const TextStyle(fontSize: 9),
+            ),
+            onDeleted: clearCollection,
+          ),
+        Row(
+          children: [
+            for (final entry in {'': '전체 영상'}.entries)
+              Padding(
+                padding: const EdgeInsets.only(right: 3),
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    minimumSize: const Size(0, 25),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 5,
+                    ),
+                    backgroundColor: (typeFilter ?? '') == entry.key
+                        ? const Color(0xff2a3845)
+                        : null,
+                    foregroundColor: (typeFilter ?? '') == entry.key
+                        ? const Color(0xffb1c8d7)
+                        : const Color(0xff748d9f),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  onPressed: () {
+                    activeCriteria = null;
+                    activeCollectionId = null;
+                    collectionName = null;
+                    typeFilter = entry.key.isEmpty ? null : entry.key;
+                    selected.clear();
+                    refresh();
+                  },
+                  child: Text(
+                    '${entry.value} ${entry.key.isEmpty ? items.length : items.where((item) => item['type'] == entry.key).length}',
+                    style: const TextStyle(fontSize: 9, height: 1),
+                  ),
+                ),
+              ),
+            const Spacer(),
+            DropdownButton<String>(
+              value: sort,
+              isDense: true,
+              underline: const SizedBox.shrink(),
+              icon: const DesignIcon('down', size: 12),
+              items:
+                  {
+                        'recent': '최근 추가순',
+                        'name': '이름순',
+                        'rating': '평점순',
+                        'duration': '길이순',
+                      }.entries
+                      .map(
+                        (entry) => DropdownMenuItem(
+                          value: entry.key,
+                          child: Text(
+                            entry.value,
+                            style: const TextStyle(
+                              fontSize: 9,
+                              color: Color(0xff708ca1),
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+              onChanged: (value) {
+                sort = value!;
+                refresh();
+              },
+            ),
+          ],
+        ),
+        if (minimumRating != null || unrated)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              onPressed: () {
+                minimumRating = null;
+                unrated = false;
+                refresh();
+              },
+              child: Text(
+                '${unrated ? '미평가' : '$minimumRating점 이상'} · 초기화',
+                style: const TextStyle(fontSize: 9),
+              ),
+            ),
+          ),
+      ],
+    ),
+  );
+  Widget? get contentPanel {
+    final panel = switch (view) {
+      'organize' => OrganizePanel(
+        library: widget.library,
+        rules: rules,
+        openCollection: openCollection,
+        openMedia: select,
+        prepare: prepareFileWork,
+        changed: refresh,
+      ),
+      'actors' || 'tags' => CatalogPanel(
+        key: ValueKey(view),
+        library: widget.library,
+        kind: view,
+        openAll: () {
+          activeCriteria = null;
+          activeCollectionId = null;
+          collectionName = null;
+          query = '';
+          folder = null;
+          typeFilter = null;
+          minimumRating = null;
+          unrated = false;
+          selected.clear();
+          view = 'files';
+          refresh();
+        },
+        open: (value) {
+          activeCriteria = null;
+          activeCollectionId = null;
+          collectionName = null;
+          query = value;
+          view = 'files';
+          refresh();
+        },
+        changed: refresh,
+      ),
+      'settings' => SettingsPanel(
+        privacy: widget.privacy,
+        lockNow: widget.lockNow == null || busy || jobs.running
+            ? null
+            : lockSession,
+        keys: keys,
+        folderCount: folders.length,
+        mediaTitle: current?['title'] as String?,
+        busy: busy,
+        connect: connect,
+        folders: () => showFolderManager(context, widget.library, () async {
+          await scanFuture;
+          await refresh();
+          await watchFolders();
+        }),
+        action: settingsAction,
+        close: () => update(() => view = 'files'),
+        capturing: (value) => capturing = value,
+        backup: exportBackup,
+        restore: restoreBackup,
+        external: openExternal,
+      ),
+      _ => null,
+    };
+    if (panel == null) return null;
+    return Column(
+      children: [
+        Container(
+          height: 60,
+          padding: const EdgeInsets.symmetric(horizontal: 30),
+          decoration: const BoxDecoration(
+            border: Border(bottom: BorderSide(color: Color(0xff323d49))),
+          ),
+          child: Row(
+            children: [
+              const DesignIcon('panel', size: 18),
+              const SizedBox(width: 20),
+              const Text(
+                '라이브러리',
+                style: TextStyle(color: Color(0xff8a9baa), fontSize: 12),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Icon(Icons.chevron_right, size: 16),
+              ),
+              Text(
+                view == 'actors'
+                    ? '배우'
+                    : view == 'tags'
+                    ? '태그'
+                    : view == 'organize'
+                    ? '라이브러리 정리'
+                    : '설정',
+                style: const TextStyle(fontSize: 12),
+              ),
+              const Spacer(),
+              DeckIconButton(
+                'search',
+                onPressed: search,
+                tooltip: '검색 · Ctrl/Cmd+K',
+              ),
+              const SizedBox(width: 10),
+              const KeyCap('Ctrl K'),
+            ],
+          ),
+        ),
+        Expanded(child: panel),
+      ],
+    );
+  }
+
+  Widget get selectionBar => Material(
+    color: const Color(0xf52b4051),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+      side: const BorderSide(color: Color(0xff52758d)),
+    ),
+    elevation: 12,
+    child: Padding(
+      padding: const EdgeInsets.all(9),
+      child: Row(
+        children: [
+          Text('${selected.length}개 선택', style: const TextStyle(fontSize: 11)),
+          const SizedBox(width: 9),
+          for (var rating = 1; rating <= 5; rating++)
+            IconButton(
+              onPressed: () => rateTargets(rating),
+              tooltip: '일괄 $rating점',
+              icon: const Text(
+                '★',
+                style: TextStyle(fontSize: 15, color: DeckDesign.gold),
+              ),
+            ),
+          TextButton(
+            onPressed: () => rateTargets(null),
+            child: const Text('평점 초기화'),
+          ),
+          TextButton(onPressed: batchTags, child: const Text('태그 편집')),
+          TextButton(onPressed: moveFiles, child: const Text('폴더 이동')),
+          const Spacer(),
+          IconButton(
+            onPressed: () => update(selected.clear),
+            tooltip: '선택 해제',
+            icon: const Icon(Icons.close),
+          ),
+        ],
+      ),
+    ),
+  );
+}

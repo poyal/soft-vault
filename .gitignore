@@ -1,0 +1,8 @@
+.tools/
+.dart_tool/
+build/
+sample-media/
+.flutter-plugins-dependencies
+*.log
+.idea/
+*.iml

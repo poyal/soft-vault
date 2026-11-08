@@ -1,0 +1,74 @@
+﻿[
+    {
+        "file":  "library.png",
+        "source":  "build/e2e/design-library-1280.png",
+        "capturedAt":  "2026-11-08T22:41:58.6125703+09:00",
+        "platform":  "Windows x64",
+        "mode":  "Flutter native integration test, debug",
+        "data":  "Synthetic test catalog and sample video",
+        "sha256":  "5F3FC3CE759E18FB2BEE19B496A3C70525924F0D503F670BDFA1F4A534567710"
+    },
+    {
+        "file":  "settings-library.png",
+        "source":  "build/e2e/design-settings-1280.png",
+        "capturedAt":  "2026-11-08T22:42:03.7158075+09:00",
+        "platform":  "Windows x64",
+        "mode":  "Flutter native integration test, debug",
+        "data":  "Synthetic test catalog and sample video",
+        "sha256":  "7DD605EB17C2AFD8467B6614B1BEB4CA86390B63CF66136560CC9018BA819809"
+    },
+    {
+        "file":  "actors.png",
+        "source":  "build/e2e/design-actors-1280.png",
+        "capturedAt":  "2026-11-08T22:42:01.1666383+09:00",
+        "platform":  "Windows x64",
+        "mode":  "Flutter native integration test, debug",
+        "data":  "Synthetic test catalog and sample video",
+        "sha256":  "6D1BD62E5FB41B08007C5B4D8CAA93466D9F69D4ED6E4F80B63B58D6E8C43465"
+    },
+    {
+        "file":  "playback.png",
+        "source":  "build/e2e/02-player-1280.png",
+        "capturedAt":  "2026-11-08T22:43:10.0825885+09:00",
+        "platform":  "Windows x64",
+        "mode":  "Flutter native integration test, debug",
+        "data":  "Synthetic test catalog and sample video",
+        "sha256":  "05B366AF516421C0CA01AF1D0378D8A33C014BA74DE6A5D77A49164544AF9E30"
+    },
+    {
+        "file":  "details.png",
+        "source":  "build/e2e/design-detail-1280.png",
+        "capturedAt":  "2026-11-08T22:41:59.8936117+09:00",
+        "platform":  "Windows x64",
+        "mode":  "Flutter native integration test, debug",
+        "data":  "Synthetic test catalog and sample video",
+        "sha256":  "3F2D823051708F23C3782383DA621BE72FA6FAB47B1B1B1008E6A617B475B121"
+    },
+    {
+        "file":  "scenes.png",
+        "source":  "build/e2e/14-scenes-1280.png",
+        "capturedAt":  "2026-11-08T21:53:51.5059785+09:00",
+        "platform":  "Windows x64",
+        "mode":  "Flutter native integration test, debug",
+        "data":  "Synthetic test catalog and sample video",
+        "sha256":  "C2468012AB4AF4B5A86D152B6CD09DC80AD936AD33BB15FAEEDA34DCE22CD777"
+    },
+    {
+        "file":  "privacy.png",
+        "source":  "build/e2e/privacy-settings-1280.png",
+        "capturedAt":  "2026-11-08T22:26:43.1528980+09:00",
+        "platform":  "Windows x64",
+        "mode":  "Flutter native integration test, debug",
+        "data":  "Synthetic test catalog and sample video",
+        "sha256":  "A284CA45AE3451092546FE83166B21AAEBD07F1B151965BFDF2473A5AFD8F2F7"
+    },
+    {
+        "file":  "backup.png",
+        "source":  "build/e2e/design-settings-backup-1280.png",
+        "capturedAt":  "2026-11-08T22:42:06.5944612+09:00",
+        "platform":  "Windows x64",
+        "mode":  "Flutter native integration test, debug",
+        "data":  "Synthetic test catalog and sample video",
+        "sha256":  "A3107B73F0CFED824EB2982637F2AD3FCC733D56545CB3F1F9DD060199328DDD"
+    }
+]

@@ -1,0 +1,255 @@
+[
+  {
+    "id": "m1",
+    "title": "북쪽으로 향하는 길",
+    "file": "northbound_2026_4k.mkv",
+    "image": "alpine",
+    "folder": "films",
+    "duration": 1122,
+    "resolution": "4K",
+    "codec": "HEVC · 10bit",
+    "size": "3.24 GB",
+    "rating": 5,
+    "actors": [
+      "이서윤"
+    ],
+    "tags": [
+      "여행",
+      "자연",
+      "시네마틱"
+    ],
+    "note": "아침 안개가 걷히고, 산맥 위로 빛이 들어오는 순간.\n다시 보고 싶은 장면들을 담았습니다.",
+    "type": "video"
+  },
+  {
+    "id": "m2",
+    "title": "고요를 따라",
+    "file": "a_quiet_morning.mp4",
+    "image": "lake",
+    "folder": "films",
+    "duration": 1498,
+    "resolution": "4K",
+    "codec": "H.264",
+    "size": "2.81 GB",
+    "rating": 4,
+    "actors": [
+      "김도현"
+    ],
+    "tags": [
+      "자연",
+      "여행"
+    ],
+    "note": "물 위에 비친 산과 느리게 흘러가는 아침.",
+    "type": "video"
+  },
+  {
+    "id": "m3",
+    "title": "숲이 건네는 이야기",
+    "file": "the_forest_speaks.mkv",
+    "image": "forest",
+    "folder": "selected",
+    "duration": 824,
+    "resolution": "1080p",
+    "codec": "AV1",
+    "size": "1.12 GB",
+    "rating": null,
+    "actors": [
+      "박지우"
+    ],
+    "tags": [
+      "자연",
+      "기록"
+    ],
+    "note": "초록 사이로 들어오는 빛과 바람.",
+    "type": "video"
+  },
+  {
+    "id": "m4",
+    "title": "파도가 지나간 자리",
+    "file": "after_the_waves.mov",
+    "image": "coast",
+    "folder": "films",
+    "duration": 1285,
+    "resolution": "4K",
+    "codec": "HEVC",
+    "size": "3.08 GB",
+    "rating": 5,
+    "actors": [
+      "이서윤",
+      "김도현"
+    ],
+    "tags": [
+      "여행",
+      "시네마틱"
+    ],
+    "note": "한적한 해안에서 보낸 오후의 기록.",
+    "type": "video"
+  },
+  {
+    "id": "m5",
+    "title": "모래 위의 느린 시간",
+    "file": "slow_days_in_the_desert.mp4",
+    "image": "desert",
+    "folder": "selected",
+    "duration": 1002,
+    "resolution": "4K",
+    "codec": "H.264",
+    "size": "2.40 GB",
+    "rating": 3,
+    "actors": [
+      "박지우"
+    ],
+    "tags": [
+      "여행",
+      "기록"
+    ],
+    "note": "끝없는 모래의 곡선과 해 질 무렵의 색.",
+    "type": "video"
+  },
+  {
+    "id": "m6",
+    "title": "도시가 잠든 밤",
+    "file": "when_the_city_sleeps.mkv",
+    "image": "night",
+    "folder": "films",
+    "duration": 1892,
+    "resolution": "4K",
+    "codec": "HEVC · 10bit",
+    "size": "4.62 GB",
+    "rating": 4,
+    "actors": [
+      "김도현"
+    ],
+    "tags": [
+      "야경",
+      "시네마틱"
+    ],
+    "note": "도시의 불빛 사이를 천천히 걷는 시간.",
+    "type": "video"
+  },
+  {
+    "id": "m7",
+    "title": "길 위에서 만난 오후",
+    "file": "afternoon_on_the_road.mp4",
+    "image": "road",
+    "folder": "selected",
+    "duration": 678,
+    "resolution": "1080p",
+    "codec": "H.264",
+    "size": "0.92 GB",
+    "rating": null,
+    "actors": [
+      "이서윤"
+    ],
+    "tags": [
+      "여행",
+      "일상"
+    ],
+    "note": "계획 없이 떠난 길에서.",
+    "type": "video"
+  },
+  {
+    "id": "m8",
+    "title": "다시, 산의 품으로",
+    "file": "back_to_the_mountains.mkv",
+    "image": "ridge",
+    "folder": "films",
+    "duration": 1564,
+    "resolution": "4K",
+    "codec": "VP9",
+    "size": "3.78 GB",
+    "rating": 5,
+    "actors": [
+      "박지우",
+      "김도현"
+    ],
+    "tags": [
+      "자연",
+      "시네마틱"
+    ],
+    "note": "높은 곳에서 내려다본 풍경.",
+    "type": "video"
+  },
+  {
+    "id": "m9",
+    "title": "초록의 깊이",
+    "file": "green_study_03.jpg",
+    "image": "forest",
+    "folder": "selected",
+    "duration": 0,
+    "resolution": "6000 × 4000",
+    "codec": "JPEG",
+    "size": "8.4 MB",
+    "rating": 4,
+    "actors": [
+      "박지우"
+    ],
+    "tags": [
+      "자연",
+      "사진"
+    ],
+    "note": "숲의 색을 모은 이미지.",
+    "type": "image"
+  },
+  {
+    "id": "m10",
+    "title": "새벽의 호수",
+    "file": "lake_at_dawn.jpg",
+    "image": "lake",
+    "folder": "films",
+    "duration": 0,
+    "resolution": "6000 × 4000",
+    "codec": "JPEG",
+    "size": "7.2 MB",
+    "rating": null,
+    "actors": [],
+    "tags": [
+      "자연",
+      "사진"
+    ],
+    "note": "아직 아무도 없는 호숫가.",
+    "type": "image"
+  },
+  {
+    "id": "m11",
+    "title": "바람이 불어오는 곳",
+    "file": "where_the_wind_blows.mp4",
+    "image": "road",
+    "folder": "selected",
+    "duration": 1351,
+    "resolution": "4K",
+    "codec": "H.264",
+    "size": "2.89 GB",
+    "rating": 3,
+    "actors": [
+      "이서윤"
+    ],
+    "tags": [
+      "일상",
+      "기록"
+    ],
+    "note": "평범한 하루 속에서 찾은 장면들.",
+    "type": "video"
+  },
+  {
+    "id": "m12",
+    "title": "수평선 너머",
+    "file": "beyond_the_horizon.mkv",
+    "image": "coast",
+    "folder": "films",
+    "duration": 923,
+    "resolution": "4K",
+    "codec": "HEVC",
+    "size": "2.14 GB",
+    "rating": 4,
+    "actors": [
+      "김도현"
+    ],
+    "tags": [
+      "여행",
+      "자연"
+    ],
+    "note": "바다와 하늘의 경계.",
+    "type": "video"
+  }
+]
