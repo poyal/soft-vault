@@ -30,9 +30,9 @@ void main() {
       final clock = Stopwatch()..start();
       final result = <String, Object?>{
         'name': name,
-        'mode': kProfileMode
-            ? 'Windows profile integration'
-            : 'Windows debug integration',
+        'mode':
+            '${Platform.operatingSystem} '
+            '${kProfileMode ? 'profile' : 'debug'} integration',
         'passed': false,
       };
       try {
@@ -105,11 +105,12 @@ void main() {
         expect(await windowManager.isFullScreen(), isTrue);
         await app.key(LogicalKeyboardKey.escape);
         expect(await windowManager.isMinimized(), isTrue);
-        await windowManager.restore();
+        await restoreNativeWindow(app.tester);
         await app.settle(2);
         expect(player.state.volume, 0);
         expect(player.state.playing, wasPlaying);
-        await app.key(LogicalKeyboardKey.keyF);
+        expect(await windowManager.isFullScreen(), !Platform.isMacOS);
+        if (!Platform.isMacOS) await app.key(LogicalKeyboardKey.keyF);
         expect(await windowManager.isFullScreen(), isFalse);
       }
       result['cycles'] = 12;
