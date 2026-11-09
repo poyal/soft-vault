@@ -27,7 +27,14 @@ Future<void> restoreNativeWindow(WidgetTester tester) async {
     // suspend Flutter frames, so establish a real visible surface before pump.
     for (var i = 0; i < 100; i++) {
       await Future<void>.delayed(const Duration(milliseconds: 100));
-      if (tester.binding.lifecycleState == ui.AppLifecycleState.resumed) return;
+      // Test reset can leave lifecycleState null until the next native event.
+      // Check frame availability and the real window instead of requiring an
+      // event which that platform need not send at startup.
+      if (tester.binding.framesEnabled &&
+          await windowManager.isVisible() &&
+          !await windowManager.isMinimized()) {
+        return;
+      }
     }
     fail(
       'Native window did not resume within 10 seconds: '

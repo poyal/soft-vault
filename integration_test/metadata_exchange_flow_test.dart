@@ -9,6 +9,23 @@ import 'package:soft_vault/metadata_exchange_dialog.dart';
 import 'support/scenario_app.dart';
 import 'support/native_surface.dart';
 
+// Windows clipboard readers can briefly contend with another desktop process.
+// Retry only harness access; application copy/paste actions remain under test.
+Future<T> clipboardAccess<T>(Future<T> Function() action) async {
+  for (var attempt = 0; ; attempt++) {
+    try {
+      return await action();
+    } on PlatformException catch (error) {
+      if (error.code != 'Clipboard error' ||
+          error.details != 5 ||
+          attempt == 9) {
+        rethrow;
+      }
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+    }
+  }
+}
+
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   binding.framePolicy = LiveTestWidgetsFlutterBindingFramePolicy.fullyLive;
@@ -16,9 +33,14 @@ void main() {
     'whole metadata clipboard, files, cancel, restart request and apply',
     (tester) async {
       final app = await ScenarioApp.create(tester);
-      final previousClipboard = await Clipboard.getData(Clipboard.kTextPlain);
+      ClipboardData? previousClipboard;
+      var clipboardSaved = false;
       try {
         await app.mount();
+        previousClipboard = await clipboardAccess(
+          () => Clipboard.getData(Clipboard.kTextPlain),
+        );
+        clipboardSaved = true;
         await resizeNativeSurface(tester, const Size(1000, 700));
         final exchange = MetadataExchange(app.library);
         Future<void> open() async {
@@ -28,7 +50,9 @@ void main() {
 
         await open();
         await app.tap('AI 요청문 + 전체 정보 복사');
-        final copied = (await Clipboard.getData(Clipboard.kTextPlain))!.text!;
+        final copied = (await clipboardAccess(
+          () => Clipboard.getData(Clipboard.kTextPlain),
+        ))!.text!;
         expect(copied, contains('requestId'));
         expect(copied, isNot(contains(app.source.path)));
         final request = (await exchange.load())!;
@@ -69,7 +93,9 @@ void main() {
         );
         await open();
         await app.tap('입력하기');
-        await Clipboard.setData(ClipboardData(text: jsonEncode(result)));
+        await clipboardAccess(
+          () => Clipboard.setData(ClipboardData(text: jsonEncode(result))),
+        );
         await app.tap('결과 붙여넣기');
         await app.tap('변경 비교');
         await app.tap('선택한 변경 일괄 적용');
@@ -91,10 +117,17 @@ void main() {
         );
         expect(await exchange.load(), isNull);
       } finally {
-        await Clipboard.setData(
-          ClipboardData(text: previousClipboard?.text ?? ''),
-        );
-        await app.close();
+        try {
+          if (clipboardSaved) {
+            await clipboardAccess(
+              () => Clipboard.setData(
+                ClipboardData(text: previousClipboard?.text ?? ''),
+              ),
+            );
+          }
+        } finally {
+          await app.close();
+        }
       }
     },
     timeout: const Timeout(Duration(minutes: 4)),
