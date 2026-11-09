@@ -1,6 +1,6 @@
 # Soft Vault 0.2.0 릴리즈 준비
 
-버전은 `0.2.0+2`이다. 이 문서는 게시 전 초안이며 공개 릴리즈가 아니다. 이번 작업은 현재 Windows 개발 PC에서 가능한 검사와 후보 준비에 한정한다. 별도 Windows·Mac 실기 검사와 업로드는 사용자가 집에서 이어간다.
+버전은 `0.2.0+2`이다. 이 문서는 게시 전 초안이며 공개 릴리즈가 아니다. 사용자 요청에 따라 별도 Windows와 Mac에 접속해 릴리즈 검증을 진행했다. 현재 상태·후보 해시·미완료 항목은 [두 PC 검증 기록](VERIFICATION.md)을 기준으로 한다.
 
 ## 바뀐 동작
 
@@ -19,12 +19,12 @@ Windows ZIP 전체를 풀고 `app/soft_vault.exe`를 실행하거나 동봉한 `
 
 업데이트 기능이 없는 `0.1.0`에서는 첫 지원 버전을 직접 설치한다. 교체 전 카탈로그 백업을 권장한다. JSON 백업에는 원본 영상과 앱 잠금 정보가 포함되지 않는다. 스키마는 4로 이전하며 기존 이어보기·시청 기록을 보존하지만 과거 재생 횟수를 추정하지 않는다. 실제 구 배포본에서 새 배포본으로 교체하는 전체 사용자 흐름은 별도 실기 확인 대상이다.
 
-## 집에서 이어갈 순서
+## 남은 릴리즈 절차
 
-1. 로컬 후보와 같은 소스·공개키·lock 파일을 별도 Windows와 Apple Silicon Mac에 준비한다. 시험 영상 해시도 검증 기록과 맞춘다. 개발 PC의 `.dart_tool`, `build`, 개인키는 다른 장비에 무차별 복사하지 않는다.
-2. Windows는 `scripts/verify-windows.ps1`, `scripts/package-windows.ps1`, `scripts/verify-install-windows.ps1`을 실행한다. Mac은 `scripts/verify-macos.sh`, `scripts/package-macos.sh`, `scripts/verify-install-macos.sh`을 순서대로 실행한다. 자세한 인자와 환경은 [릴리즈 가이드](../../release.md), 접속 별칭은 [원격 실기 검증](../../remote-testing.md)을 따른다.
+1. Windows 시험 PC의 클립보드 접근 오류를 해결하고 실제 복사·붙여넣기 profile 검사와 전체 보고서를 완료한다. OS 접근 실패를 앱 기능 통과로 기록하지 않는다.
+2. 검증 기록에 고정한 Windows·Mac ZIP과 SHA-256을 사용한다. Mac 종료·최종 설치·일반 앱 실행과 양쪽 소스 지문 대조는 완료했다. 자세한 인자와 환경은 [릴리즈 가이드](../../release.md), 접속 별칭은 [원격 실기 검증](../../remote-testing.md)을 따른다.
 3. 실제 마우스 크기 조절·한글 IME·OS 파일 선택기·화면 배율·스피커·HDR·장시간 재생과 구버전 데이터 보존을 확인한다. 이 항목을 자동 UI 검사나 HDR 파일 디코딩으로 대체하지 않는다.
 4. 통과한 플랫폼 ZIP만 모아 `tool/prepare_update.dart --platform=windows-x64` 또는 두 플랫폼 인자를 명시해 manifest를 만들고 기존 개인키로 서명한다. Mac ZIP이 폴더에 남아 있다는 이유로 포함하지 않는다.
 5. 설치 검사에서 확인한 ZIP과 게시할 ZIP의 SHA-256이 같은지 확인하고 릴리즈를 올린다. 게시 파일을 다시 다운로드해 해시를 대조한 뒤 게시 완료로 기록한다.
 
-실행 결과와 후보 해시는 [로컬 검증 기록](../../verification/2026-11-09-windows-0.2.0.md)에 정리한다. 이 문서만으로 Mac 검증이나 게시 완료를 주장하지 않는다.
+이전 개발 PC의 결과는 [로컬 검증 기록](../../verification/2026-11-09-windows-0.2.0.md)에 보존한다. 이번 원격 검증과 혼합하지 않는다.
