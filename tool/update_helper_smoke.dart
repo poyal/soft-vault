@@ -41,8 +41,7 @@ Future<void> main() async {
     await File(p.join(data.path, 'vault.sqlite')).writeAsString('catalog');
     final archive = Archive()
       ..addFile(
-        ArchiveFile.bytes('$prefix/$executable', fixture)
-          ..mode = 0x1ed,
+        ArchiveFile.bytes('$prefix/$executable', fixture)..mode = 0x1ed,
       );
     if (scenario == 'rollback')
       archive.addFile(
