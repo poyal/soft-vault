@@ -19,7 +19,7 @@ Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사
 
 ## 현재 확인된 범위
 
-- `0.2.0+2`는 별도 Windows와 Mac에서 필수 자동 검사·설치 검증을 완료했다. 보류했던 Windows 클립보드 검사도 재실행해 통과했다. [두 PC 결과와 검증 제한](releases/v0.2.0/VERIFICATION.md), [배포 안내](releases/v0.2.0/README.md), [이전 로컬 기록](verification/2026-11-09-windows-0.2.0.md)을 참고한다.
+- `0.2.0+2`는 별도 Windows와 Mac의 필수 자동 검사·설치 검증 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.2.0)했다. 보류했던 Windows 클립보드 검사도 통과했고 공개 파일 6개의 재다운로드 해시가 일치한다. [두 PC 결과와 검증 제한](releases/v0.2.0/VERIFICATION.md), [배포 안내](releases/v0.2.0/README.md), [이전 로컬 기록](verification/2026-11-09-windows-0.2.0.md)을 참고한다.
 - `0.1.0+1`의 실제 RTX Windows·Mac M4 검증 결과와 배포 안내는 [0.1.0](releases/v0.1.0/README.md)에 있다.
 - Windows 99개, Mac 100개 검사와 각각 별도 profile 4개, 최종 ZIP 설치 사본 검증이 통과했다. [소스 대응·수치·검증 제한](releases/v0.1.0/VERIFICATION.md)을 함께 확인한다.
 - 두 플랫폼의 디자인·코덱·잠금·파일 장애·대량 데이터 검사를 실행했다. HDR 파일 디코딩과 물리 HDR 출력은 구분하며 후자는 미검증이다.

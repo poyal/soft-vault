@@ -25,7 +25,7 @@
 | 업데이트 도우미 정상 교체·실패 복구·변조 거부 5개 | PASS | PASS |
 | 정상·연속 닫기 18회 | PASS | PASS |
 | Release·최종 ZIP 설치 사본 | PASS | PASS: 직접 실행 및 LaunchServices |
-| GitHub 정식 게시·재다운로드 | NOT_RUN | NOT_RUN |
+| GitHub 정식 게시·재다운로드 | PASS | PASS |
 
 양쪽 필수 로그 20개 suite의 성공 종료를 대조했다. Flutter 로그의 `tearDownAll`, 반복 측정, 코덱 파일 개수는 독립 테스트 합계에 중복 가산하지 않는다.
 
@@ -55,12 +55,19 @@
 | `SoftVault-Windows.zip` | 117,171,296바이트 | 설치 검증 바이트와 일치, 실제 클립보드 검사 통과 |
 | `SoftVault-macOS-arm64.zip` | 86,681,535바이트 | 설치 검증 바이트와 일치 |
 
-후보는 `build/release-020-20261109-173203/candidate/`에 ZIP과 SHA-256 파일로 고정했다. `candidate-evidence.json`은 양쪽 소스·번들 버전/공개키·설치 ZIP·종료·업데이트·필수 suite를 대조했고 미완료 suite는 없다. 두 플랫폼 `update.json`을 기존 개인키로 서명했으며, 번들 공개키의 Ed25519 검증·파일 크기·ZIP 해시·설치 진단 해시 일치를 `update-artifacts.json`에 기록했다. GitHub 게시·재다운로드 결과는 게시 후 추가한다.
+후보는 `build/release-020-20261109-173203/candidate/`에 ZIP과 SHA-256 파일로 고정했다. `candidate-evidence.json`은 양쪽 소스·번들 버전/공개키·설치 ZIP·종료·업데이트·필수 suite를 대조했고 미완료 suite는 없다. 두 플랫폼 `update.json`을 기존 개인키로 서명했으며, 번들 공개키의 Ed25519 검증·파일 크기·ZIP 해시·설치 진단 해시 일치를 `update-artifacts.json`에 기록했다.
+
+## 게시 결과
+
+- [Soft Vault 0.2.0](https://github.com/poyal/soft-vault/releases/tag/v0.2.0)을 `2026-11-09T10:27:22Z`(한국 시간 19:27)에 정식 공개했다. 최신 안정 릴리즈이며 draft·prerelease가 아니다.
+- 태그 `v0.2.0`은 `bb1192ec9272a0200edcaa93a0002fa3b192de2d`를 가리킨다. 빌드 기준 이후 변경은 앞서 기록한 검사 파일 형식 정리와 문서이며, 태그를 이동하지 않았다.
+- ZIP 2개, 각 `.sha256`, `update.json`, `update.json.sig`의 6개 자산을 업로드했다. 초안 다운로드를 먼저 대조한 뒤 공개했고, 공개 URL에서 인증 없이 재다운로드해 모든 크기·SHA-256이 고정 후보와 일치함을 `2026-11-09T10:27:30Z`에 확인했다.
+- 게시 원본 메타데이터와 재다운로드 대조 결과는 실행 폴더의 `published-release.json`, `publication-verification.json`에 보존했다. 개인키는 로컬에 유지하고 공개 자산에 포함하지 않았다.
 
 임시 Scheduled Task와 Mac LaunchAgent·절전 방지 프로세스를 해제했고, 이 실행이 만든 앱 프로세스가 남지 않았음을 확인했다. Windows 개발 SQLite DLL도 복원됐다. 원시 실패 로그·후보·사용자 데이터·기존 개발 도구는 보존했다.
 
 ## 남은 범위
 
-필수 자동 검사는 완료했다. 고정한 동일 파일의 GitHub 게시와 재다운로드 해시 확인을 진행한다.
+필수 자동 검사·정식 게시·공개 파일 재다운로드 해시 확인을 완료했다.
 
 실제 한글 IME·OS 파일 선택기·물리 HDR/스피커·수시간 재생·구 배포본 전체 교체·깨끗한 계정의 첫 실행 경고는 자동 검사가 대신하지 않는다. Windows 코드 서명과 Apple Developer ID 서명·공증은 제공하지 않는다. 앱 업데이트 manifest의 Ed25519 서명은 이 OS 서명들과 별개다.
