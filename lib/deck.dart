@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'design.dart';
+import 'app_updater.dart';
 import 'scenes_dialog.dart';
 
 /// Measurements, colors and SVGs mirror design/side-deck.css.
@@ -14,6 +15,8 @@ class SideDeck extends StatelessWidget {
   final String? folder;
   final String query;
   final bool expanded, busy, playing;
+  final int filterCount;
+  final bool settingsOnly;
   final VoidCallback connect, search, edit, rescan, clearSearch, settings;
   final VoidCallback? filters, open;
   final ValueChanged<String?> chooseFolder;
@@ -48,6 +51,8 @@ class SideDeck extends StatelessWidget {
     required this.searchTerm,
     this.folderDrop,
     this.playing = false,
+    this.settingsOnly = false,
+    this.filterCount = 0,
     this.filters,
     this.open,
   });
@@ -531,164 +536,198 @@ class SideDeck extends StatelessWidget {
     ),
   );
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, bounds) => Row(
-      children: [
-        Expanded(
-          child:
-              content ??
-              (playing ? player() : preview(bounds.maxWidth, bounds.maxHeight)),
-        ),
-        if (!expanded)
-          Container(
-            key: const ValueKey('library-sidebar'),
-            width: bounds.maxWidth <= 1280 ? 340 : 370,
-            decoration: const BoxDecoration(
-              color: DeckDesign.sidebar,
-              border: Border(left: BorderSide(color: Color(0xff313c47))),
-            ),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 73,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 22),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'design/assets/app-icon.png',
-                          width: 28,
-                          height: 28,
-                        ),
-                        const SizedBox(width: 9),
-                        const Text(
-                          'soft vault.',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const Spacer(),
-                        DeckIconButton(
-                          'settings',
-                          tooltip: '설정',
-                          onPressed: settings,
-                          size: 19,
-                          extent: 34,
-                        ),
-                      ],
-                    ),
+  Widget build(BuildContext context) => settingsOnly
+      ? content!
+      : LayoutBuilder(
+          builder: (context, bounds) => Row(
+            children: [
+              Expanded(
+                child:
+                    content ??
+                    (playing
+                        ? player()
+                        : preview(bounds.maxWidth, bounds.maxHeight)),
+              ),
+              if (!expanded)
+                Container(
+                  key: const ValueKey('library-sidebar'),
+                  width: bounds.maxWidth <= 1280 ? 340 : 370,
+                  decoration: const BoxDecoration(
+                    color: DeckDesign.sidebar,
+                    border: Border(left: BorderSide(color: Color(0xff313c47))),
                   ),
-                ),
-                if (navigation != null) navigation!,
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(19, 20, 19, 12),
-                  child: Row(
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
+                      SizedBox(
+                        height: 73,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 22),
                           child: Row(
                             children: [
-                              folderButton(null),
-                              for (final root in folders)
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 5),
-                                  child: DragTarget<List<int>>(
-                                    onAcceptWithDetails: (details) =>
-                                        folderDrop?.call(root, details.data),
-                                    builder: (_, _, _) => folderButton(root),
-                                  ),
+                              Image.asset(
+                                'design/assets/app-icon.png',
+                                width: 28,
+                                height: 28,
+                              ),
+                              const SizedBox(width: 9),
+                              const Text(
+                                'soft vault.',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
                                 ),
+                              ),
+                              const Spacer(),
+                              if (AppUpdater.instance != null)
+                                ListenableBuilder(
+                                  listenable: AppUpdater.instance!,
+                                  builder: (context, _) =>
+                                      AppUpdater.instance!.release == null
+                                      ? const SizedBox.shrink()
+                                      : const Tooltip(
+                                          message: '새 업데이트가 있습니다',
+                                          child: Icon(
+                                            Icons.circle,
+                                            size: 7,
+                                            color: Colors.lightBlueAccent,
+                                          ),
+                                        ),
+                                ),
+                              DeckIconButton(
+                                'settings',
+                                tooltip: '설정',
+                                onPressed: settings,
+                                size: 19,
+                                extent: 34,
+                              ),
                             ],
                           ),
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      DeckIconButton(
-                        'plus',
-                        tooltip: '폴더 연결',
-                        onPressed: busy ? null : connect,
-                        size: 18,
-                        extent: 25,
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(22, 5, 22, 4),
-                  child: Row(
-                    children: [
-                      Text(
-                        playing ? '재생 목록' : '전체 파일',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xffc4d3df),
+                      if (navigation != null) navigation!,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(19, 20, 19, 12),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    folderButton(null),
+                                    for (final root in folders)
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 5),
+                                        child: DragTarget<List<int>>(
+                                          onAcceptWithDetails: (details) =>
+                                              folderDrop?.call(
+                                                root,
+                                                details.data,
+                                              ),
+                                          builder: (_, _, _) =>
+                                              folderButton(root),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            DeckIconButton(
+                              'plus',
+                              tooltip: '폴더 연결',
+                              onPressed: busy ? null : connect,
+                              size: 18,
+                              extent: 25,
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 9),
-                      Text(
-                        '${items.length}',
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: Color(0xff6f8ca1),
-                        ),
-                      ),
-                      const Spacer(),
-                      DeckIconButton(
-                        'filter',
-                        tooltip: '필터',
-                        onPressed: filters,
-                        size: 18,
-                      ),
-                    ],
-                  ),
-                ),
-                if (playing)
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(22, 2, 22, 16),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        '파일을 열 때마다 볼륨 0%로 시작',
-                        style: TextStyle(fontSize: 9, color: Color(0xff6a899e)),
-                      ),
-                    ),
-                  )
-                else if (toolbar != null)
-                  toolbar!,
-                if (query.isNotEmpty)
-                  InkWell(
-                    onTap: clearSearch,
-                    child: Container(
-                      color: const Color(0xff253b4e),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 22,
-                        vertical: 10,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              '검색: $query',
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(22, 5, 22, 4),
+                        child: Row(
+                          children: [
+                            Text(
+                              playing ? '재생 목록' : '전체 파일',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xffc4d3df),
+                              ),
+                            ),
+                            const SizedBox(width: 9),
+                            Text(
+                              '${items.length}',
                               style: const TextStyle(
                                 fontSize: 10,
-                                color: Color(0xffabc5d9),
+                                color: Color(0xff6f8ca1),
+                              ),
+                            ),
+                            const Spacer(),
+                            DeckIconButton(
+                              'filter',
+                              tooltip: '필터',
+                              onPressed: filters,
+                              size: 18,
+                            ),
+                            if (filterCount > 0)
+                              Text(
+                                '$filterCount',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: DeckDesign.accent,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (playing)
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(22, 2, 22, 16),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              '파일을 열 때마다 볼륨 0%로 시작',
+                              style: TextStyle(
+                                fontSize: 9,
+                                color: Color(0xff6a899e),
                               ),
                             ),
                           ),
-                          const DesignIcon('close', size: 13),
-                        ],
-                      ),
-                    ),
+                        )
+                      else if (toolbar != null)
+                        toolbar!,
+                      if (query.isNotEmpty)
+                        InkWell(
+                          onTap: clearSearch,
+                          child: Container(
+                            color: const Color(0xff253b4e),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 22,
+                              vertical: 10,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    '검색: $query',
+                                    style: const TextStyle(
+                                      fontSize: 10,
+                                      color: Color(0xffabc5d9),
+                                    ),
+                                  ),
+                                ),
+                                const DesignIcon('close', size: 13),
+                              ],
+                            ),
+                          ),
+                        ),
+                      const Divider(height: 1, color: Color(0xff2e3944)),
+                      Expanded(child: fileList ?? const SizedBox.shrink()),
+                    ],
                   ),
-                const Divider(height: 1, color: Color(0xff2e3944)),
-                Expanded(child: fileList ?? const SizedBox.shrink()),
-              ],
-            ),
+                ),
+            ],
           ),
-      ],
-    ),
-  );
+        );
 }

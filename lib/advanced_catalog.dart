@@ -1,3 +1,4 @@
+import 'library_filter.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as p;
@@ -5,11 +6,13 @@ import 'library.dart';
 import 'catalog_schema.dart';
 
 class MediaCriteria {
+  final List<LibraryFilter> filters;
   final String query, tags, actor;
   final String? folder, type;
   final int? minimumRating;
   final bool unrated, unfinished, onlineOnly;
   const MediaCriteria({
+    this.filters = const [],
     this.query = '',
     this.tags = '',
     this.actor = '',
@@ -21,6 +24,7 @@ class MediaCriteria {
     this.onlineOnly = false,
   });
   Map<String, Object?> toJson() => {
+    'filters': filters.map((f) => f.toJson()).toList(),
     'query': query,
     'tags': tags,
     'actor': actor,
@@ -32,6 +36,9 @@ class MediaCriteria {
     'onlineOnly': onlineOnly,
   };
   factory MediaCriteria.fromJson(Map<String, dynamic> json) => MediaCriteria(
+    filters: (json['filters'] as List? ?? [])
+        .map((f) => LibraryFilter.fromJson(Map<String, dynamic>.from(f as Map)))
+        .toList(),
     query: json['query'] as String? ?? '',
     tags: json['tags'] as String? ?? '',
     actor: json['actor'] as String? ?? '',
@@ -45,6 +52,7 @@ class MediaCriteria {
   factory MediaCriteria.decode(String json) =>
       MediaCriteria.fromJson(jsonDecode(json) as Map<String, dynamic>);
   String get summary => [
+    ...filters.where((f) => !f.isEmpty).map((f) => f.summary),
     if (query.isNotEmpty) query,
     if (folder != null) p.basename(folder!),
     if (type == 'video') '영상',
@@ -61,8 +69,10 @@ extension AdvancedCatalog on Library {
   Future<List<Map<String, Object?>>> matching(
     MediaCriteria criteria, {
     String sort = 'recent',
+    List<LibraryFilter> filters = const [],
   }) async {
     final rows = await items(
+      filters: [...criteria.filters, ...filters],
       query: criteria.query,
       folder: criteria.folder,
       type: criteria.type,

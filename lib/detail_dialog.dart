@@ -3,10 +3,12 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'design.dart';
+import 'playback_history_dialog.dart';
 
 class DetailEditor extends StatefulWidget {
   final Map<String, Object?> item;
   final VoidCallback play, rename, external, relink;
+  final VoidCallback? history;
   const DetailEditor({
     super.key,
     required this.item,
@@ -14,6 +16,7 @@ class DetailEditor extends StatefulWidget {
     required this.rename,
     required this.external,
     required this.relink,
+    this.history,
   });
   @override
   State<DetailEditor> createState() => _DetailEditorState();
@@ -203,6 +206,10 @@ class _DetailEditorState extends State<DetailEditor> {
                                       '${((item['size'] as int? ?? 0) / 1048576).toStringAsFixed(2)} MB',
                                   '해상도': '${item['resolution'] ?? ''}',
                                   '코덱': '${item['codec'] ?? ''}',
+                                  '재생 횟수': '${item['play_count'] ?? 0}회',
+                                  '최근 재생': formatPlaybackDate(
+                                    item['last_played'] as int? ?? 0,
+                                  ),
                                 }.entries)
                                   SizedBox(
                                     width: 160,
@@ -228,6 +235,12 @@ class _DetailEditorState extends State<DetailEditor> {
                               ],
                             ),
                             const SizedBox(height: 22),
+                            if (widget.history != null)
+                              TextButton.icon(
+                                onPressed: widget.history,
+                                icon: const Icon(Icons.history, size: 18),
+                                label: const Text('재생 이력'),
+                              ),
                             const Divider(color: Color(0xff323d49)),
                             const SizedBox(height: 18),
                             const Text(

@@ -185,10 +185,34 @@ extension _HomeFeatures on _VaultHomeState {
     await windowManager.setPreventClose(true);
     await keys.load();
     await jobs.recover();
+    if (closing || !mounted) return;
     await refresh();
     await watchFolders();
+    if (closing || !mounted) return;
     playerEvents.add(player.stream.playing.listen((_) => update(() {})));
     playerEvents.add(player.stream.tracks.listen((_) => update(() {})));
+    playerEvents.add(
+      player.stream.position.listen((position) {
+        if (playbackMediaId == null || closing) return;
+        if (playbackCompleted &&
+            player.state.playing &&
+            position > Duration.zero &&
+            position < player.state.duration * .9) {
+          playbackCompleted = false;
+          playbackSession = newPlaybackSession(playbackMediaId!, Duration.zero);
+        }
+        final session = playbackSession;
+        if (session != null) {
+          guard(
+            () => session.observe(
+              position,
+              player.state.duration,
+              player.state.playing,
+            ),
+          );
+        }
+      }),
+    );
     playerEvents.add(
       player.stream.error.listen((message) => update(() => error = message)),
     );
@@ -199,7 +223,10 @@ extension _HomeFeatures on _VaultHomeState {
     );
     playerEvents.add(
       player.stream.completed.listen((completed) {
-        if (completed) guard(() => persistProgress(completed: true));
+        if (completed) {
+          playbackCompleted = true;
+          guard(() => persistProgress(completed: true));
+        }
       }),
     );
     await rescanLibrary();
@@ -221,8 +248,10 @@ extension _HomeFeatures on _VaultHomeState {
       await watcher.cancel();
     }
     watchers.clear();
+    if (closing || !mounted) return;
     for (final root in await widget.library.folders()) {
       if (!await Directory(root).exists()) continue;
+      if (closing || !mounted) return;
       try {
         watchers.add(
           Directory(root).watch(recursive: true).listen((_) {
@@ -237,7 +266,7 @@ extension _HomeFeatures on _VaultHomeState {
   }
 
   Future<void> rescanLibrary() async {
-    if (scanFuture != null || jobs.running || !mounted) return;
+    if (closing || scanFuture != null || jobs.running || !mounted) return;
     final work = guard(() async {
       for (final root in await widget.library.folders()) {
         await widget.library.scan(root);
@@ -267,6 +296,8 @@ extension _HomeFeatures on _VaultHomeState {
       throw FileSystemException('오프라인 파일입니다.', item['path'] as String);
     if (item['type'] != 'video') throw StateError('영상 파일만 재생할 수 있습니다.');
     playbackMediaId = null;
+    playbackSession = null;
+    playbackCompleted = false;
     final resume =
         position ??
         (fromStart
@@ -274,6 +305,7 @@ extension _HomeFeatures on _VaultHomeState {
             : Duration(milliseconds: item['resume_ms'] as int));
     await playback.open(item['path'] as String, start: resume);
     playbackMediaId = item['id'] as int;
+    playbackSession = newPlaybackSession(playbackMediaId!, resume);
     await (player.platform as NativePlayer).setProperty('mute', 'no');
     update(() {
       current = item;
@@ -282,6 +314,14 @@ extension _HomeFeatures on _VaultHomeState {
       muted = false;
     });
   });
+  PlaybackSession newPlaybackSession(int mediaId, Duration start) {
+    final startedAt = DateTime.now();
+    return PlaybackSession(() async {
+      await widget.library.recordPlayback(mediaId, startedAt, start);
+      if (mounted && !closing) unawaited(refresh());
+    });
+  }
+
   Future<void> rateTargets(int? value) => guard(() async {
     await widget.library.batchEdit(targets, rating: value, setRating: true);
     await refresh();
@@ -397,6 +437,7 @@ extension _HomeFeatures on _VaultHomeState {
     }
   });
   bool handleKey(KeyEvent event) {
+    if (closing) return false;
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) return false;
     if (event.logicalKey == LogicalKeyboardKey.escape) {
       if (event is KeyDownEvent) guard(playback.panic);
@@ -520,55 +561,53 @@ extension _HomeFeatures on _VaultHomeState {
       });
   }
 
-  Future<void> filters() async {
-    var rating = minimumRating;
-    var onlyUnrated = unrated;
-    final result = await showDeckDialog<bool>(
+  Future<void> filters() => guard(() async {
+    final entities = await Future.wait([
+      widget.library.entities('actors'),
+      widget.library.entities('tags'),
+    ]);
+    filterActorNames = {
+      for (final row in entities[0]) row['id'] as int: row['name'] as String,
+    };
+    filterTagNames = {
+      for (final row in entities[1]) row['id'] as int: row['name'] as String,
+    };
+    if (!mounted) return;
+    final result = await showDeckDialog<LibraryFilter>(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, update) => AlertDialog(
-          title: const Text('라이브러리 필터'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              DropdownButton<int>(
-                value: rating ?? 0,
-                items: [
-                  for (var value = 0; value <= 5; value++)
-                    DropdownMenuItem(
-                      value: value,
-                      child: Text(value == 0 ? '모든 평점' : '$value점 이상'),
-                    ),
-                ],
-                onChanged: (value) =>
-                    update(() => rating = value == 0 ? null : value),
-              ),
-              CheckboxListTile(
-                value: onlyUnrated,
-                onChanged: (value) => update(() => onlyUnrated = value!),
-                title: const Text('미평가만'),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('취소'),
+      builder: (_) => LibraryFilterDialog(
+        initial: libraryFilter,
+        actors: entities[0],
+        tags: entities[1],
+        validate: (draft) async {
+          final latest = await Future.wait([
+            widget.library.entities('actors'),
+            widget.library.entities('tags'),
+          ]);
+          return draft.withIds(
+            actors: draft.actorIds.where(
+              (id) => latest[0].any((r) => r['id'] == id),
             ),
-            FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('적용'),
+            tags: draft.tagIds.where(
+              (id) => latest[1].any((r) => r['id'] == id),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
-    if (result == true) {
-      minimumRating = onlyUnrated ? null : rating;
-      unrated = onlyUnrated;
+    if (result != null) {
+      libraryFilter = result;
+      minimumRating = null;
+      unrated = false;
       selected.clear();
       await refresh();
     }
+  });
+
+  void changeLibraryFilter(LibraryFilter value) {
+    update(() => libraryFilter = value);
+    selected.clear();
+    guard(refresh);
   }
 
   Future<void> exportBackup() => guard(() async {
@@ -735,6 +774,19 @@ extension _HomeFeatures on _VaultHomeState {
                 ),
               ),
             const Spacer(),
+            IconButton(
+              tooltip: '영상정보 내보내기·입력하기',
+              icon: const Icon(Icons.import_export, size: 19),
+              onPressed: () => guard(() async {
+                final changed = await showDeckDialog<bool>(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (_) =>
+                      MetadataExchangeDialog(library: widget.library),
+                );
+                if (changed == true) await refresh();
+              }),
+            ),
             DropdownButton<String>(
               value: sort,
               isDense: true,
@@ -767,19 +819,91 @@ extension _HomeFeatures on _VaultHomeState {
             ),
           ],
         ),
-        if (minimumRating != null || unrated)
-          Align(
-            alignment: Alignment.centerLeft,
-            child: TextButton(
-              onPressed: () {
-                minimumRating = null;
-                unrated = false;
-                refresh();
-              },
-              child: Text(
-                '${unrated ? '미평가' : '$minimumRating점 이상'} · 초기화',
-                style: const TextStyle(fontSize: 9),
-              ),
+        if (!libraryFilter.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                if (libraryFilter.playback != PlaybackFilter.all)
+                  InputChip(
+                    label: Text(libraryFilter.playback.label),
+                    onDeleted: () => changeLibraryFilter(
+                      libraryFilter.withPlayback(PlaybackFilter.all),
+                    ),
+                  ),
+                if (libraryFilter.rating != null || libraryFilter.unrated)
+                  InputChip(
+                    label: Text(
+                      libraryFilter.ratingLabel,
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                    onDeleted: () =>
+                        changeLibraryFilter(libraryFilter.withoutRating()),
+                  ),
+                for (final kind in ['actors', 'tags']) ...[
+                  if ((kind == 'actors'
+                          ? libraryFilter.actorIds
+                          : libraryFilter.tagIds)
+                      .isNotEmpty)
+                    ActionChip(
+                      label: Text(
+                        '${kind == 'actors' ? '배우' : '태그'} · ${(kind == 'actors' ? libraryFilter.actorsAll : libraryFilter.tagsAll) ? '모두' : '하나라도'}',
+                        style: const TextStyle(fontSize: 10),
+                      ),
+                      onPressed: filters,
+                    ),
+                  for (final id
+                      in (kind == 'actors'
+                              ? libraryFilter.actorIds
+                              : libraryFilter.tagIds)
+                          .take(2))
+                    InputChip(
+                      label: SizedBox(
+                        width: 125,
+                        child: Text(
+                          (kind == 'actors'
+                                  ? filterActorNames[id]
+                                  : filterTagNames[id]) ??
+                              '삭제된 항목',
+                          style: const TextStyle(fontSize: 10),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      onPressed: filters,
+                      onDeleted: () => changeLibraryFilter(
+                        kind == 'actors'
+                            ? libraryFilter.withIds(
+                                actors: libraryFilter.actorIds.where(
+                                  (v) => v != id,
+                                ),
+                              )
+                            : libraryFilter.withIds(
+                                tags: libraryFilter.tagIds.where(
+                                  (v) => v != id,
+                                ),
+                              ),
+                      ),
+                    ),
+                  if ((kind == 'actors'
+                              ? libraryFilter.actorIds
+                              : libraryFilter.tagIds)
+                          .length >
+                      2)
+                    ActionChip(
+                      label: Text(
+                        '외 ${(kind == 'actors' ? libraryFilter.actorIds : libraryFilter.tagIds).length - 2}개',
+                      ),
+                      onPressed: filters,
+                    ),
+                ],
+                TextButton(
+                  onPressed: () => changeLibraryFilter(LibraryFilter()),
+                  child: const Text('필터 해제'),
+                ),
+              ],
             ),
           ),
       ],
@@ -808,6 +932,7 @@ extension _HomeFeatures on _VaultHomeState {
           typeFilter = null;
           minimumRating = null;
           unrated = false;
+          libraryFilter = LibraryFilter();
           selected.clear();
           view = 'files';
           refresh();
@@ -823,6 +948,7 @@ extension _HomeFeatures on _VaultHomeState {
         changed: refresh,
       ),
       'settings' => SettingsPanel(
+        installUpdate: busy || jobs.running ? null : installUpdate,
         privacy: widget.privacy,
         lockNow: widget.lockNow == null || busy || jobs.running
             ? null
@@ -847,6 +973,7 @@ extension _HomeFeatures on _VaultHomeState {
       _ => null,
     };
     if (panel == null) return null;
+    if (view == 'settings') return panel;
     return Column(
       children: [
         Container(

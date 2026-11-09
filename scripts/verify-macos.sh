@@ -30,7 +30,7 @@ done
 check stress test test/stress_scenarios_test.dart --no-pub
 export VAULT_FILE_COUNT=10000 VAULT_BENCH_LABEL=macos-10000
 check performance test test/load_benchmark_test.dart test/catalog_benchmark_test.dart --no-pub --concurrency=1
-for target in stress_flow ui_latency; do
+for target in stress_flow ui_latency library_filter_flow playback_history_flow settings_native_review resize_profile metadata_exchange_flow; do
   check "${target}-profile" drive -d macos --profile --no-pub \
     --driver=integration_test/performance_driver.dart "--target=integration_test/${target}_test.dart" \
     --dart-define=INTEGRATION_TEST_SHOULD_REPORT_RESULTS_TO_NATIVE=false "--dart-define=VIDEO_FIXTURE=$fixture"

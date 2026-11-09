@@ -1,4 +1,8 @@
+import 'library_filter.dart';
+import 'library_filter_dialog.dart';
 import 'design.dart';
+import 'app_updater.dart';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -34,6 +38,10 @@ import 'nfo_service.dart';
 import 'welcome_dialog.dart';
 import 'privacy_lock.dart';
 import 'privacy_ui.dart';
+import 'window_lifecycle.dart';
+import 'metadata_exchange_dialog.dart';
+import 'playback_history.dart';
+import 'playback_history_dialog.dart';
 export 'native_playback.dart';
 part 'home_features.dart';
 part 'extended_features.dart';
@@ -53,6 +61,53 @@ Future<void> main(List<String> arguments) async {
   await windowManager.setMinimumSize(const Size(1000, 700));
   final directory = await getApplicationSupportDirectory();
   await directory.create(recursive: true);
+  final updateRoot = Directory(p.join(directory.path, 'updates'));
+  final healthRun =
+      arguments.length == 2 && arguments.first == '--update-ready';
+  final journal = File(p.join(updateRoot.path, 'transaction.json'));
+  if (!healthRun && await journal.exists()) {
+    final transaction = jsonDecode(await journal.readAsString());
+    if (!['complete', 'rolledBack'].contains(transaction['state'])) {
+      final helper = p.join(
+        updateRoot.path,
+        Platform.isWindows ? 'soft_vault_updater.exe' : 'soft_vault_updater',
+      );
+      final config = jsonDecode(
+        await rootBundle.loadString('assets/update-config.json'),
+      );
+      await Process.start(helper, [
+        updateRoot.path,
+        transaction['target'],
+        directory.path,
+        '$pid',
+        config['publicKey'],
+        '--recover',
+      ], mode: ProcessStartMode.detached);
+      exit(0);
+    }
+  }
+  if (healthRun) {
+    final expected = p.join(updateRoot.path, 'healthy');
+    if (p.normalize(arguments[1]) != p.normalize(expected))
+      throw StateError('Invalid health path');
+    final checkLibrary = await Library.open(
+      p.join(directory.path, 'vault.sqlite'),
+    );
+    await checkLibrary.close();
+    final checkPrivacy = PrivacyLock(p.join(directory.path, 'privacy.sqlite'));
+    await checkPrivacy.status();
+    await checkPrivacy.close();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await File(expected).writeAsString('ready', flush: true);
+    });
+  }
+  AppUpdater.instance = AppUpdater(updateRoot);
+  try {
+    await AppUpdater.instance!.initialize();
+  } catch (_) {
+    // Optional update storage must not prevent opening a local library.
+    AppUpdater.instance = null;
+  }
   Future<Library>? library;
   runApp(
     VaultApp(
@@ -214,11 +269,17 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   Timer? poll, debounce;
   Timer? progressTimer;
   int? playbackMediaId, activeCollectionId;
+  PlaybackSession? playbackSession;
+  bool playbackCompleted = false;
   MediaCriteria? activeCriteria;
   String? collectionName;
   Future<void>? scanFuture;
+  Future<void>? playerDisposal;
+  bool closing = false;
   String view = 'files', sort = 'recent';
   String? typeFilter;
+  LibraryFilter libraryFilter = LibraryFilter();
+  Map<int, String> filterActorNames = {}, filterTagNames = {};
   int? minimumRating;
   bool unrated = false,
       grid = false,
@@ -239,6 +300,49 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   void update(VoidCallback action) {
     if (mounted) setState(action);
   }
+
+  Future<void> installUpdate() => guard(() async {
+    if (busy || jobs.running) throw StateError('진행 중인 작업을 마친 후 다시 시도하세요.');
+    await AppUpdater.instance!.launchHelper(p.dirname(widget.library.db.path));
+    update(() => busy = true);
+    if (mounted) {
+      unawaited(
+        showDialog<void>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => const PopScope(
+            canPop: false,
+            child: AlertDialog(
+              content: Row(
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(width: 20),
+                  Text('저장 후 업데이트를 준비하고 있습니다…'),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+    poll?.cancel();
+    debounce?.cancel();
+    progressTimer?.cancel();
+    for (final watcher in watchers) {
+      await watcher.cancel();
+    }
+    for (final event in playerEvents) {
+      await event.cancel();
+    }
+    await scanFuture;
+    await player.pause();
+    await persistProgress();
+    await widget.library.fileOperation(() async {});
+    await widget.library.close();
+    await widget.privacy?.close();
+    await disposePlayer();
+    exit(0);
+  });
 
   Future<void> lockSession() => guard(() async {
     if (sessionLocking) return;
@@ -269,9 +373,34 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
 
   @override
   void onWindowClose() async {
-    await guard(persistProgress);
-    await windowManager.destroy();
+    if (closing) return;
+    update(() => closing = true);
+    try {
+      // Keep the engine's event loop alive until video textures are released.
+      poll?.cancel();
+      debounce?.cancel();
+      progressTimer?.cancel();
+      for (final watcher in watchers) {
+        await watcher.cancel();
+      }
+      for (final event in playerEvents) {
+        await event.cancel();
+      }
+      if (playerDisposal == null) {
+        await player.pause();
+        await persistProgress();
+      }
+      await disposePlayer();
+      await closeAppWindow();
+    } catch (e) {
+      update(() {
+        error = '종료를 마무리하지 못했습니다: $e';
+        closing = false;
+      });
+    }
   }
+
+  Future<void> disposePlayer() => playerDisposal ??= player.dispose();
 
   @override
   void initState() {
@@ -298,7 +427,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     for (final event in playerEvents) {
       event.cancel();
     }
-    player.dispose();
+    unawaited(disposePlayer());
     super.dispose();
   }
 
@@ -315,8 +444,13 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     final selectedId = current?['id'];
     await guard(() async {
       final next = activeCriteria != null
-          ? await widget.library.matching(activeCriteria!, sort: sort)
+          ? await widget.library.matching(
+              activeCriteria!,
+              sort: sort,
+              filters: [libraryFilter],
+            )
           : await widget.library.items(
+              filters: [libraryFilter],
               query: query,
               folder: folder,
               type: typeFilter,
@@ -408,8 +542,11 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   }
 
   Future<void> edit() async {
-    final item = current;
-    if (item == null) return;
+    final selectedItem = current;
+    if (selectedItem == null) return;
+    await playbackSession?.pending;
+    final item = await widget.library.mediaById(selectedItem['id'] as int);
+    if (!mounted) return;
     final values = await showDeckDialog<Map<String, Object?>>(
       context: context,
       builder: (context) => DetailEditor(
@@ -418,6 +555,11 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
         rename: () => moveFiles(rename: true),
         external: openExternal,
         relink: relinkFile,
+        history: () => showDeckDialog<void>(
+          context: context,
+          builder: (_) =>
+              PlaybackHistoryDialog(library: widget.library, item: item),
+        ),
       ),
     );
     if (values != null)
@@ -430,6 +572,11 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
 
   @override
   Widget build(BuildContext context) {
+    if (closing) {
+      return const Scaffold(
+        body: Center(child: Text('재생 위치를 저장하고 종료하고 있습니다…')),
+      );
+    }
     if (sessionLocking) {
       return Scaffold(
         body: Center(
@@ -440,7 +587,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                   children: [
                     const Text('잠금을 마무리하지 못했습니다. 앱을 종료해 주세요.'),
                     TextButton(
-                      onPressed: () => windowManager.destroy(),
+                      onPressed: onWindowClose,
                       child: const Text('앱 종료'),
                     ),
                   ],
@@ -470,6 +617,8 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                   fit: StackFit.expand,
                   children: [
                     SideDeck(
+                      filterCount: libraryFilter.groupCount,
+                      settingsOnly: view == 'settings',
                       items: items,
                       folderDrop: (path, ids) =>
                           moveFiles(destination: path, ids: ids),

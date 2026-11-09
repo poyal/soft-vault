@@ -1,3 +1,4 @@
+import 'library_filter.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
@@ -23,7 +24,7 @@ class Library {
     final db = await databaseFactoryFfi.openDatabase(
       path,
       options: OpenDatabaseOptions(
-        version: 3,
+        version: 4,
         onOpen: (db) async {
           await db.execute(
             'CREATE INDEX IF NOT EXISTS media_fingerprint ON media(fingerprint)',
@@ -44,6 +45,7 @@ class Library {
         onUpgrade: (db, old, version) async {
           if (old < 2) await upgradeCatalog(db);
           if (old < 3) await upgradeFeatures(db);
+          if (old < 4) await upgradePlaybackHistory(db);
         },
         onCreate: (db, _) async {
           await db.execute('CREATE TABLE folders (path TEXT PRIMARY KEY)');
@@ -55,6 +57,7 @@ class Library {
           tags TEXT NOT NULL DEFAULT '', added INTEGER NOT NULL)''');
           await upgradeCatalog(db);
           await upgradeFeatures(db);
+          await upgradePlaybackHistory(db);
         },
       ),
     );
@@ -104,6 +107,7 @@ class Library {
     bool unrated = false,
     String sort = 'recent',
     int? limit,
+    List<LibraryFilter> filters = const [],
   }) async => db.query(
     'media',
     where:
@@ -111,7 +115,8 @@ class Library {
       OR actors LIKE ? ESCAPE '!' OR tags LIKE ? ESCAPE '!' OR note LIKE ? ESCAPE '!' OR id IN
       (SELECT media_id FROM media_actors JOIN actors ON actors.id = actor_id WHERE alias LIKE ? ESCAPE '!'))
       ${folder == null ? '' : ' AND folder = ?'}${type == null ? '' : ' AND type = ?'}
-      ${minimumRating == null ? '' : ' AND rating >= ?'}${unrated ? ' AND rating IS NULL' : ''}''',
+      ${minimumRating == null ? '' : ' AND rating >= ?'}${unrated ? ' AND rating IS NULL' : ''}
+      ${[for (final filter in filters) ...filter.clauses].map((clause) => ' AND ($clause)').join()}''',
     whereArgs: [
       ...List.filled(
         7,
@@ -120,6 +125,7 @@ class Library {
       if (folder != null) await canonicalPath(folder),
       if (type != null) type,
       if (minimumRating != null) minimumRating,
+      for (final filter in filters) ...filter.arguments,
     ],
     orderBy:
         {
@@ -258,7 +264,7 @@ class Library {
   }
 
   Future<void> exportTo(File target) async {
-    final data = <String, Object?>{'version': 3};
+    final data = <String, Object?>{'version': 4};
     await db.transaction((tx) async {
       for (final table in [
         'folders',
@@ -271,6 +277,7 @@ class Library {
         'bookmarks',
         'collections',
         'move_rules',
+        'playback_history',
       ]) {
         data[table] = await tx.query(table);
       }
@@ -281,8 +288,9 @@ class Library {
   Future<void> restoreFrom(File source) async {
     final data =
         jsonDecode(await source.readAsString()) as Map<String, dynamic>;
-    if (![2, 3].contains(data['version']))
+    if (![2, 3, 4].contains(data['version']))
       throw FormatException('지원하지 않는 백업 버전');
+    if (data['version'] != 4) data['playback_history'] = [];
     if (data['version'] == 2) {
       for (final table in ['bookmarks', 'collections', 'move_rules']) {
         data[table] = [];
@@ -299,6 +307,7 @@ class Library {
       'bookmarks',
       'collections',
       'move_rules',
+      'playback_history',
     ];
     for (final table in tables) {
       if (data[table] is! List) throw FormatException('잘못된 백업: $table');
@@ -316,7 +325,12 @@ class Library {
     final mediaIds = (data['media'] as List).map((row) => row['id']).toSet();
     final actorIds = (data['actors'] as List).map((row) => row['id']).toSet();
     final tagIds = (data['tags'] as List).map((row) => row['id']).toSet();
-    for (final table in ['bookmarks', 'media_actors', 'media_tags']) {
+    for (final table in [
+      'bookmarks',
+      'media_actors',
+      'media_tags',
+      'playback_history',
+    ]) {
       for (final row in data[table] as List) {
         if (!mediaIds.contains(row['media_id']) ||
             (table == 'media_actors' && !actorIds.contains(row['actor_id'])) ||
@@ -383,6 +397,11 @@ class Library {
     final stat = await file.stat();
     await db.transaction((tx) async {
       for (final duplicate in duplicates) {
+        await tx.delete(
+          'playback_history',
+          where: 'media_id = ?',
+          whereArgs: [duplicate['id']],
+        );
         await tx.delete(
           'bookmarks',
           where: 'media_id = ?',

@@ -3,11 +3,13 @@ part of 'main.dart';
 extension _ExtendedFeatures on _VaultHomeState {
   Future<void> persistProgress({bool completed = false}) async {
     final id = playbackMediaId;
-    if (id == null || player.state.duration <= Duration.zero) return;
+    final position = player.state.position, duration = player.state.duration;
+    if (id == null || duration <= Duration.zero) return;
+    await playbackSession?.pending;
     await widget.library.saveResume(
       id,
-      player.state.position,
-      player.state.duration,
+      position,
+      duration,
       completed: completed,
     );
   }
@@ -55,15 +57,21 @@ extension _ExtendedFeatures on _VaultHomeState {
       context: context,
       builder: (_) => CriteriaDialog(
         folders: folders,
-        initial:
-            activeCriteria ??
-            MediaCriteria(
-              query: query,
-              folder: folder,
-              type: typeFilter,
-              minimumRating: minimumRating,
-              unrated: unrated,
-            ),
+        initial: MediaCriteria.fromJson({
+          ...(activeCriteria ??
+                  MediaCriteria(
+                    query: query,
+                    folder: folder,
+                    type: typeFilter,
+                    minimumRating: minimumRating,
+                    unrated: unrated,
+                  ))
+              .toJson(),
+          'filters': [
+            ...?activeCriteria?.filters,
+            if (!libraryFilter.isEmpty) libraryFilter,
+          ].map((f) => f.toJson()).toList(),
+        }),
         save: (draft) async {
           await widget.library.saveCollection(draft.name, draft.criteria);
         },
@@ -75,6 +83,7 @@ extension _ExtendedFeatures on _VaultHomeState {
     activeCollectionId = row['id'] as int;
     collectionName = row['name'] as String;
     activeCriteria = MediaCriteria.decode(row['criteria'] as String);
+    libraryFilter = LibraryFilter();
     view = 'files';
     selected.clear();
     await refresh();

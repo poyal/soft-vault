@@ -120,6 +120,8 @@ void main() {
             .onPressed,
         isNotNull,
       );
+      expect(find.byType(VaultFileList), findsNothing);
+      await app.tap('영상으로 돌아가기');
       expect(app.visible, isEmpty);
     },
     fixtures: 0,

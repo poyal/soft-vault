@@ -46,237 +46,265 @@ class VaultFileList extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    if (items.isEmpty)
-      return const Align(
-        alignment: Alignment.topCenter,
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-          child: Text(
-            '표시할 파일이 없습니다.',
-            style: TextStyle(fontSize: 11, color: Color(0xff7792a6)),
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, bounds) {
+      if (items.isEmpty)
+        return const Align(
+          alignment: Alignment.topCenter,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+            child: Text(
+              '표시할 파일이 없습니다.',
+              style: TextStyle(fontSize: 11, color: Color(0xff7792a6)),
+            ),
           ),
-        ),
-      );
-    final small = MediaQuery.sizeOf(context).width <= 1280;
-    Widget tile(BuildContext context, int index) {
-      final item = items[index], id = item['id'] as int;
-      final isCurrent = current == id;
-      final actors = (item['actors'] as String? ?? '')
-          .split(',')
-          .map((name) => name.trim())
-          .where((name) => name.isNotEmpty)
-          .join(' · ');
-      final tags = (item['tags'] as String? ?? '')
-          .split(',')
-          .map((tag) => tag.trim())
-          .where((tag) => tag.isNotEmpty)
-          .map((tag) => '#$tag')
-          .join(' · ');
-      Widget metadata(
-        String field,
-        String icon,
-        String title,
-        String value,
-        String empty,
-      ) => Padding(
-        padding: const EdgeInsets.only(top: 4),
-        child: Tooltip(
-          message: '$title: ${value.isEmpty ? empty : value}',
-          child: Row(
-            children: [
-              DesignIcon(icon, size: 10, color: const Color(0xff829bad)),
-              const SizedBox(width: 4),
-              Expanded(
-                child: Text(
-                  value.isEmpty ? empty : value,
-                  key: ValueKey('file-$field-$id'),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 9,
-                    height: 1.3,
-                    color: value.isEmpty
-                        ? const Color(0xff668397)
-                        : const Color(0xff9eb9cc),
+        );
+      final small = bounds.maxWidth <= 340;
+      Widget tile(BuildContext context, int index) {
+        final item = items[index], id = item['id'] as int;
+        final isCurrent = current == id;
+        final hasPlayed =
+            (item['play_count'] as int? ?? 0) > 0 ||
+            (item['last_played'] as int? ?? 0) > 0 ||
+            (item['resume_ms'] as int? ?? 0) > 0 ||
+            item['watched'] == 1;
+        final playbackStatus = Tooltip(
+          message: hasPlayed ? '재생한 적 있음' : '미재생',
+          child: Semantics(
+            label: hasPlayed ? '재생한 적 있음' : '미재생',
+            child: Container(
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                color: const Color(0xee14232d),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                hasPlayed
+                    ? Icons.play_circle_filled
+                    : Icons.play_circle_outline,
+                key: ValueKey('file-playback-$id'),
+                size: 16,
+                color: hasPlayed ? DeckDesign.accent : DeckDesign.muted,
+              ),
+            ),
+          ),
+        );
+        final actors = (item['actors'] as String? ?? '')
+            .split(',')
+            .map((name) => name.trim())
+            .where((name) => name.isNotEmpty)
+            .join(' · ');
+        final tags = (item['tags'] as String? ?? '')
+            .split(',')
+            .map((tag) => tag.trim())
+            .where((tag) => tag.isNotEmpty)
+            .map((tag) => '#$tag')
+            .join(' · ');
+        Widget metadata(
+          String field,
+          String icon,
+          String title,
+          String value,
+          String empty,
+        ) => Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Tooltip(
+            message: '$title: ${value.isEmpty ? empty : value}',
+            child: Row(
+              children: [
+                DesignIcon(icon, size: 10, color: const Color(0xff829bad)),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    value.isEmpty ? empty : value,
+                    key: ValueKey('file-$field-$id'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 9,
+                      height: 1.3,
+                      color: value.isEmpty
+                          ? const Color(0xff668397)
+                          : const Color(0xff9eb9cc),
+                    ),
                   ),
                 ),
+              ],
+            ),
+          ),
+        );
+        final thumb = InkWell(
+          onTap: () => play(item),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              HoverPreview(
+                key: ValueKey('$id:${item['modified']}'),
+                load:
+                    item['type'] == 'video' &&
+                        item['online'] == 1 &&
+                        motionPreview != null
+                    ? () => motionPreview!(item)
+                    : null,
+                child: thumbnail(item),
               ),
+              Positioned(left: 3, bottom: 3, child: playbackStatus),
             ],
           ),
-        ),
-      );
-      final thumb = InkWell(
-        onTap: () => play(item),
-        child: HoverPreview(
-          key: ValueKey('$id:${item['modified']}'),
-          load:
-              item['type'] == 'video' &&
-                  item['online'] == 1 &&
-                  motionPreview != null
-              ? () => motionPreview!(item)
-              : null,
-          child: thumbnail(item),
-        ),
-      );
-      final label = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            item['title'] as String,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 10, color: Color(0xffbbccd9)),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            '${item['online'] == 0 ? '오프라인' : clockText(Duration(milliseconds: ((item['duration'] as num) * 1000).round()))} · ${p.basename(item['folder'] as String)}',
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontSize: 8,
-              color: isCurrent
-                  ? const Color(0xff7d9eb3)
-                  : const Color(0xff668397),
+        );
+        final label = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              item['title'] as String,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontSize: 10, color: Color(0xffbbccd9)),
             ),
-          ),
-          const SizedBox(height: 3),
-          DeckStars(rating: item['rating'] as int?, size: 10, gap: 1),
-          metadata('actors', 'person', '배우', actors, '배우 미등록'),
-          metadata('tags', 'tag', '태그', tags, '태그 없음'),
-        ],
-      );
-      return _HoverTile(
-        builder: (hovered) {
-          final check = Opacity(
-            opacity: grid || hovered || selected.contains(id) ? 1 : 0,
-            child: Tooltip(
-              message: '${item['title']} 선택',
-              child: InkWell(
-                onTap: () => toggle(id),
-                child: Container(
-                  width: 14,
-                  height: 14,
-                  decoration: BoxDecoration(
-                    color: selected.contains(id)
-                        ? DeckDesign.accent
-                        : const Color(0xff18232e),
-                    border: Border.all(color: const Color(0xff516b7e)),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                  child: selected.contains(id)
-                      ? const DesignIcon(
-                          'check',
-                          size: 10,
-                          color: Color(0xff183245),
-                        )
-                      : null,
-                ),
-              ),
-            ),
-          );
-          return Draggable<List<int>>(
-            data: selected.contains(id) ? selected.toList() : [id],
-            feedback: Material(
-              color: const Color(0xff283a49),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Text(item['title'] as String),
-              ),
-            ),
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 2),
-              decoration: BoxDecoration(
+            const SizedBox(height: 6),
+            Text(
+              '${item['online'] == 0 ? '오프라인' : clockText(Duration(milliseconds: ((item['duration'] as num) * 1000).round()))} · ${p.basename(item['folder'] as String)}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 8,
                 color: isCurrent
-                    ? const Color(0xff283a49)
-                    : hovered
-                    ? const Color(0xff25313c)
-                    : Colors.transparent,
-                border: Border.all(
-                  color: isCurrent
-                      ? const Color(0xff3b5366)
-                      : Colors.transparent,
-                ),
-                borderRadius: BorderRadius.circular(7),
+                    ? const Color(0xff7d9eb3)
+                    : const Color(0xff668397),
               ),
-              child: InkWell(
-                onTap: () => preview(item),
-                onDoubleTap: () => play(item),
-                borderRadius: BorderRadius.circular(7),
+            ),
+            const SizedBox(height: 3),
+            DeckStars(rating: item['rating'] as int?, size: 10, gap: 1),
+            metadata('actors', 'person', '배우', actors, '배우 미등록'),
+            metadata('tags', 'tag', '태그', tags, '태그 없음'),
+          ],
+        );
+        return _HoverTile(
+          builder: (hovered) {
+            final check = Semantics(
+              checked: selected.contains(id),
+              label: '${item['title']} 선택',
+              child: Tooltip(
+                message: '${item['title']} 선택',
+                child: InkWell(
+                  onTap: () => toggle(id),
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: Center(
+                      child: Container(
+                        width: 14,
+                        height: 14,
+                        decoration: BoxDecoration(
+                          color: selected.contains(id)
+                              ? DeckDesign.accent
+                              : const Color(0xff18232e),
+                          border: Border.all(color: const Color(0xff516b7e)),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                        child: selected.contains(id)
+                            ? const DesignIcon(
+                                'check',
+                                size: 10,
+                                color: Color(0xff183245),
+                              )
+                            : null,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+            return Draggable<List<int>>(
+              data: selected.contains(id) ? selected.toList() : [id],
+              feedback: Material(
+                color: const Color(0xff283a49),
                 child: Padding(
-                  padding: grid
-                      ? const EdgeInsets.all(8)
-                      : EdgeInsets.symmetric(
-                          horizontal: small ? 7 : 10,
-                          vertical: small ? 14.5 : 13,
-                        ),
-                  child: grid
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(child: SizedBox.expand(child: thumb)),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Expanded(child: label),
-                                check,
-                              ],
-                            ),
-                          ],
-                        )
-                      : Row(
-                          children: [
-                            SizedBox(
-                              width: 12,
-                              child: Text(
-                                (index + 1).toString().padLeft(2, '0'),
-                                style: TextStyle(
-                                  fontSize: 8,
-                                  color: isCurrent
-                                      ? const Color(0xff88afca)
-                                      : const Color(0xff506b7e),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: small ? 8 : 10),
-                            SizedBox(
-                              width: small ? 70 : 78,
-                              height: small ? 47 : 51,
-                              child: thumb,
-                            ),
-                            SizedBox(width: small ? 8 : 10),
-                            Expanded(child: label),
-                            const SizedBox(width: 4),
-                            check,
-                          ],
-                        ),
+                  padding: const EdgeInsets.all(12),
+                  child: Text(item['title'] as String),
                 ),
               ),
-            ),
-          );
-        },
-      );
-    }
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 2),
+                decoration: BoxDecoration(
+                  color: isCurrent
+                      ? const Color(0xff283a49)
+                      : hovered
+                      ? const Color(0xff25313c)
+                      : Colors.transparent,
+                  border: Border.all(
+                    color: isCurrent
+                        ? const Color(0xff3b5366)
+                        : Colors.transparent,
+                  ),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: Stack(
+                  children: [
+                    InkWell(
+                      onTap: () => preview(item),
+                      onDoubleTap: () => play(item),
+                      borderRadius: BorderRadius.circular(7),
+                      child: Padding(
+                        padding: grid
+                            ? const EdgeInsets.all(8)
+                            : EdgeInsets.fromLTRB(small ? 7 : 10, 10, 32, 10),
+                        child: grid
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: SizedBox.expand(child: thumb),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  label,
+                                ],
+                              )
+                            : Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: small ? 70 : 78,
+                                    height: small ? 47 : 51,
+                                    child: thumb,
+                                  ),
+                                  SizedBox(width: small ? 8 : 10),
+                                  Expanded(child: label),
+                                ],
+                              ),
+                      ),
+                    ),
+                    Positioned(top: 6, right: 6, child: check),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      }
 
-    return grid
-        ? GridView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            itemCount: items.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisExtent: 206,
-              crossAxisSpacing: 6,
-              mainAxisSpacing: 6,
-            ),
-            itemBuilder: tile,
-          )
-        : ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            itemCount: items.length,
-            itemBuilder: tile,
-          );
-  }
+      return grid
+          ? GridView.builder(
+              key: const PageStorageKey('library-grid-scroll'),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              itemCount: items.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisExtent: 206,
+                crossAxisSpacing: 6,
+                mainAxisSpacing: 6,
+              ),
+              itemBuilder: tile,
+            )
+          : ListView.builder(
+              key: const PageStorageKey('library-list-scroll'),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              itemCount: items.length,
+              itemBuilder: tile,
+            );
+    },
+  );
 }
 
 class _HoverTile extends StatefulWidget {

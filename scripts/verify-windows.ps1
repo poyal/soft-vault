@@ -13,7 +13,7 @@ if (-not (Test-Path -LiteralPath $flutterCommand)) {
 Push-Location $repoRoot
 try {
     New-Item -ItemType Directory -Force -Path build/verification | Out-Null
-    Invoke-FlutterCheck 'dependencies' @('pub', 'get')
+    Invoke-FlutterCheck 'dependencies' @('pub', 'get', '--offline')
     Invoke-FlutterCheck 'analyze' @('analyze', '--no-pub')
     Invoke-FlutterCheck 'unit' @('test', '--no-pub', '--exclude-tags', 'load || stress')
     # Separate processes avoid the Windows desktop test runner's second-app startup failure.
@@ -26,9 +26,13 @@ try {
     Invoke-FlutterCheck 'codec-e2e' @('test', 'integration_test/codec_matrix_test.dart', '-d', 'windows', '--no-pub', "--dart-define=CODEC_FIXTURES=$repoRoot/.tools/fixtures/codecs")
     Invoke-FlutterCheck 'ui-scenarios' @('test', 'integration_test/scenario_flow_test.dart', '-d', 'windows', '--no-pub', "--dart-define=VIDEO_FIXTURE=$fixturePath")
     Invoke-FlutterCheck 'privacy-e2e' @('test', 'integration_test/privacy_flow_test.dart', '-d', 'windows', '--no-pub', "--dart-define=VIDEO_FIXTURE=$fixturePath")
+    foreach ($target in @('library_filter_flow_test','playback_history_flow_test','settings_native_review_test','resize_profile_test','metadata_exchange_flow_test')) {
+        Invoke-FlutterCheck $target @('drive', '-d', 'windows', '--profile', '--no-pub', '--driver=integration_test/performance_driver.dart', "--target=integration_test/$target.dart", '--dart-define=INTEGRATION_TEST_SHOULD_REPORT_RESULTS_TO_NATIVE=false', "--dart-define=VIDEO_FIXTURE=$fixturePath")
+    }
     & (Join-Path $PSScriptRoot 'verify-stress-windows.ps1') -VideoFixture $fixturePath
     & (Join-Path $PSScriptRoot 'verify-profile-windows.ps1') -VideoFixture $fixturePath
     & (Join-Path $PSScriptRoot 'verify-profile-windows.ps1') -VideoFixture $fixturePath -NormalUi
+    & (Join-Path $PSScriptRoot 'verify-lifecycle-windows.ps1') -VideoFixture $fixturePath
     Invoke-FlutterCheck 'release' @('build', 'windows', '--release', '--no-pub')
     & (Join-Path $PSScriptRoot 'build-test-report.ps1')
 } finally {

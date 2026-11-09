@@ -11,6 +11,7 @@ import 'package:media_kit/media_kit.dart';
 import 'package:path/path.dart' as p;
 import 'package:soft_vault/main.dart';
 import 'package:soft_vault/library.dart';
+import 'package:soft_vault/settings_panel.dart';
 import 'package:window_manager/window_manager.dart';
 
 void main() {
@@ -37,10 +38,20 @@ void main() {
           await tester.pumpAndSettle();
           expectNativeSurface(tester);
           expect(tester.takeException(), isNull);
-          expect(
-            tester.getSize(find.byKey(const ValueKey('library-sidebar'))).width,
-            size.width <= 1280 ? 340 : 370,
-          );
+          if (name.startsWith('design-settings')) {
+            expect(find.byKey(const ValueKey('library-sidebar')), findsNothing);
+            expect(
+              tester.getSize(find.byType(SettingsPanel)).width,
+              size.width,
+            );
+          } else {
+            expect(
+              tester
+                  .getSize(find.byKey(const ValueKey('library-sidebar')))
+                  .width,
+              size.width <= 1280 ? 340 : 370,
+            );
+          }
           if (name == 'design-library') {
             final stage = tester.getRect(
               find.byKey(const ValueKey('preview-stage')),
@@ -160,7 +171,7 @@ void main() {
           );
           await shot('design-settings-${entry.value}');
         }
-        await tester.tap(find.text('파일'));
+        await tester.tap(find.text('영상으로 돌아가기'));
         await tester.pumpAndSettle();
         await tester.tap(find.byTooltip('검색 · Ctrl/Cmd+K'));
         await shot('design-search');

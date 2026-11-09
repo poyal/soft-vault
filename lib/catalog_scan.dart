@@ -87,17 +87,24 @@ extension _CatalogScan on Library {
                     'resume_ms': 0,
                     'watched': 0,
                     'last_played': 0,
+                    'play_count': 0,
                   },
                 },
                 where: 'id=?',
                 whereArgs: [old['id']],
               );
-              if (changed)
+              if (changed) {
+                batch.delete(
+                  'playback_history',
+                  where: 'media_id=?',
+                  whereArgs: [old['id']],
+                );
                 batch.delete(
                   'bookmarks',
                   where: 'media_id=?',
                   whereArgs: [old['id']],
                 );
+              }
             });
           } else {
             final missing = <Map<String, Object?>>[];

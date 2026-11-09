@@ -5,8 +5,10 @@ Future<void> openSettings(
   WidgetTester tester, [
   String section = '라이브러리',
 ]) async {
-  await tester.tap(find.byTooltip('설정'));
-  await tester.pumpAndSettle();
+  if (find.byKey(ValueKey('settings-section-$section')).evaluate().isEmpty) {
+    await tester.tap(find.byTooltip('설정'));
+    await tester.pumpAndSettle();
+  }
   await tester.tap(find.byKey(ValueKey('settings-section-$section')));
   await tester.pumpAndSettle();
 }

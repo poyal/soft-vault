@@ -1,11 +1,22 @@
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $release = Join-Path $repoRoot 'build/windows/x64/runner/Release'
+$config = Get-Content -Raw -LiteralPath (Join-Path $repoRoot 'assets/update-config.json') | ConvertFrom-Json
+$versionLine = Get-Content -LiteralPath (Join-Path $repoRoot 'pubspec.yaml') | Where-Object { $_ -match '^version: ' }
+if ($config.version -ne ($versionLine -replace '^version: ', '')) { throw 'Run dart run tool/prepare_update.dart --prepare before building.' }
+$builtConfig = Get-Content -Raw -LiteralPath (Join-Path $release 'data/flutter_assets/assets/update-config.json') | ConvertFrom-Json
+if ($builtConfig.version -ne $config.version -or $builtConfig.publicKey -ne $config.publicKey) { throw 'Rebuild app with current update configuration.' }
 if (-not (Test-Path (Join-Path $release 'soft_vault.exe'))) { throw 'Build Windows release first.' }
 foreach ($required in @('tools/ffmpeg.exe','tools/ffprobe.exe','libmpv-2.dll','flutter_windows.dll','data/app.so')) {
   if (-not (Test-Path (Join-Path $release $required))) { throw "Missing bundled runtime: $required" }
 }
 $package = Join-Path $repoRoot 'build/package/SoftVault-Windows'
+if (Test-Path -LiteralPath $package) {
+  if ([IO.Path]::GetFullPath($package) -ne [IO.Path]::GetFullPath((Join-Path $repoRoot 'build/package/SoftVault-Windows'))) { throw 'Unsafe staging path' }
+  Remove-Item -LiteralPath $package -Recurse -Force
+}
+& (Join-Path $repoRoot '.tools/flutter/bin/dart.bat') compile exe (Join-Path $repoRoot 'tool/update_helper.dart') -o (Join-Path $release 'tools/soft_vault_updater.exe')
+if ($LASTEXITCODE -ne 0) { throw 'Updater compilation failed' }
 New-Item -ItemType Directory -Force -Path (Join-Path $package 'app') | Out-Null
 Copy-Item -Path (Join-Path $release '*') -Destination (Join-Path $package 'app') -Recurse -Force
 # The root manifest is a development-side file with an absolute workspace path.

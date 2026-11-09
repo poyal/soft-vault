@@ -13,7 +13,7 @@ foreach ($entry in $manifest) {
 }
 $installed = Join-Path $smokeRoot 'installed/bin'
 & (Join-Path $packageRoot 'Install.ps1') -Destination $installed -NoShortcut
-$report = Join-Path $repoRoot 'build/e2e/installed-results.json'
+$report = Join-Path $smokeRoot 'installed-results.json'
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $report) | Out-Null
 $launchArgs = @('--verify-install', ('"' + $report + '"'), ('"' + $fixture + '"'), ('"' + (Join-Path $repoRoot '.tools/fixtures/codecs') + '"'))
 $savedPath = $env:PATH
@@ -39,12 +39,16 @@ try {
   }
   $result = Get-Content -LiteralPath $report -Raw | ConvertFrom-Json
   if (-not $result.passed) { throw 'Installed application reported a failed check.' }
+  if ([IO.Path]::GetFullPath($result.executable) -ne [IO.Path]::GetFullPath((Join-Path $installed 'soft_vault.exe'))) {
+    throw 'Installed report does not belong to this isolated installation.'
+  }
   $result | Add-Member -NotePropertyName 'packageHashesVerified' -NotePropertyValue $manifest.Count
   $result | Add-Member -NotePropertyName 'pathContainsDevelopmentTools' -NotePropertyValue $false
   $result | Add-Member -NotePropertyName 'developmentSqliteUnavailable' -NotePropertyValue $true
   $result | Add-Member -NotePropertyName 'packageSHA256' -NotePropertyValue (Get-FileHash -LiteralPath (Join-Path $repoRoot 'build/package/SoftVault-Windows.zip') -Algorithm SHA256).Hash
   $result | Add-Member -NotePropertyName 'verifiedAtUTC' -NotePropertyValue ([DateTime]::UtcNow.ToString('o'))
   $result | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $report -Encoding UTF8
+  Copy-Item -LiteralPath $report -Destination (Join-Path $repoRoot 'build/e2e/installed-results.json') -Force
   Get-Content -LiteralPath $report
 } finally {
   $env:PATH = $savedPath

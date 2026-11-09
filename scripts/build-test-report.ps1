@@ -10,7 +10,7 @@ function Read-Result([string]$Relative, [switch]$Optional) {
     $parsed = Get-Content -LiteralPath $path -Raw -Encoding UTF8 | ConvertFrom-Json
     foreach ($item in $parsed) { $item }
 }
-$runs = @('unit','stress','performance','library-e2e','catalog-e2e','playback-e2e','app-playback-e2e','extended-e2e','design-e2e','codec-e2e','ui-scenarios','native-stress','privacy-e2e') | ForEach-Object {
+$runs = @('unit','stress','performance','library-e2e','catalog-e2e','playback-e2e','app-playback-e2e','extended-e2e','design-e2e','codec-e2e','ui-scenarios','native-stress','privacy-e2e','library_filter_flow_test','playback_history_flow_test','settings_native_review_test','resize_profile_test','metadata_exchange_flow_test') | ForEach-Object {
     $path = Join-Path $folder "$_.log"
     $log = Get-Content -LiteralPath $path -Raw -Encoding UTF8
     $matches = [regex]::Matches($log, '\+(\d+)(?:\s+~(\d+))?: All tests passed!')
@@ -36,7 +36,8 @@ $report = [ordered]@{
     Optimized1000 = Read-Result 'build/verification/load-optimized-1000.json' -Optional
     Load10000 = Read-Result 'build/verification/load-optimized-10000.json'
     Catalog50000 = Read-Result 'build/verification/catalog-50000.json'
-    Limits = 'Windows on this PC. Native UI timings are debug mode, not release FPS. Scan fixtures are tiny unique files, not a 10000-video decoding workload. OS choosers are substituted. Disk-full is injected; crash recovery exits a separate real process. No multi-hour soak, physical drive removal, speaker/HDR measurement or Mac verification.'
+    Shutdown = @(Read-Result 'build/shutdown-probes/candidate.json')
+    Limits = 'Windows on this PC. Native UI suites use debug and profile builds; timings are not release FPS. Optional baseline and resource samples are historical context, not current candidate measurements. Scan fixtures are tiny unique files, not a 10000-video decoding workload. OS choosers are substituted. Disk-full is injected; crash recovery exits a separate real process. No multi-hour soak, physical drive removal, speaker/HDR measurement or Mac verification.'
 }
 foreach ($group in @('UiScenarios','Stress','NativeStress','Privacy')) {
     if (@($report[$group] | Where-Object { -not $_.passed }).Count -gt 0) { throw "Failed scenario in $group" }
@@ -54,6 +55,15 @@ if ($report.ProfileStress.Count -eq 3 -and $report.ProfileUi.phases.Count -eq 4 
     (Get-Content -Raw -Encoding UTF8 $uiProfileLog).Contains('All tests passed.')) {
     $report.ProfileTestRuns = 4
 }
+if ($report.ProfileTestRuns -ne 4) { throw 'Missing or failing required profile checks' }
+if ($report.Shutdown.Count -ne 18 -or @($report.Shutdown | Where-Object {
+    $_.exitCode -ne 0 -or $_.timeout -or -not $_.withinCloseBudget -or -not $_.positionPreserved
+}).Count -ne 0) { throw 'Missing or failing shutdown probes' }
+$helperLog = Get-Content -LiteralPath (Join-Path $folder 'update-helper.log') -Raw -Encoding UTF8
+foreach ($scenario in @('install','rollback','invalid-signature','corrupt-package','unsafe-archive')) {
+    if (-not $helperLog.Contains("${scenario}: PASS")) { throw "Missing updater result: $scenario" }
+}
+$report.Updater = '5 isolated cases passed: install, startup rollback, invalid signature, corrupt package, unsafe archive'
 $json = $report | ConvertTo-Json -Depth 12
 [IO.File]::WriteAllText((Join-Path $folder 'test-report.json'), $json, [Text.UTF8Encoding]::new($false))
 $rows = ($runs | ForEach-Object { "<tr><td>$($_.Suite)</td><td>$($_.Tests)</td><td>PASS</td><td><a href='$($_.Log)'>log</a></td></tr>" }) -join "`n"
@@ -83,7 +93,8 @@ $frameRows = @($report.ProfileUi.phases | ForEach-Object {
 $html = @"
 <!doctype html><html lang='en'><meta charset='utf-8'><title>Soft Vault verification</title>
 <style>body{font:16px system-ui;max-width:1100px;margin:40px auto;background:#17222d;color:#d5e1ea}table{border-collapse:collapse;width:100%}td,th{padding:10px;border-bottom:1px solid #3b5366;text-align:left}a{color:#87b8d8}pre{white-space:pre-wrap;background:#203242;padding:20px;border-radius:8px}p{line-height:1.6}</style>
-<h1>Soft Vault Windows verification</h1><p>$($report.TestCount) tests passed. Generated $($report.Generated)</p>
+<h1>Soft Vault Windows verification</h1><p>$($report.TestCount) passing test-runner entries (native totals can include tearDownAll). Generated $($report.Generated)</p>
+<p>18 native process shutdown probes and 5 isolated updater cases passed.</p>
 <p>$($report.ProfileTestRuns) optimized profile checks also passed: the three stress workloads repeated in profile mode, plus normal four-video UI navigation, dialogs and playback.</p>
 <table><tr><th>Suite</th><th>Test cases</th><th>Result</th><th>Evidence</th></tr>$rows</table>
 <h2>Same 1000-file workload, before and after</h2><table><tr><th>Operation</th><th>Before</th><th>After</th><th>Speedup</th></tr>$($performanceRows -join "`n")</table>

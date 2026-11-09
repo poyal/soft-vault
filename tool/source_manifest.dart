@@ -8,6 +8,7 @@ Future<void> main(List<String> arguments) async {
   final paths = <String>{};
   for (final path in [
     'lib',
+    'assets',
     'test',
     'integration_test',
     'scripts',

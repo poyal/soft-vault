@@ -41,7 +41,12 @@ void main() {
     await root.delete(recursive: true);
   });
   test('v2 SQLite migrates in place without losing metadata', () async {
-    for (final table in ['bookmarks', 'collections', 'move_rules']) {
+    for (final table in [
+      'bookmarks',
+      'collections',
+      'move_rules',
+      'playback_history',
+    ]) {
       await library.db.execute('DROP TABLE $table');
     }
     for (final column in [
@@ -49,6 +54,7 @@ void main() {
       'watched',
       'last_played',
       'custom_thumbnail',
+      'play_count',
     ]) {
       await library.db.execute('ALTER TABLE media DROP COLUMN $column');
     }
@@ -57,7 +63,7 @@ void main() {
     library = await Library.open(p.join(root.path, 'db.sqlite'));
     expect(
       (await library.db.rawQuery('PRAGMA user_version')).single.values.single,
-      3,
+      4,
     );
     expect((await library.mediaById(id))['note'], '개인 메모');
     expect((await library.mediaById(id))['resume_ms'], 0);

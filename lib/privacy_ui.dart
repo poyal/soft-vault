@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:window_manager/window_manager.dart';
+import 'window_lifecycle.dart';
 import 'design.dart';
 import 'privacy_lock.dart';
 
@@ -132,7 +132,7 @@ class _PrivacyGateState extends State<PrivacyGate> {
                     ),
                   const SizedBox(height: 12),
                   TextButton(
-                    onPressed: () => windowManager.destroy(),
+                    onPressed: closeAppWindow,
                     child: const Text('앱 종료'),
                   ),
                 ],
@@ -288,7 +288,7 @@ class _PrivacyFormState extends State<PrivacyForm> {
         PrivacyFormMode.setup => '앱 시작 비밀번호 설정',
         PrivacyFormMode.change => '비밀번호 변경',
         PrivacyFormMode.disable => '비밀번호 잠금 해제',
-      }, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+      }, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
       const SizedBox(height: 12),
       Text(
         creates
@@ -310,12 +310,15 @@ class _PrivacyFormState extends State<PrivacyForm> {
         field(next, '새 비밀번호', 'privacy-new', autofocus: !asksCurrent),
         field(confirmation, '새 비밀번호 확인', 'privacy-confirm'),
       ],
-      CheckboxListTile(
-        contentPadding: EdgeInsets.zero,
-        dense: true,
-        title: const Text('비밀번호 표시'),
-        value: visible,
-        onChanged: busy ? null : (value) => setState(() => visible = value!),
+      Material(
+        type: MaterialType.transparency,
+        child: CheckboxListTile(
+          contentPadding: EdgeInsets.zero,
+          dense: true,
+          title: const Text('비밀번호 표시'),
+          value: visible,
+          onChanged: busy ? null : (value) => setState(() => visible = value!),
+        ),
       ),
       if (error != null)
         Padding(
@@ -389,7 +392,7 @@ class _PrivacySettingsState extends State<PrivacySettings> {
     children: [
       const Text(
         '앱 시작 비밀번호',
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
       ),
       const SizedBox(height: 10),
       const Text(

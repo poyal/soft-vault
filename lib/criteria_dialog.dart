@@ -76,6 +76,13 @@ class _CriteriaDialogState extends State<CriteriaDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (widget.initial.filters.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  widget.initial.filters.map((f) => f.summary).join(' · '),
+                ),
+              ),
             TextField(
               controller: name,
               decoration: const InputDecoration(labelText: '이름'),
@@ -226,6 +233,7 @@ class _CriteriaDialogState extends State<CriteriaDialog> {
                     CriteriaDraft(
                       name.text,
                       MediaCriteria(
+                        filters: widget.initial.filters,
                         query: query.text,
                         tags: tags.text,
                         actor: actor.text,

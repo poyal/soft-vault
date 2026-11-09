@@ -1,5 +1,19 @@
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
+Future<void> upgradePlaybackHistory(Database db) async {
+  await db.execute(
+    'ALTER TABLE media ADD COLUMN play_count INTEGER NOT NULL DEFAULT 0 CHECK(play_count >= 0)',
+  );
+  await db.execute(
+    '''CREATE TABLE playback_history (
+    id INTEGER PRIMARY KEY, media_id INTEGER NOT NULL,
+    started_at INTEGER NOT NULL, start_position_ms INTEGER NOT NULL CHECK(start_position_ms >= 0))''',
+  );
+  await db.execute(
+    'CREATE INDEX playback_history_media ON playback_history(media_id, started_at DESC, id DESC)',
+  );
+}
+
 Future<void> upgradeFeatures(Database db) async {
   for (final declaration in [
     'resume_ms INTEGER NOT NULL DEFAULT 0',

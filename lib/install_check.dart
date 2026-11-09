@@ -14,6 +14,9 @@ import 'advanced_catalog.dart';
 import 'nfo_service.dart';
 import 'rule_runner.dart';
 import 'privacy_lock.dart';
+import 'playback_history.dart';
+import 'library_filter.dart';
+import 'metadata_exchange.dart';
 
 /// Installer verification uses temporary data and never opens the user's catalog.
 Future<void> verifyInstalledApp(
@@ -83,6 +86,28 @@ Future<void> verifyInstalledApp(
       'tags': 'installed-check',
     });
     final mediaId = item['id'] as int;
+    await library.recordPlayback(mediaId, DateTime.now(), Duration.zero);
+    final exchange = MetadataExchange(library);
+    final request = await exchange.create();
+    final response = jsonDecode(exchange.encode(request));
+    response['videos'][0]['description'] = '설치 사본 AI 정보 교환';
+    await exchange.apply(exchange.parse(jsonEncode(response), request), {
+      mediaId: {'description'},
+    });
+    if ((await library.mediaById(mediaId))['description'] != '설치 사본 AI 정보 교환' ||
+        (await library.playbackHistory(mediaId)).length != 1 ||
+        (await library.items(
+              filters: [
+                LibraryFilter(playback: PlaybackFilter.played, rating: 5),
+              ],
+            )).length !=
+            1 ||
+        (await library.items(
+          filters: [LibraryFilter(playback: PlaybackFilter.unplayed)],
+        )).isNotEmpty) {
+      throw StateError('Installed metadata exchange/playback filter failed');
+    }
+    report['metadataExchangeAndPlaybackHistory'] = true;
     await library.saveResume(
       mediaId,
       const Duration(seconds: 5),
@@ -119,6 +144,8 @@ Future<void> verifyInstalledApp(
     if (restored['rating'] != 5 || restored['folder'] != destination.path)
       throw StateError('Catalog move/persistence failure');
     if (restored['resume_ms'] != 5000 ||
+        restored['play_count'] != 1 ||
+        (await library.playbackHistory(mediaId)).length != 1 ||
         restored['custom_thumbnail'] != 1 ||
         (await library.bookmarks(mediaId)).single['note'] != '한글 메모\n둘째 줄' ||
         (await library.matching(

@@ -1,4 +1,6 @@
+import 'settings_components.dart';
 import 'design.dart';
+import 'update_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'key_bindings.dart';
@@ -6,6 +8,7 @@ import 'privacy_lock.dart';
 import 'privacy_ui.dart';
 
 class SettingsPanel extends StatefulWidget {
+  final Future<void> Function()? installUpdate;
   final PrivacyLock? privacy;
   final Future<void> Function()? lockNow;
   final KeyBindings keys;
@@ -17,6 +20,7 @@ class SettingsPanel extends StatefulWidget {
   final bool busy;
   const SettingsPanel({
     super.key,
+    this.installUpdate,
     this.privacy,
     this.lockNow,
     required this.keys,
@@ -37,6 +41,13 @@ class SettingsPanel extends StatefulWidget {
 }
 
 class _SettingsPanelState extends State<SettingsPanel> {
+  Future<T?> settingsDialog<T>({
+    required BuildContext context,
+    required WidgetBuilder builder,
+  }) => showDeckDialog<T>(
+    context: context,
+    builder: (dialogContext) => SettingsTheme(child: builder(dialogContext)),
+  );
   final presetName = TextEditingController(text: '내 단축키');
   Map<String, dynamic> presets = {};
   String? message;
@@ -64,7 +75,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
     widget.capturing(true);
     String? error;
     try {
-      await showDeckDialog<void>(
+      await settingsDialog<void>(
         context: context,
         builder: (context) => StatefulBuilder(
           builder: (context, update) => Focus(
@@ -118,7 +129,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
 
   String tab = '라이브러리';
   Future<void> managePresets() async {
-    await showDeckDialog<void>(
+    await settingsDialog<void>(
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, update) => AlertDialog(
@@ -200,42 +211,51 @@ class _SettingsPanelState extends State<SettingsPanel> {
   }
 
   Widget section(String title, String description, List<Widget> children) =>
-      Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(bottom: 18),
-        padding: const EdgeInsets.all(22),
-        decoration: BoxDecoration(
-          color: const Color(0xff1c2935),
-          border: Border.all(color: DeckDesign.line),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              style: const TextStyle(
-                fontSize: 12,
-                height: 1.7,
-                color: DeckDesign.muted,
-              ),
-            ),
-            const SizedBox(height: 18),
-            Wrap(spacing: 10, runSpacing: 10, children: children),
-          ],
-        ),
+      SettingsSection(
+        title: title,
+        description: description,
+        children: [
+          for (var i = 0; i < children.length; i++)
+            children[i] is SettingsRow
+                ? children[i]
+                : SettingsRow(
+                    title: switch (title) {
+                      '연결 폴더' => i == 0 ? '새 폴더 추가' : '연결된 폴더 관리',
+                      '재생 기본 동작' => i == 0 ? '시작 음량' : '재생 위치 기억',
+                      '선택한 영상' => '외부 플레이어',
+                      '카탈로그와 기록 백업' => '기록 내보내기',
+                      '백업 복원' => '저장한 기록 불러오기',
+                      _ => title,
+                    },
+                    control: children[i],
+                  ),
+        ],
       );
 
-  Widget action(String label, String id, {bool enabled = true}) =>
-      OutlinedButton(
-        onPressed: enabled && !widget.busy ? () => widget.action(id) : null,
-        child: Text(label),
-      );
+  Widget action(String label, String id, {bool enabled = true}) => SettingsRow(
+    title:
+        const {
+          'grid': '보기 방식',
+          'selectAll': '파일 선택',
+          'collection': '컬렉션',
+          'organize': '정리 도구',
+          'history': '작업 기록',
+          'rescan': '폴더 갱신',
+          'resume': '이어서 보기',
+          'restart': '재생 위치',
+          'decoder': '재생 옵션',
+          'scenes': '장면 관리',
+          'thumbnail': '미리보기 이미지',
+          'nfoImport': '메타데이터 읽기',
+          'nfoExport': '메타데이터 저장',
+        }[id] ??
+        '영상 작업',
+    description: !enabled ? '영상을 먼저 선택해 주세요.' : null,
+    control: OutlinedButton(
+      onPressed: enabled && !widget.busy ? () => widget.action(id) : null,
+      child: Text(label),
+    ),
+  );
 
   List<Widget> get librarySettings => [
     section(
@@ -330,9 +350,9 @@ class _SettingsPanelState extends State<SettingsPanel> {
       constraints: const BoxConstraints(minHeight: 84),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xff1e3a4e),
-        border: Border.all(color: const Color(0xff45667e)),
-        borderRadius: BorderRadius.circular(9),
+        color: DeckDesign.surface,
+        border: Border.all(color: DeckDesign.line),
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
         children: [
@@ -355,7 +375,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xff25352f),
+              color: DeckDesign.surface,
               borderRadius: BorderRadius.circular(5),
             ),
             child: const Text(
@@ -379,10 +399,10 @@ class _SettingsPanelState extends State<SettingsPanel> {
         ),
         const SizedBox(width: 10),
         SizedBox(
-          height: 28,
+          height: 36,
           child: OutlinedButton(
             onPressed: managePresets,
-            child: const Text('표준 + 왼손 보조', style: TextStyle(fontSize: 10)),
+            child: const Text('표준 + 왼손 보조'),
           ),
         ),
         const Spacer(),
@@ -470,77 +490,139 @@ class _SettingsPanelState extends State<SettingsPanel> {
       ),
   ];
 
+  static const sections = ['라이브러리', '재생', '단축키', '사생활 보호', '백업', '앱 정보 · 업데이트'];
   @override
-  Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, bounds) => Padding(
-      padding: EdgeInsets.fromLTRB(
-        bounds.maxWidth < 800 ? 28 : 48,
-        28,
-        bounds.maxWidth < 800 ? 28 : 48,
-        0,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Expanded(
-                child: Text(
-                  '설정',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
-                ),
-              ),
-              TextButton.icon(
-                onPressed: widget.close,
-                icon: const Icon(Icons.arrow_back, size: 16),
-                label: const Text('영상으로 돌아가기'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            '폴더, 재생, 단축키, 사생활 보호와 백업을 한곳에서 관리하세요.',
-            style: TextStyle(fontSize: 12, color: DeckDesign.muted),
-          ),
-          const SizedBox(height: 24),
-          Wrap(
-            spacing: 10,
-            runSpacing: 8,
-            children: [
-              for (final name in ['라이브러리', '재생', '단축키', '사생활 보호', '백업'])
-                ChoiceChip(
-                  key: ValueKey('settings-section-$name'),
-                  label: Text(name),
-                  selected: tab == name,
-                  showCheckmark: false,
-                  onSelected: (_) => setState(() => tab = name),
-                ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Expanded(
-            child: SingleChildScrollView(
-              key: ValueKey('settings-body-$tab'),
-              padding: const EdgeInsets.only(bottom: 28),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: switch (tab) {
-                  '사생활 보호' => [
-                    PrivacySettings(
-                      privacy: widget.privacy,
-                      lockNow: widget.lockNow,
+  Widget build(BuildContext context) => SettingsTheme(
+    child: LayoutBuilder(
+      builder: (context, bounds) {
+        final padding = bounds.maxWidth < 1200 ? 24.0 : 32.0;
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: padding, vertical: 20),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      '설정',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ],
-                  '재생' => playbackSettings,
-                  '단축키' => shortcutSettings,
-                  '백업' => backupSettings,
-                  _ => librarySettings,
-                },
+                  ),
+                  TextButton.icon(
+                    onPressed: widget.close,
+                    icon: const Icon(Icons.arrow_back, size: 16),
+                    label: const Text('영상으로 돌아가기'),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
+            const Divider(height: 1, color: DeckDesign.line),
+            Expanded(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    width: 200,
+                    decoration: const BoxDecoration(
+                      border: Border(right: BorderSide(color: DeckDesign.line)),
+                    ),
+                    child: ListView(
+                      padding: const EdgeInsets.all(12),
+                      children: [
+                        for (final name in sections)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: ListTile(
+                              key: ValueKey('settings-section-$name'),
+                              dense: true,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              title: Text(
+                                name,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: tab == name
+                                      ? DeckDesign.text
+                                      : DeckDesign.muted,
+                                ),
+                              ),
+                              selected: tab == name,
+                              selectedTileColor: DeckDesign.surface,
+                              onTap: () => setState(() => tab = name),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 944),
+                        child: SingleChildScrollView(
+                          key: PageStorageKey('settings-body-$tab'),
+                          padding: EdgeInsets.all(padding),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 24),
+                                child: Text(
+                                  tab,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              ...switch (tab) {
+                                '재생' => playbackSettings,
+                                '단축키' => [
+                                  SettingsSection(
+                                    title: '키보드 단축키',
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: shortcutSettings,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                                '사생활 보호' => [
+                                  SettingsSection(
+                                    title: '앱 접근 보호',
+                                    children: [
+                                      PrivacySettings(
+                                        privacy: widget.privacy,
+                                        lockNow: widget.lockNow,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                                '백업' => backupSettings,
+                                '앱 정보 · 업데이트' => [
+                                  UpdateSettings(install: widget.installUpdate),
+                                ],
+                                _ => librarySettings,
+                              },
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     ),
   );
 }

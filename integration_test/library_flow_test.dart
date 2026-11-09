@@ -9,6 +9,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:path/path.dart' as p;
 import 'package:soft_vault/library.dart';
+import 'package:soft_vault/file_list.dart';
 import 'package:soft_vault/main.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -37,6 +38,24 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
+        final home = tester.state(find.byType(VaultHome)) as dynamic;
+        final currentId = home.current?['id'];
+        final check = find.byTooltip('sample 선택');
+        await tester.tap(check);
+        await tester.pump();
+        expect(
+          tester.widget<VaultFileList>(find.byType(VaultFileList)).selected,
+          hasLength(1),
+        );
+        await tester.tap(check);
+        await tester.pump();
+        expect(
+          tester.widget<VaultFileList>(find.byType(VaultFileList)).selected,
+          isEmpty,
+        );
+        await tester.pump(const Duration(milliseconds: 350));
+        expect(home.current?['id'], currentId);
+        expect(home.player.state.playing, isFalse);
         await tester.tap(find.text('sample').last);
         await tester.pumpAndSettle();
         for (final size in [const Size(1440, 900), const Size(1280, 800)]) {
