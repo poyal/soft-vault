@@ -21,7 +21,20 @@ Future<void> waitNativeMinimized(WidgetTester tester) async {
 Future<void> restoreNativeWindow(WidgetTester tester) async {
   await tester.runAsync(() async {
     await windowManager.restore();
-    await Future<void>.delayed(const Duration(milliseconds: 500));
+    await windowManager.show();
+    await windowManager.focus();
+    // restore only deminiaturizes on macOS. A hidden/occluded launch can still
+    // suspend Flutter frames, so establish a real visible surface before pump.
+    for (var i = 0; i < 100; i++) {
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      if (tester.binding.lifecycleState == ui.AppLifecycleState.resumed) return;
+    }
+    fail(
+      'Native window did not resume within 10 seconds: '
+      '${tester.binding.lifecycleState}; '
+      'visible=${await windowManager.isVisible()}, '
+      'minimized=${await windowManager.isMinimized()}',
+    );
   });
 }
 
