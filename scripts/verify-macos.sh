@@ -35,4 +35,5 @@ for target in stress_flow ui_latency library_filter_flow playback_history_flow s
     --driver=integration_test/performance_driver.dart "--target=integration_test/${target}_test.dart" \
     --dart-define=INTEGRATION_TEST_SHOULD_REPORT_RESULTS_TO_NATIVE=false "--dart-define=VIDEO_FIXTURE=$fixture"
 done
+bash scripts/verify-lifecycle-macos.sh "$fixture"
 check release build macos --release --no-pub

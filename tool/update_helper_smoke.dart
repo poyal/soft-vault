@@ -6,6 +6,14 @@ import 'package:cryptography/cryptography.dart';
 import 'package:path/path.dart' as p;
 
 Future<void> main() async {
+  final suffix = Platform.isWindows ? '.exe' : '';
+  final platform = Platform.isWindows ? 'windows-x64' : 'macos-arm64';
+  final prefix = Platform.isWindows
+      ? 'SoftVault-Windows/app'
+      : 'SoftVault-macOS-arm64/Soft Vault.app';
+  final executable = Platform.isWindows
+      ? 'soft_vault.exe'
+      : 'Contents/MacOS/Soft Vault';
   await Directory('build/update-smoke').create(recursive: true);
   for (final scenario in [
     'install',
@@ -21,20 +29,30 @@ Future<void> main() async {
         root = Directory(p.join(base, 'data', 'updates'));
     await target.create();
     await root.create(recursive: true);
-    final fixture = await File('build/update_fixture.exe').readAsBytes();
-    await File(p.join(target.path, 'soft_vault.exe')).writeAsBytes(fixture);
+    final fixture = await File('build/update_fixture$suffix').readAsBytes();
+    final oldExe = File(p.join(target.path, executable));
+    await oldExe.parent.create(recursive: true);
+    await oldExe.writeAsBytes(fixture);
+    if (!Platform.isWindows) {
+      final chmod = await Process.run('/bin/chmod', ['755', oldExe.path]);
+      if (chmod.exitCode != 0) throw StateError('Fixture permissions failed');
+    }
     await File(p.join(target.path, 'old-marker')).writeAsString('old');
     await File(p.join(data.path, 'vault.sqlite')).writeAsString('catalog');
     final archive = Archive()
       ..addFile(
-        ArchiveFile.bytes('SoftVault-Windows/app/soft_vault.exe', fixture),
+        ArchiveFile.bytes('$prefix/$executable', fixture)
+          ..mode = 0x1ed,
       );
     if (scenario == 'rollback')
-      archive.addFile(ArchiveFile.string('SoftVault-Windows/app/fail', 'fail'));
-    if (scenario == 'unsafe-archive') {
       archive.addFile(
-        ArchiveFile.string('SoftVault-Windows/app/../escaped-marker', 'bad'),
+        ArchiveFile.string(
+          '$prefix/${p.posix.dirname(executable)}/fail',
+          'fail',
+        ),
       );
+    if (scenario == 'unsafe-archive') {
+      archive.addFile(ArchiveFile.string('$prefix/../escaped-marker', 'bad'));
     }
     final zip = ZipEncoder().encode(archive);
     await File(p.join(root.path, 'package.zip')).writeAsBytes(zip);
@@ -42,7 +60,7 @@ Future<void> main() async {
       jsonEncode({
         'version': '0.2.0',
         'platforms': {
-          'windows-x64': {
+          platform: {
             'size': zip.length,
             'sha256': sha256.convert(zip).toString(),
           },
@@ -65,7 +83,7 @@ Future<void> main() async {
       ).writeAsBytes([zip.first ^ 1, ...zip.skip(1)]);
     }
     final result =
-        await Process.run(p.absolute('build/soft_vault_updater.exe'), [
+        await Process.run(p.absolute('build/soft_vault_updater$suffix'), [
           root.path,
           target.path,
           data.path,
