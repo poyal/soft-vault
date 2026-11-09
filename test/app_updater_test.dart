@@ -43,7 +43,7 @@ void main() {
       const prefix =
           'https://github.com/poyal/soft-vault/releases/download/v0.2.0';
       final asset = {
-        'url': '$prefix/package.zip',
+        'url': '$prefix/package.svupdate',
         'size': payload.length,
         'sha256': sha256.convert(payload).toString(),
       };
@@ -78,7 +78,7 @@ void main() {
           response.write(signature);
         } else if (request.uri.path.endsWith('/update.json')) {
           response.add(manifest);
-        } else if (request.uri.path.endsWith('/package.zip')) {
+        } else if (request.uri.path.endsWith('/package.svupdate')) {
           response.add(
             corrupt ? [payload.first ^ 1, ...payload.skip(1)] : payload,
           );

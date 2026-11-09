@@ -1,6 +1,6 @@
 # 릴리즈와 설치 검증 가이드
 
-Windows x64 ZIP과 `Install.ps1`, Apple Silicon Mac ZIP을 위한 준비·검증·패키징 스크립트가 있다. 실제 통과와 게시 상태는 후보별 검증 기록으로 판단한다. GitHub 게시와 두 OS 결과 취합은 수동 절차이며 버전별 실행 잠금은 아직 없다.
+Windows x64 설치 EXE와 Apple Silicon Mac DMG를 배포한다. 내부 ZIP은 설치 파일 제작·업데이트 payload 검증에만 사용하고 공개 릴리즈에는 올리지 않는다. 실제 통과와 게시 상태는 후보별 검증 기록으로 판단한다. GitHub 게시와 두 OS 결과 취합은 수동 절차이며 버전별 실행 잠금은 아직 없다.
 
 ## 1. 후보와 출처
 
@@ -49,7 +49,14 @@ Get-FileHash -LiteralPath build/package/SoftVault-Windows.zip -Algorithm SHA256
 
 설치 검증은 ZIP 해시 목록을 확인하고 새 `build/install-smoke/<ID>/` 아래에 `Install.ps1 -NoShortcut`으로 복사 설치한다. 개발 도구를 제외한 PATH와 개발 SQLite DLL 격리 상태에서 배포 실행 파일을 실행한다. 임시 DB로 비밀번호·카탈로그·이동·확장 기능·재생·코덱을 확인하고 `installed-results.json`에 ZIP 해시를 남긴다. 완료 후 개발 SQLite DLL이 복원됐는지도 확인한다. 다른 빌드·테스트와 동시에 실행하지 않는다.
 
-이 검사는 최종 Release 앱의 설치 사본 진단이다. 전체 UI E2E가 모두 최종 ZIP을 대상으로 수행된다는 뜻은 아니다. 일반 바로가기 생성, 깨끗한 Windows 계정의 설치 경고, 실제 구버전 업그레이드, 제거 수명주기는 별도 검사다. 현재 NSIS/MSIX 설치 EXE나 제거 등록은 제공하지 않는다.
+이 검사는 최종 Release 앱의 설치 사본 진단이다. 전체 UI E2E가 모두 최종 ZIP을 대상으로 수행된다는 뜻은 아니다. 이어서 Inno Setup 7.1.1로 실제 설치 EXE를 만들고 검증한다. 컴파일러는 공식 배포본의 서명을 확인한 뒤 `.tools/inno`에 준비한다.
+
+```powershell
+& .\scripts\package-installer-windows.ps1
+& .\scripts\verify-installer-windows.ps1 -SetupExe build/package/SoftVault-0.2.0-Windows-x64-Setup.exe -VideoFixture $fixture
+```
+
+EXE 검사는 기존 등록 설치본과 같은 이름의 바로가기가 없는 시험 계정에서 실행한다. 새 설치·재설치·시작 메뉴·제거 등록·파일 해시·실제 재생·제거 및 시험 데이터 보존을 확인한다. 앱은 `bin`, 제거 프로그램은 형제 `uninstall` 폴더에 설치하여 업데이트의 `bin` 교체 이후에도 제거 등록을 유지한다. 깨끗한 계정의 설치 경고와 실제 구 배포본 전체 업그레이드는 별도 검사다.
 
 ## 4. 데이터 보존과 업그레이드
 
@@ -65,7 +72,7 @@ Get-FileHash -LiteralPath build/package/SoftVault-Windows.zip -Algorithm SHA256
 
 검증한 ZIP과 SHA-256 파일을 실행별 후보 경로에 복사해 고정한다. 게시 전 그 ZIP 해시와 설치 검증의 `packageSHA256`이 같은지 확인한다. 게시용 파일을 다시 압축하거나 재빌드했다면 다른 바이트의 새 후보이므로 영향받는 검증을 다시 한다.
 
-현재 이름은 `SoftVault-Windows.zip`이다. 공개용 이름에 버전·아키텍처를 넣으려면 압축 내용을 바꾸지 않고 복사하고, 새 파일명을 가리키는 체크섬을 작성한다. 공개 파일 이름·크기·해시·서명 상태를 [릴리즈 노트](templates/release-notes.md)에 기록한다. 현재 Windows 서명 절차는 없으며 서명·SmartScreen 승인을 주장하지 않는다.
+공개 설치 파일은 `SoftVault-<버전>-Windows-x64-Setup.exe`, `SoftVault-<버전>-macOS-arm64.dmg`와 각 `.sha256`이다. 업데이트 payload는 검증한 ZIP과 동일한 바이트를 `.svupdate` 이름으로 복사한다. 공개 파일 이름·크기·해시·서명 상태를 [릴리즈 노트](templates/release-notes.md)에 기록한다. 현재 Windows 서명 절차는 없으며 서명·SmartScreen 승인을 주장하지 않는다.
 
 게시가 요청된 작업에서는 실제 저장소·태그·기존 자산을 조회한 뒤 검증한 동일 파일을 게시한다. 기존 태그를 옮기거나 같은 이름의 다른 파일로 교체하지 않는다. 릴리즈에서 재다운로드하여 크기·SHA-256을 확인한 뒤에만 게시 완료로 기록한다. 비공개 저장소의 릴리즈는 접근 권한이 필요하며 저장소 공개 전환을 의미하지 않는다. 통신 실패는 동일 파일로 재개하고, 로컬 설치 성공을 배포 성공으로 바꾸지 않는다.
 
@@ -78,6 +85,8 @@ bash scripts/prepare-media-macos.sh
 bash scripts/verify-macos.sh "$PWD/.tools/fixtures/trailer.mp4"
 bash scripts/package-macos.sh
 bash scripts/verify-install-macos.sh "$PWD/.tools/fixtures/trailer.mp4"
+bash scripts/package-dmg-macos.sh
+bash scripts/verify-dmg-macos.sh "$PWD/build/package/SoftVault-0.2.0-macOS-arm64.dmg" "$PWD/.tools/fixtures/trailer.mp4"
 ```
 
 동일 코덱 fixture 묶음을 `.tools/fixtures/codecs`에 먼저 준비한다. `prepare-media-macos.sh`는 고정 공급처 커밋의 ZIP 체크섬을 검사한다. 공급처 경로 이름은 v8.0이지만 실제 바이너리가 보고하는 FFmpeg 버전은 7.0이다.
@@ -106,7 +115,9 @@ $env:SOFT_VAULT_UPDATE_KEY = '안전하게 보관한 개인키 파일 경로'
 & .tools/flutter/bin/dart.bat run tool/sign_update.dart sign build/package/update.json
 ```
 
-릴리즈에는 기존 ZIP·체크섬과 `update.json`, `update.json.sig`를 함께 올린다. 모든 파일 검증 후 정식 릴리즈로 공개한다. 사전 공개 버전은 앱에서 설치하지 않는다. 서명 키와 앱 공개키가 일치하지 않으면 서명이 실패한다.
+prepare_update는 플랫폼별 `.svupdate`를 만들고 그 URL·크기·SHA-256을 manifest에 기록한다. 릴리즈에는 EXE·DMG와 각 체크섬, 두 `.svupdate`, `update.json`, `update.json.sig`를 올린다. ZIP과 ZIP 체크섬은 공개하지 않는다. 모든 파일 검증 후 정식 릴리즈로 공개한다. 사전 공개 버전은 앱에서 설치하지 않는다. 서명 키와 앱 공개키가 일치하지 않으면 서명이 실패한다.
+
+기존 앱은 서명된 manifest의 URL을 사용하며 확장자를 제한하지 않는다. 따라서 `.svupdate`도 기존 ZIP 내용·서명·해시·교체·복구 절차로 처리한다. 자동 확인과 사용자 승인 후 적용 방식은 그대로다. EXE·DMG를 앱 내 업데이트 payload로 직접 전달하지 않는다. 게시 중인 릴리즈의 형식 변경을 사용자가 요청한 경우에는 새 payload 업로드·공개 해시 확인 → manifest와 서명 변경·검증 → 이전 ZIP 자산 제거 순서로 진행하고 기존 파일과 게시 기록을 보존한다.
 
 초기 개인키는 Git에서 제외된 `build/update-keys/private.key`에 생성했다. 배포 담당자는 빌드 폴더를 정리하기 전에 이 파일을 안전한 별도 저장소에 백업하고 CI 비밀로 제공해야 한다. 공개키는 `assets/update-config.json`에 포함한다. 배포 후 키를 임의로 재생성하면 기존 앱이 새 업데이트를 검증하지 못한다. 개인키를 릴리즈나 Git에 포함하지 않는다.
 

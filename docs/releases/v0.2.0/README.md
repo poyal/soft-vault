@@ -15,7 +15,11 @@
 
 ## 설치와 데이터
 
-Windows ZIP 전체를 풀고 `app/soft_vault.exe`를 실행하거나 동봉한 `Install.ps1`을 실행한다. EXE만 옮기면 필요한 DLL·도구가 누락된다. Windows 코드 서명은 제공하지 않는다. 업데이트 manifest의 Ed25519 서명은 Windows 코드 서명과 별개다.
+[Windows 설치 EXE](https://github.com/poyal/soft-vault/releases/download/v0.2.0/SoftVault-0.2.0-Windows-x64-Setup.exe)를 실행하고 시작 메뉴의 Soft Vault를 연다. 관리자 권한 없이 사용자 폴더에 설치하며 Windows의 설치된 앱에서 제거할 수 있다. [Apple Silicon Mac DMG](https://github.com/poyal/soft-vault/releases/download/v0.2.0/SoftVault-0.2.0-macOS-arm64.dmg)는 열어서 `Soft Vault.app`을 Applications로 드래그한다.
+
+Windows 코드 서명과 Apple Developer ID 서명·공증은 제공하지 않는다. Mac 앱은 로컬 서명이며 업데이트 manifest의 Ed25519 서명은 OS 코드 서명과 별개다.
+
+양쪽 모두 새 버전을 자동 확인하고 **다운로드 → 업데이트 후 재시작**으로 적용한다. 사용자 확인 없이 설치하지 않는다. `.svupdate`는 앱이 받는 업데이트 전용 파일이며 직접 열 필요가 없다. 기존 ZIP과 내용·해시가 같고 기존 앱의 업데이트 방식과 호환된다.
 
 업데이트 기능이 없는 `0.1.0`에서는 첫 지원 버전을 직접 설치한다. 교체 전 카탈로그 백업을 권장한다. JSON 백업에는 원본 영상과 앱 잠금 정보가 포함되지 않는다. 스키마는 4로 이전하며 기존 이어보기·시청 기록을 보존하지만 과거 재생 횟수를 추정하지 않는다. 실제 구 배포본에서 새 배포본으로 교체하는 전체 사용자 흐름은 별도 실기 확인 대상이다.
 
@@ -23,10 +27,12 @@ Windows ZIP 전체를 풀고 `app/soft_vault.exe`를 실행하거나 동봉한 `
 
 | 파일 | 크기 | SHA-256 |
 | --- | ---: | --- |
-| `SoftVault-Windows.zip` | 117,171,296바이트 | `34f4666f3f7d27d2f63f2c3641d275018fe009c0e5f9bf5c6c23a3da3080c10b` |
-| `SoftVault-macOS-arm64.zip` | 86,681,535바이트 | `3e9d9d208445b1ea3b886031dd91c475bd8f5d026b34cc3f1146623f28b358bc` |
+| `SoftVault-0.2.0-Windows-x64-Setup.exe` | 89,093,688바이트 | `764c7177768817bad9eea086d6b72c8f0d887b013ce4c8e964c6409668509c42` |
+| `SoftVault-0.2.0-macOS-arm64.dmg` | 94,988,458바이트 | `0727550366b13279dafef1060d8354f91c98e436cef909921f54d55718989c92` |
+| `SoftVault-Windows.svupdate` (앱 전용) | 117,171,296바이트 | `34f4666f3f7d27d2f63f2c3641d275018fe009c0e5f9bf5c6c23a3da3080c10b` |
+| `SoftVault-macOS-arm64.svupdate` (앱 전용) | 86,681,535바이트 | `3e9d9d208445b1ea3b886031dd91c475bd8f5d026b34cc3f1146623f28b358bc` |
 
-각 ZIP의 `.sha256`, 서명된 `update.json`과 `update.json.sig`를 함께 제공한다. Mac은 ZIP에서 `Soft Vault.app`을 꺼내 응용 프로그램 폴더에 복사한다. 로컬 서명이며 Apple Developer ID 서명·공증은 없다.
+설치 EXE·DMG의 `.sha256`, 서명된 `update.json`과 `update.json.sig`를 함께 제공한다. ZIP과 ZIP 체크섬은 공개 배포에서 제외한다. 앱 바이너리와 버전은 앞서 검증한 0.2.0 그대로이며 설치 형식만 바꿨다.
 
 실제 한글 IME·OS 파일 선택기·물리 HDR/스피커·장시간 재생·구 배포본 전체 교체는 자동 검사 범위와 구분한다. 자세한 검증과 남은 제한은 [검증 기록](VERIFICATION.md)에 있다.
 

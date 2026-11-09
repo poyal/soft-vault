@@ -24,10 +24,18 @@ Future<void> main() async {
   ]) {
     final fail = scenario != 'install';
     final area = await Directory('build/update-smoke').createTemp('case-');
-    final base = p.absolute(area.path), target = Directory(p.join(base, 'app'));
+    final base = p.absolute(area.path);
+    final target = Directory(
+      p.join(base, 'installed', Platform.isWindows ? 'bin' : 'Soft Vault.app'),
+    );
+    final uninstallMarker = File(
+      p.join(base, 'installed', 'uninstall', 'fixture-marker'),
+    );
+    await uninstallMarker.parent.create(recursive: true);
+    await uninstallMarker.writeAsString('installer registration survives');
     final data = Directory(p.join(base, 'data')),
         root = Directory(p.join(base, 'data', 'updates'));
-    await target.create();
+    await target.create(recursive: true);
     await root.create(recursive: true);
     final fixture = await File('build/update_fixture$suffix').readAsBytes();
     final oldExe = File(p.join(target.path, executable));
@@ -100,6 +108,10 @@ Future<void> main() async {
       throw StateError('Catalog changed');
     if (await File(p.join(target.path, 'old-marker')).exists() != fail)
       throw StateError('Wrong app restored');
+    if (await uninstallMarker.readAsString() !=
+        'installer registration survives') {
+      throw StateError('Update changed the sibling uninstaller');
+    }
     if (scenario == 'unsafe-archive' &&
         (await File(p.join(base, 'escaped-marker')).exists() ||
             await File(

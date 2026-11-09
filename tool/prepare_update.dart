@@ -45,9 +45,13 @@ Future<void> main(List<String> args) async {
   }.entries) {
     if (!requested.contains(entry.key)) continue;
     final file = File('build/package/${entry.value}');
+    // Installation media are EXE/DMG; the existing helper reads these ZIP bytes
+    // under a dedicated extension, without changing the archive layout.
+    final updateName = entry.value.replaceAll('.zip', '.svupdate');
+    await file.copy('build/package/$updateName');
     platforms[entry.key] = {
       'url':
-          'https://github.com/poyal/soft-vault/releases/download/$tag/${entry.value}',
+          'https://github.com/poyal/soft-vault/releases/download/$tag/$updateName',
       'size': await file.length(),
       'sha256': (await sha256.bind(file.openRead()).first).toString(),
     };
