@@ -79,6 +79,10 @@
 
 원시 증거는 `build/installer-020/windows/`, `mac/`, `update-artifacts.json`, `artifacts.json`에 있다. 설치 파일의 크기·해시는 [배포 파일 표](README.md#배포-파일)에 기록했다.
 
+후속 패키징 커밋은 `31b6848`이다. `2026-11-09T12:57:22Z`에 기존 v0.2.0 릴리즈의 EXE·DMG·두 `.svupdate`·설치 체크섬·manifest/서명 총 8개 자산을 확인했다. 인증 없는 공개 URL에서 받은 모든 크기·SHA-256이 검증 후보와 일치했다. 새 payload를 먼저 게시·검증한 뒤 manifest/서명을 교체하고 마지막으로 이전 ZIP 2개와 ZIP 체크섬 2개를 제거했다. 최신 안정 릴리즈 상태와 원래 태그를 유지했다. 게시 전후 메타데이터와 대조 결과는 `build/installer-020/publication-verification.json` 등에 보존한다.
+
+이번 시험용 Windows Scheduled Task와 Mac LaunchAgent를 해제했다. Windows 시험 설치 등록이 제거됐고 개발 SQLite가 복원됐으며, 양쪽 시험 앱과 DMG 마운트가 남지 않았음을 확인했다.
+
 ## 남은 범위
 
 필수 자동 검사·정식 게시·공개 파일 재다운로드 해시 확인을 완료했다.
