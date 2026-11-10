@@ -10,6 +10,7 @@ class MediaTools {
   final String bin;
   MediaTools(this.library, this.cache, this.bin);
   Future<void> _previewQueue = Future.value();
+  final _failedEnrichment = <String>{};
   Future<String> frame(Map<String, Object?> item, double seconds) async {
     if (item['type'] != 'video' || item['online'] != 1)
       throw StateError('온라인 영상이 필요합니다.');
@@ -133,32 +134,55 @@ class MediaTools {
     );
   }
 
-  Future<ProcessResult> run(String tool, List<String> args) async {
+  Future<ProcessResult> run(
+    String tool,
+    List<String> args, {
+    bool Function()? cancelled,
+  }) async {
     final process = await Process.start(
       p.join(bin, '$tool${Platform.isWindows ? '.exe' : ''}'),
       args,
     );
     final output = process.stdout.transform(utf8.decoder).join();
     final error = process.stderr.transform(utf8.decoder).join();
+    final cancellation = cancelled == null
+        ? null
+        : Timer.periodic(const Duration(milliseconds: 100), (_) {
+            if (cancelled()) process.kill();
+          });
     try {
       final code = await process.exitCode.timeout(const Duration(seconds: 45));
       return ProcessResult(process.pid, code, await output, await error);
     } on TimeoutException {
       process.kill();
       rethrow;
+    } finally {
+      cancellation?.cancel();
     }
   }
 
-  Future<void> enrich() async {
+  Future<void> enrich({
+    bool Function()? cancelled,
+    void Function(int done, int total)? progress,
+    Future<void> Function()? changed,
+  }) async {
     await cache.create(recursive: true);
-    for (final item in await library.items()) {
-      if (item['online'] != 1) continue;
-      if (item['custom_thumbnail'] == 1 &&
-          File(item['thumbnail'] as String).existsSync())
-        continue;
-      if ((item['thumbnail'] as String).isNotEmpty &&
-          File(item['thumbnail'] as String).existsSync())
-        continue;
+    String attemptKey(Map<String, Object?> item) =>
+        '${item['id']}:${item['path']}:${item['size']}:${item['modified']}';
+    final pending = (await library.items())
+        .where(
+          (item) =>
+              item['online'] == 1 &&
+              item['custom_thumbnail'] != 1 &&
+              !_failedEnrichment.contains(attemptKey(item)) &&
+              ((item['thumbnail'] as String).isEmpty ||
+                  !File(item['thumbnail'] as String).existsSync()),
+        )
+        .toList();
+    var done = 0;
+    progress?.call(done, pending.length);
+    for (final item in pending) {
+      if (cancelled?.call() == true) return;
       final path = item['path'] as String;
       try {
         final probe = await run('ffprobe', [
@@ -169,8 +193,12 @@ class MediaTools {
           '-of',
           'json',
           path,
-        ]);
-        if (probe.exitCode != 0) continue;
+        ], cancelled: cancelled);
+        if (cancelled?.call() == true) return;
+        if (probe.exitCode != 0) {
+          _failedEnrichment.add(attemptKey(item));
+          continue;
+        }
         final data = jsonDecode(probe.stdout as String) as Map<String, dynamic>;
         final streams = (data['streams'] as List).cast<Map<String, dynamic>>();
         final videos = streams.where((s) => s['codec_type'] == 'video');
@@ -195,7 +223,9 @@ class MediaTools {
           '-vf',
           'scale=480:-2',
           thumb,
-        ]);
+        ], cancelled: cancelled);
+        if (cancelled?.call() == true) return;
+        if (extraction.exitCode != 0) _failedEnrichment.add(attemptKey(item));
         await library.db.update(
           'media',
           {
@@ -206,15 +236,23 @@ class MediaTools {
                 : '${video['width']} × ${video['height']}',
             'thumbnail': extraction.exitCode == 0 ? thumb : '',
           },
-          where: 'id = ?',
-          whereArgs: [item['id']],
+          // A user can move/change a file or choose a custom thumbnail while
+          // this background worker is extracting. Never overwrite that work.
+          where:
+              'id = ? AND path = ? AND modified = ? AND custom_thumbnail = 0 AND thumbnail = ?',
+          whereArgs: [item['id'], path, item['modified'], item['thumbnail']],
         );
+        await changed?.call();
       } on ProcessException {
         rethrow;
       } on TimeoutException {
+        _failedEnrichment.add(attemptKey(item));
         continue;
       } on FormatException {
+        _failedEnrichment.add(attemptKey(item));
         continue;
+      } finally {
+        progress?.call(++done, pending.length);
       }
     }
   }

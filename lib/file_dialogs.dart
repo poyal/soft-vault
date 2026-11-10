@@ -294,7 +294,7 @@ Future<void> showFolderManager(
               final folder = await getDirectoryPath();
               if (folder == null) return;
               try {
-                await library.connect(folder);
+                await library.connect(folder, verifyContents: false);
                 folders = await library.folders();
                 await changed();
               } catch (e) {

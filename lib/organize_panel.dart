@@ -223,7 +223,7 @@ class _OrganizePanelState extends State<OrganizePanel> {
                 Text(
                   similar
                       ? '길이·해상도가 비슷한 후보입니다. 같은 영상이라고 확정하지 않습니다.'
-                      : '스캔 시 SHA-256이 같았던 파일입니다. 현재 내용을 다시 검증할 수 있습니다.',
+                      : '내용 검사에서 같은 지문으로 확인된 파일입니다. 현재 내용을 다시 검증할 수 있습니다.',
                 ),
                 const SizedBox(height: 18),
                 Expanded(

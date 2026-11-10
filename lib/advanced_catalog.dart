@@ -202,6 +202,7 @@ extension AdvancedCatalog on Library {
   Future<List<List<Map<String, Object?>>>> duplicateGroups({
     bool similar = false,
   }) async {
+    if (!similar) await _verifyDuplicateCandidates();
     final groups = <String, List<Map<String, Object?>>>{};
     for (final row in await items(sort: 'name')) {
       final hash = row['fingerprint'] as String;
@@ -222,6 +223,44 @@ extension AdvancedCatalog on Library {
         )
         .toList();
   }
+
+  // Only the explicitly opened duplicate comparison reads video contents.
+  // Different sizes cannot be exact duplicates, so avoid reading those files.
+  Future<void> _verifyDuplicateCandidates() => fileOperation(() async {
+    final rows = await items();
+    final sizes = <int, int>{};
+    for (final row in rows) {
+      if (row['online'] == 1) {
+        final size = row['size'] as int;
+        sizes[size] = (sizes[size] ?? 0) + 1;
+      }
+    }
+    for (final row in rows) {
+      if (row['online'] != 1 ||
+          (sizes[row['size']] ?? 0) < 2 ||
+          row['fingerprint'] != '')
+        continue;
+      final file = File(row['path'] as String);
+      try {
+        final before = await file.stat();
+        if (before.size != row['size'] ||
+            before.modified.millisecondsSinceEpoch != row['modified'])
+          continue;
+        final digest = await Library.fingerprint(file);
+        final after = await file.stat();
+        if (before.size != after.size || before.modified != after.modified)
+          continue;
+        await db.update(
+          'media',
+          {'fingerprint': digest},
+          where: 'id=? AND path=? AND size=? AND modified=?',
+          whereArgs: [row['id'], row['path'], row['size'], row['modified']],
+        );
+      } on FileSystemException {
+        // Unavailable files remain unverified rather than becoming a match.
+      }
+    }
+  });
 
   Future<List<Map<String, Object?>>> moveRules() =>
       db.query('move_rules', orderBy: 'id');

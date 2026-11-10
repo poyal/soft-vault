@@ -67,13 +67,16 @@ class Library {
   Future<List<String>> folders() async =>
       (await db.query('folders')).map((row) => row['path'] as String).toList();
 
-  Future<void> connect(String path) => fileOperation(() async {
-    final root = await Directory(path).resolveSymbolicLinks();
-    await db.insert('folders', {
-      'path': root,
-    }, conflictAlgorithm: ConflictAlgorithm.ignore);
-    await _scan(root);
-  });
+  /// Interactive folder browsing uses verifyContents:false. Deep verification
+  /// remains available for import/reconciliation tools that need exact hashes.
+  Future<void> connect(String path, {bool verifyContents = true}) =>
+      fileOperation(() async {
+        final root = await Directory(path).resolveSymbolicLinks();
+        await db.insert('folders', {
+          'path': root,
+        }, conflictAlgorithm: ConflictAlgorithm.ignore);
+        await _scan(root, verifyContents: verifyContents);
+      });
 
   /// Resolve existing ancestors too, so an offline /var path still matches
   /// the /private/var path stored while the directory was connected on macOS.
@@ -93,8 +96,10 @@ class Library {
     }
   }
 
-  Future<void> scan(String root) =>
-      fileOperation(() async => _scan(await canonicalPath(root)));
+  Future<void> scan(String root, {bool verifyContents = true}) => fileOperation(
+    () async =>
+        _scan(await canonicalPath(root), verifyContents: verifyContents),
+  );
 
   static Future<String> fingerprint(File file) async =>
       (await sha256.bind(file.openRead()).first).toString();

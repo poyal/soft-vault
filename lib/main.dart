@@ -274,6 +274,9 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   MediaCriteria? activeCriteria;
   String? collectionName;
   Future<void>? scanFuture;
+  Future<void>? enrichmentFuture;
+  bool enrichmentCancelled = false, enrichmentPaused = false;
+  int enrichmentDone = 0, enrichmentTotal = 0;
   Future<void>? playerDisposal;
   bool closing = false;
   String view = 'files', sort = 'recent';
@@ -335,6 +338,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
       await event.cancel();
     }
     await scanFuture;
+    await stopEnrichment();
     await player.pause();
     await persistProgress();
     await widget.library.fileOperation(() async {});
@@ -355,6 +359,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     await player.pause();
     await persistProgress();
     await setNativeFullscreen(false);
+    await stopEnrichment();
     await windowManager.setPreventClose(false);
     if (mounted) widget.lockNow?.call();
   });
@@ -375,6 +380,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   void onWindowClose() async {
     if (closing) return;
     update(() => closing = true);
+    enrichmentCancelled = true;
     try {
       // Keep the engine's event loop alive until video textures are released.
       poll?.cancel();
@@ -386,6 +392,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
       for (final event in playerEvents) {
         await event.cancel();
       }
+      await stopEnrichment();
       if (playerDisposal == null) {
         await player.pause();
         await persistProgress();
@@ -415,6 +422,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
 
   @override
   void dispose() {
+    enrichmentCancelled = true;
     windowManager.removeListener(this);
     nativeFullscreen.removeListener(fullscreenChanged);
     progressTimer?.cancel();
@@ -495,13 +503,14 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     if (path == null) return;
     setState(() => busy = true);
     try {
-      await widget.library.connect(path);
-      await mediaTools.enrich();
+      await widget.library.connect(path, verifyContents: false);
       await refresh();
       await watchFolders();
     } finally {
       if (mounted) setState(() => busy = false);
     }
+    enrichmentPaused = false;
+    unawaited(enrichLibrary());
   });
   Future<void> select(Map<String, Object?> item) => guard(() async {
     await persistProgress();
@@ -612,6 +621,54 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                   ],
                 ),
               if (busy) const LinearProgressIndicator(),
+              if (enrichmentFuture != null || enrichmentPaused)
+                Material(
+                  color: const Color(0xff1c2229),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 100,
+                          child: LinearProgressIndicator(
+                            value: enrichmentTotal == 0
+                                ? null
+                                : enrichmentDone / enrichmentTotal,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Text(
+                            enrichmentPaused && enrichmentFuture == null
+                                ? '썸네일 준비 중지됨 · 목록을 사용할 수 있습니다'
+                                : '썸네일 준비 $enrichmentDone / $enrichmentTotal · 목록을 사용할 수 있습니다',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: enrichmentFuture == null
+                              ? () {
+                                  enrichmentPaused = false;
+                                  unawaited(enrichLibrary());
+                                }
+                              : enrichmentCancelled
+                              ? null
+                              : () => update(() {
+                                  enrichmentCancelled = true;
+                                  enrichmentPaused = true;
+                                }),
+                          child: Text(
+                            enrichmentFuture == null
+                                ? '계속'
+                                : enrichmentCancelled
+                                ? '중지 중…'
+                                : '중지',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               Expanded(
                 child: Stack(
                   fit: StackFit.expand,

@@ -269,9 +269,9 @@ extension _HomeFeatures on _VaultHomeState {
     if (closing || scanFuture != null || jobs.running || !mounted) return;
     final work = guard(() async {
       for (final root in await widget.library.folders()) {
-        await widget.library.scan(root);
+        await widget.library.scan(root, verifyContents: false);
       }
-      await mediaTools.enrich();
+      await refresh();
       await rules.runAutomatic(
         skipIds: {if (playbackMediaId != null) playbackMediaId!},
       );
@@ -283,6 +283,36 @@ extension _HomeFeatures on _VaultHomeState {
     } finally {
       scanFuture = null;
     }
+    unawaited(enrichLibrary());
+  }
+
+  Future<void> enrichLibrary() async {
+    if (closing || !mounted || enrichmentPaused || enrichmentFuture != null)
+      return;
+    enrichmentCancelled = false;
+    final work = guard(() async {
+      await mediaTools.enrich(
+        cancelled: () => enrichmentCancelled || closing || !mounted,
+        progress: (done, total) => update(() {
+          enrichmentDone = done;
+          enrichmentTotal = total;
+        }),
+        changed: refresh,
+      );
+    });
+    update(() {
+      enrichmentFuture = work;
+    });
+    try {
+      await work;
+    } finally {
+      update(() => enrichmentFuture = null);
+    }
+  }
+
+  Future<void> stopEnrichment() async {
+    enrichmentCancelled = true;
+    await enrichmentFuture;
   }
 
   Future<void> openMedia(
@@ -486,6 +516,7 @@ extension _HomeFeatures on _VaultHomeState {
       rename: rename,
       prepare: () async {
         await scanFuture;
+        await stopEnrichment();
         await persistProgress();
         playbackMediaId = null;
         await playback.silence();

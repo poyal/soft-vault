@@ -98,6 +98,7 @@ extension _ExtendedFeatures on _VaultHomeState {
 
   Future<void> prepareFileWork() async {
     await scanFuture;
+    await stopEnrichment();
     await persistProgress();
     playbackMediaId = null;
     await playback.silence();

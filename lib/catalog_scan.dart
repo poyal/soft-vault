@@ -1,7 +1,7 @@
 part of 'library.dart';
 
 extension _CatalogScan on Library {
-  Future<void> _scan(String root) async {
+  Future<void> _scan(String root, {required bool verifyContents}) async {
     if (!await Directory(root).exists()) {
       await db.update(
         'media',
@@ -20,7 +20,8 @@ extension _CatalogScan on Library {
     final existing = {for (final row in rows) key(row['path'] as String): row};
     final hashes = <String, List<Map<String, Object?>>>{};
     for (final row in rows) {
-      hashes.putIfAbsent(row['fingerprint'] as String, () => []).add(row);
+      final hash = row['fingerprint'] as String;
+      if (hash.isNotEmpty) hashes.putIfAbsent(hash, () => []).add(row);
     }
     final seen = <String>{}, claimed = <int>{};
     final missingCache = <int, bool>{};
@@ -54,7 +55,8 @@ extension _CatalogScan on Library {
         seen.add(pathKey);
         if (old != null &&
             old['size'] == stat.size &&
-            old['modified'] == stat.modified.millisecondsSinceEpoch) {
+            old['modified'] == stat.modified.millisecondsSinceEpoch &&
+            (!verifyContents || old['fingerprint'] != '')) {
           if (old['online'] != 1 || old['folder'] != owner) {
             writes.add(
               (batch) => batch.update(
@@ -66,9 +68,16 @@ extension _CatalogScan on Library {
             );
           }
         } else {
-          final digest = await Library.fingerprint(entity);
+          // Browsing a folder must not read every byte of its videos. Empty
+          // means unverified, never an identity shared by unrelated files.
+          final digest = verifyContents
+              ? await Library.fingerprint(entity)
+              : '';
           if (old != null) {
-            final changed = old['fingerprint'] != digest;
+            final changed =
+                verifyContents &&
+                old['fingerprint'] != '' &&
+                old['fingerprint'] != digest;
             writes.add((batch) {
               batch.update(
                 'media',
@@ -78,12 +87,14 @@ extension _CatalogScan on Library {
                   'modified': stat.modified.millisecondsSinceEpoch,
                   'folder': owner,
                   'online': 1,
-                  if (changed) ...{
+                  if (changed || !verifyContents) ...{
                     'thumbnail': '',
                     'custom_thumbnail': 0,
                     'duration': 0,
                     'codec': '',
                     'resolution': '',
+                  },
+                  if (changed) ...{
                     'resume_ms': 0,
                     'watched': 0,
                     'last_played': 0,
