@@ -17,7 +17,7 @@ Windows x64 설치 EXE와 Apple Silicon Mac DMG를 제공한다. 앱 내 업데�
 
 ## 배포 파일
 
-| ?뚯씪 | ?ш린(byte) | SHA-256 |
+| 파일 | 크기(byte) | SHA-256 |
 | --- | ---: | --- |
 | SoftVault-0.2.1-macOS-arm64.dmg | 95025686 | `fd9d9bf419322a3e74786605c4bee0973fb2efde1d38f4593c6508b8ac5afba3` |
 | SoftVault-0.2.1-macOS-arm64.dmg.sha256 | 98 | `609abb696d8835455402048cde440b509f015d5a236699860383919d987ab27f` |

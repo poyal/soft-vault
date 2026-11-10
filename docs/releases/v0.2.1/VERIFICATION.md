@@ -64,4 +64,9 @@ Mac 임시 LaunchAgent·창 전면 유지·절전 방지를 해제했고 시험 
 
 ## 게시 결과
 
-공개 게시·재다운로드 검증 전이다. 확인 후 실제 결과로 갱신한다.
+- [Soft Vault 0.2.1](https://github.com/poyal/soft-vault/releases/tag/v0.2.1)을 2026-11-10T13:13:32Z(한국 시간 22:13)에 정식 공개했다. 최신 안정 릴리즈이며 draft·prerelease가 아니다.
+- 태그 v0.2.1은 5ad5084b2bae551582b14314fa9b8e16002471be를 가리킨다. 최종 앱 소스 ae9ae86 이후에는 검증 문서만 변경했다. 태그는 이동하지 않았다.
+- EXE·DMG·각 체크섬·두 .svupdate·update.json·update.json.sig 총 8개를 게시했다. 내부 ZIP과 개인키는 게시하지 않았다.
+- 초안에서 8개를 재다운로드해 대조한 뒤 공개했다. 2026-11-10T13:13:43Z에 인증 없는 공개 URL에서 8개 모두의 크기·SHA-256이 고정 후보와 일치함을 확인했다.
+- 공개 릴리즈 노트의 표 머리글 인코딩을 바로잡고 본문 일치를 확인했다. 설치·업데이트 파일의 바이트는 바꾸지 않았다.
+- 원본 메타데이터·검증 결과·정리 기록은 build/release-021/published-release.json, publication-verification.json, cleanup.json에 보존했다.

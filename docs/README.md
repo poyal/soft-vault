@@ -19,7 +19,7 @@ Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사
 
 ## 현재 확인된 범위
 
-- `0.2.1+3`은 Windows·Mac 자동 검사와 EXE·DMG 설치 검증을 완료했다. Mac 크기 변경 중 발견한 Impeller 충돌은 Skia 설정으로 회피하고 네이티브 검사를 다시 통과했다. 기존 키로 양쪽 업데이트 파일을 서명했으며 공개 게시를 준비했다. [0.2.1 검증 기록](releases/v0.2.1/VERIFICATION.md)을 참고한다.
+- `0.2.1+3`은 Windows·Mac 자동 검사와 EXE·DMG 설치 검증 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.2.1)했다. Mac 크기 변경 중 발견한 Impeller 충돌은 Skia 설정으로 회피하고 네이티브 검사를 다시 통과했다. 기존 키로 양쪽 업데이트를 서명했고 공개 파일 8개의 재다운로드 해시가 일치한다. [0.2.1 검증 기록](releases/v0.2.1/VERIFICATION.md)을 참고한다.
 - 폴더 등록에서 전체 영상 해시·썸네일 완료를 기다리던 문제의 Windows 로컬 수정과 Falcon 관리 메뉴 검토는 [2026-11-10 기록](verification/2026-11-10-folder-loading.md)에 있다. 공개 릴리즈 게시·Mac 실기 결과와 구분한다.
 - `0.2.0+2`는 별도 Windows와 Mac의 필수 자동 검사·설치 검증 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.2.0)했다. 보류했던 Windows 클립보드 검사도 통과했고 공개 파일 6개의 재다운로드 해시가 일치한다. [두 PC 결과와 검증 제한](releases/v0.2.0/VERIFICATION.md), [배포 안내](releases/v0.2.0/README.md), [이전 로컬 기록](verification/2026-11-09-windows-0.2.0.md)을 참고한다.
 - `0.1.0+1`의 실제 RTX Windows·Mac M4 검증 결과와 배포 안내는 [0.1.0](releases/v0.1.0/README.md)에 있다.
