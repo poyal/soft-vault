@@ -19,6 +19,7 @@ Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사
 
 ## 현재 확인된 범위
 
+- `0.2.1+3`은 소스 준비와 Windows 일반 회귀 90개·Release 빌드까지 완료했다. Mac은 동일 소스 전달·의존성 준비 단계다. 사용자가 서명 키가 있는 PC에서 배포를 이어가기로 하여 릴리즈는 게시하지 않았다. [0.2.1 인계 기록](releases/v0.2.1/VERIFICATION.md)을 참고한다.
 - 폴더 등록에서 전체 영상 해시·썸네일 완료를 기다리던 문제의 Windows 로컬 수정과 Falcon 관리 메뉴 검토는 [2026-11-10 기록](verification/2026-11-10-folder-loading.md)에 있다. 공개 릴리즈 게시·Mac 실기 결과와 구분한다.
 - `0.2.0+2`는 별도 Windows와 Mac의 필수 자동 검사·설치 검증 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.2.0)했다. 보류했던 Windows 클립보드 검사도 통과했고 공개 파일 6개의 재다운로드 해시가 일치한다. [두 PC 결과와 검증 제한](releases/v0.2.0/VERIFICATION.md), [배포 안내](releases/v0.2.0/README.md), [이전 로컬 기록](verification/2026-11-09-windows-0.2.0.md)을 참고한다.
 - `0.1.0+1`의 실제 RTX Windows·Mac M4 검증 결과와 배포 안내는 [0.1.0](releases/v0.1.0/README.md)에 있다.
