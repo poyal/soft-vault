@@ -1,8 +1,10 @@
 part of 'main.dart';
 
 extension _HomeFeatures on _VaultHomeState {
-  Future<void> relinkFile() => guard(() async {
-    final item = current;
+  Future<void> relinkFile({int? mediaId}) => guard(() async {
+    final item = mediaId == null
+        ? current
+        : await widget.library.mediaById(mediaId);
     if (item == null) return;
     final file = await openFile();
     if (file == null || !mounted) return;
@@ -184,6 +186,17 @@ extension _HomeFeatures on _VaultHomeState {
   Future<void> initialize() => guard(() async {
     await windowManager.setPreventClose(true);
     await keys.load();
+    sidebarWidth = (await widget.library.readSetting('sidebar_width') as num?)
+        ?.toDouble();
+    final pendingTrash = await widget.library.readSetting('pending_trash');
+    if (pendingTrash is Map &&
+        pendingTrash['id'] is int &&
+        pendingTrash['path'] is String) {
+      if (pendingTrash['moved'] == true &&
+          !await File(pendingTrash['path']).exists())
+        await widget.library.forgetTrashed(pendingTrash['id']);
+      await widget.library.setting('pending_trash', {});
+    }
     await jobs.recover();
     if (closing || !mounted) return;
     await refresh();
@@ -702,9 +715,12 @@ extension _HomeFeatures on _VaultHomeState {
     await refresh();
     await watchFolders();
   });
-  Future<void> openExternal() => guard(() async {
-    if (current == null) return;
-    final path = current!['path'] as String;
+  Future<void> openExternal({int? mediaId}) => guard(() async {
+    final item = mediaId == null
+        ? current
+        : await widget.library.mediaById(mediaId);
+    if (item == null) return;
+    final path = item['path'] as String;
     if (!await File(path).exists())
       throw FileSystemException('파일이 오프라인입니다.', path);
     // A file URI is handled by the desktop shell; no command text is constructed.
@@ -734,7 +750,7 @@ extension _HomeFeatures on _VaultHomeState {
               padding: const EdgeInsets.only(right: 7),
               child: OutlinedButton(
                 style: TextButton.styleFrom(
-                  minimumSize: const Size(0, 44),
+                  minimumSize: const Size(0, 40),
                   padding: const EdgeInsets.symmetric(horizontal: 6),
                   backgroundColor: view == entry.key
                       ? const Color(0xff2a3b4b)

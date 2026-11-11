@@ -1,6 +1,10 @@
 #include "flutter_window.h"
 
 #include <optional>
+#include <shobjidl.h>
+#include <shlobj.h>
+#include <shellapi.h>
+#include <filesystem>
 
 #include "flutter/generated_plugin_registrant.h"
 
@@ -36,6 +40,33 @@ bool FlutterWindow::OnCreate() {
           // Panic must work there too, while retaining fullscreen placement.
           ShowWindow(GetHandle(), SW_MINIMIZE);
           result->Success();
+        } else if (call.method_name() == "trash" || call.method_name() == "reveal") {
+          const auto* path = std::get_if<std::string>(call.arguments());
+          if (!path) { result->Error("argument", "Missing file path"); return; }
+          const auto wide = std::filesystem::absolute(std::filesystem::u8path(*path)).make_preferred().wstring();
+          IShellItem* item = nullptr;
+          HRESULT hr = SHCreateItemFromParsingName(wide.c_str(), nullptr, IID_PPV_ARGS(&item));
+          if (SUCCEEDED(hr) && call.method_name() == "reveal") {
+            PIDLIST_ABSOLUTE pidl = nullptr;
+            hr = SHGetIDListFromObject(item, &pidl);
+            if (SUCCEEDED(hr)) { hr = SHOpenFolderAndSelectItems(pidl, 0, nullptr, 0); CoTaskMemFree(pidl); }
+          } else if (SUCCEEDED(hr)) {
+            IFileOperation* operation = nullptr;
+            hr = CoCreateInstance(CLSID_FileOperation, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&operation));
+            if (SUCCEEDED(hr)) {
+              // Refuse permanent deletion when recycling is unavailable.
+              hr = operation->SetOperationFlags(FOF_ALLOWUNDO | FOF_NOCONFIRMATION | FOF_NOERRORUI | FOF_SILENT | FOFX_RECYCLEONDELETE | FOFX_EARLYFAILURE);
+              if (SUCCEEDED(hr)) hr = operation->DeleteItem(item, nullptr);
+              if (SUCCEEDED(hr)) hr = operation->PerformOperations();
+              BOOL aborted = FALSE;
+              operation->GetAnyOperationsAborted(&aborted);
+              if (aborted) hr = E_ABORT;
+              operation->Release();
+            }
+          }
+          if (item) item->Release();
+          if (FAILED(hr)) result->Error("file_operation", "File operation failed", flutter::EncodableValue(static_cast<int>(hr)));
+          else result->Success();
         } else {
           result->NotImplemented();
         }

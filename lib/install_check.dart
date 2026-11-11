@@ -95,7 +95,7 @@ Future<void> verifyInstalledApp(
       mediaId: {'description'},
     });
     if ((await library.mediaById(mediaId))['description'] != '설치 사본 AI 정보 교환' ||
-        (await library.playbackHistory(mediaId)).length != 1 ||
+        (await library.mediaById(mediaId))['play_count'] != 1 ||
         (await library.items(
               filters: [
                 LibraryFilter(playback: PlaybackFilter.played, rating: 5),
@@ -145,7 +145,7 @@ Future<void> verifyInstalledApp(
       throw StateError('Catalog move/persistence failure');
     if (restored['resume_ms'] != 5000 ||
         restored['play_count'] != 1 ||
-        (await library.playbackHistory(mediaId)).length != 1 ||
+        (await library.mediaById(mediaId))['play_count'] != 1 ||
         restored['custom_thumbnail'] != 1 ||
         (await library.bookmarks(mediaId)).single['note'] != '한글 메모\n둘째 줄' ||
         (await library.matching(

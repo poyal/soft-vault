@@ -24,7 +24,17 @@ class Library {
     final db = await databaseFactoryFfi.openDatabase(
       path,
       options: OpenDatabaseOptions(
-        version: 4,
+        version: 5,
+        onConfigure: (db) async {
+          final version =
+              (await db.rawQuery('PRAGMA user_version')).single.values.first
+                  as int;
+          if (version > 0 && version < 5) {
+            final backup =
+                '$path.before-v5-${DateTime.now().microsecondsSinceEpoch}';
+            await db.execute("VACUUM INTO '${backup.replaceAll("'", "''")}'");
+          }
+        },
         onOpen: (db) async {
           await db.execute(
             'CREATE INDEX IF NOT EXISTS media_fingerprint ON media(fingerprint)',
@@ -46,6 +56,7 @@ class Library {
           if (old < 2) await upgradeCatalog(db);
           if (old < 3) await upgradeFeatures(db);
           if (old < 4) await upgradePlaybackHistory(db);
+          if (old < 5) await upgradePlaybackSummary(db);
         },
         onCreate: (db, _) async {
           await db.execute('CREATE TABLE folders (path TEXT PRIMARY KEY)');
@@ -58,6 +69,7 @@ class Library {
           await upgradeCatalog(db);
           await upgradeFeatures(db);
           await upgradePlaybackHistory(db);
+          await upgradePlaybackSummary(db);
         },
       ),
     );
@@ -269,7 +281,7 @@ class Library {
   }
 
   Future<void> exportTo(File target) async {
-    final data = <String, Object?>{'version': 4};
+    final data = <String, Object?>{'version': 5};
     await db.transaction((tx) async {
       for (final table in [
         'folders',
@@ -282,7 +294,6 @@ class Library {
         'bookmarks',
         'collections',
         'move_rules',
-        'playback_history',
       ]) {
         data[table] = await tx.query(table);
       }
@@ -293,9 +304,21 @@ class Library {
   Future<void> restoreFrom(File source) async {
     final data =
         jsonDecode(await source.readAsString()) as Map<String, dynamic>;
-    if (![2, 3, 4].contains(data['version']))
+    if (![2, 3, 4, 5].contains(data['version']))
       throw FormatException('지원하지 않는 백업 버전');
-    if (data['version'] != 4) data['playback_history'] = [];
+    if (data['version'] == 4 && data['playback_history'] is List) {
+      for (final row in data['media'] as List) {
+        final history = (data['playback_history'] as List)
+            .where((h) => h['media_id'] == row['id'])
+            .toList();
+        final count = row['play_count'] as int? ?? 0;
+        row['play_count'] = count > history.length ? count : history.length;
+        for (final h in history) {
+          if ((h['started_at'] as int) > (row['last_played'] as int? ?? 0))
+            row['last_played'] = h['started_at'];
+        }
+      }
+    }
     if (data['version'] == 2) {
       for (final table in ['bookmarks', 'collections', 'move_rules']) {
         data[table] = [];
@@ -312,7 +335,6 @@ class Library {
       'bookmarks',
       'collections',
       'move_rules',
-      'playback_history',
     ];
     for (final table in tables) {
       if (data[table] is! List) throw FormatException('잘못된 백업: $table');
@@ -330,12 +352,7 @@ class Library {
     final mediaIds = (data['media'] as List).map((row) => row['id']).toSet();
     final actorIds = (data['actors'] as List).map((row) => row['id']).toSet();
     final tagIds = (data['tags'] as List).map((row) => row['id']).toSet();
-    for (final table in [
-      'bookmarks',
-      'media_actors',
-      'media_tags',
-      'playback_history',
-    ]) {
+    for (final table in ['bookmarks', 'media_actors', 'media_tags']) {
       for (final row in data[table] as List) {
         if (!mediaIds.contains(row['media_id']) ||
             (table == 'media_actors' && !actorIds.contains(row['actor_id'])) ||
@@ -402,11 +419,6 @@ class Library {
     final stat = await file.stat();
     await db.transaction((tx) async {
       for (final duplicate in duplicates) {
-        await tx.delete(
-          'playback_history',
-          where: 'media_id = ?',
-          whereArgs: [duplicate['id']],
-        );
         await tx.delete(
           'bookmarks',
           where: 'media_id = ?',

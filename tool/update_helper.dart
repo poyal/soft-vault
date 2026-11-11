@@ -42,6 +42,19 @@ Future<void> main(List<String> args) async {
   final journal = File(p.join(root.path, 'transaction.json'));
   final health = File(p.join(root.path, 'healthy'));
   var replaced = false;
+  var phase = 'waiting';
+  Future<void> retryFile(Future<void> Function() action) async {
+    for (var attempt = 0; ; attempt++) {
+      try {
+        await action();
+        return;
+      } on FileSystemException {
+        if (attempt >= 20) rethrow;
+        await Future<void>.delayed(const Duration(milliseconds: 250));
+      }
+    }
+  }
+
   Process? child;
   Future<void> record(String state) => journal
       .writeAsString(
@@ -61,6 +74,7 @@ Future<void> main(List<String> args) async {
     child = await Process.start(
       exe,
       check ? ['--update-ready', health.path] : [],
+      workingDirectory: root.path,
     );
     unawaited(child!.stdout.drain<void>());
     unawaited(child!.stderr.drain<void>());
@@ -87,6 +101,7 @@ Future<void> main(List<String> args) async {
         throw StateError('Recover interrupted transaction');
       }
     }
+    phase = 'verify';
     final manifest = await verifyManifest(
       await File(p.join(root.path, 'update.json')).readAsBytes(),
       await File(p.join(root.path, 'update.json.sig')).readAsString(),
@@ -99,6 +114,7 @@ Future<void> main(List<String> args) async {
             as Map<String, dynamic>;
     final zip = File(p.join(root.path, 'package.zip'));
     await verifyPackage(zip, asset);
+    phase = 'extract';
     if (await stage.exists()) await stage.delete(recursive: true);
     await stage.create();
     final archive = ZipDecoder().decodeBytes(await zip.readAsBytes());
@@ -153,6 +169,7 @@ Future<void> main(List<String> args) async {
         ? p.join(stage.path, 'soft_vault.exe')
         : p.join(stage.path, 'Contents', 'MacOS', 'Soft Vault');
     if (!await File(exe).exists()) throw StateError('Incomplete package');
+    phase = 'backup-database';
     if (await snapshot.exists()) await snapshot.delete(recursive: true);
     await snapshot.create();
     for (final name in ['vault.sqlite', 'privacy.sqlite']) {
@@ -165,10 +182,17 @@ Future<void> main(List<String> args) async {
     if (await health.exists()) await health.delete();
     if (await backup.exists()) await backup.delete(recursive: true);
     await record('prepared');
-    await target.rename(backup.path);
+    phase = 'backup-application';
+    await retryFile(() async {
+      await target.rename(backup.path);
+    });
     replaced = true;
-    await stage.rename(target.path);
+    phase = 'install-application';
+    await retryFile(() async {
+      await stage.rename(target.path);
+    });
     await record('installed');
+    phase = 'startup-health';
     await launch(check: true);
     await record('installed');
     for (var i = 0; !await health.exists(); i++) {
@@ -177,6 +201,8 @@ Future<void> main(List<String> args) async {
       await Future<void>.delayed(const Duration(seconds: 1));
     }
     await record('complete');
+    final oldError = File(p.join(root.path, 'last-error.txt'));
+    if (await oldError.exists()) await oldError.delete();
   } catch (failure) {
     await File(
       p.join(root.path, 'failure-type.txt'),
@@ -215,7 +241,7 @@ Future<void> main(List<String> args) async {
     }
     await record('rolledBack');
     await File(p.join(root.path, 'last-error.txt')).writeAsString(
-      'Update failed; previous application and database restored.',
+      'Update failed at $phase: $failure. Previous application and database restored.',
     );
     if (await target.exists()) await launch();
   } finally {

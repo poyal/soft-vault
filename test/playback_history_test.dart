@@ -35,13 +35,17 @@ void main() {
         const Duration(seconds: 8),
         const Duration(seconds: 60),
       );
-      await library.db.execute('DROP TABLE playback_history');
       await library.db.execute('ALTER TABLE media DROP COLUMN play_count');
       await library.db.execute('PRAGMA user_version=3');
       await library.close();
       library = await Library.open('${root.path}/catalog.sqlite');
       expect((await library.mediaById(id))['play_count'], 0);
-      expect(await library.playbackHistory(id), isEmpty);
+      expect(
+        await library.db.rawQuery(
+          "SELECT name FROM sqlite_master WHERE name='playback_history'",
+        ),
+        isEmpty,
+      );
       expect(
         await library.items(
           filters: [LibraryFilter(playback: PlaybackFilter.unplayed)],
@@ -58,7 +62,7 @@ void main() {
   );
 
   test(
-    'records count atomically, paginate, survive move and backup, reset replaced content',
+    'summary count is atomic, survives move and backup, resets replaced content',
     () async {
       final now = DateTime.now();
       await Future.wait(
@@ -68,36 +72,35 @@ void main() {
         ),
       );
       expect((await library.mediaById(id))['play_count'], 3);
-      final first = await library.playbackHistory(id, limit: 2);
-      final second = await library.playbackHistory(id, offset: 2, limit: 2);
-      expect(
-        {...first.map((r) => r['id']), ...second.map((r) => r['id'])}.length,
-        3,
-      );
       await library.db.execute(
-        "CREATE TRIGGER fail_history BEFORE INSERT ON playback_history BEGIN SELECT RAISE(ABORT, 'test failure'); END",
+        "CREATE TRIGGER fail_summary BEFORE UPDATE OF play_count ON media BEGIN SELECT RAISE(ABORT, 'test failure'); END",
       );
       await expectLater(
         library.recordPlayback(id, now, Duration.zero),
         throwsA(anything),
       );
       expect((await library.mediaById(id))['play_count'], 3);
-      await library.db.execute('DROP TRIGGER fail_history');
+      await library.db.execute('DROP TRIGGER fail_summary');
       await FileJobs(library).move([id], target.path);
       await library.close();
       library = await Library.open('${root.path}/catalog.sqlite');
-      expect((await library.playbackHistory(id)).length, 3);
+      expect((await library.mediaById(id))['play_count'], 3);
       final backup = File('${root.path}/backup.json');
       await library.exportTo(backup);
       await library.recordPlayback(id, now, Duration.zero);
       await library.restoreFrom(backup);
       expect((await library.mediaById(id))['play_count'], 3);
-      expect((await library.playbackHistory(id)).length, 3);
+      expect((await library.mediaById(id))['play_count'], 3);
       final path = (await library.mediaById(id))['path'] as String;
       await File(path).writeAsBytes([9, 8, 7, 6, 5]);
       await library.scan(target.path);
       expect((await library.mediaById(id))['play_count'], 0);
-      expect(await library.playbackHistory(id), isEmpty);
+      expect(
+        await library.db.rawQuery(
+          "SELECT name FROM sqlite_master WHERE name='playback_history'",
+        ),
+        isEmpty,
+      );
     },
   );
 
@@ -127,7 +130,7 @@ void main() {
   );
 
   test(
-    'v3 backup restores and invalid history references leave catalog intact',
+    'v3 backup restores and obsolete history is ignored',
     () async {
       await library.saveResume(
         id,
@@ -141,7 +144,7 @@ void main() {
         {'id': 1, 'media_id': -1, 'started_at': 1, 'start_position_ms': 0},
       ];
       await backup.writeAsString(jsonEncode(data));
-      await expectLater(library.restoreFrom(backup), throwsFormatException);
+      await library.restoreFrom(backup);
       expect((await library.mediaById(id))['resume_ms'], 3000);
       data['version'] = 3;
       data.remove('playback_history');

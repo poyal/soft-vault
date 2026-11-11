@@ -3,12 +3,16 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'design.dart';
-import 'playback_history_dialog.dart';
+import 'playback_history.dart';
+import 'file_list.dart';
 
 class DetailEditor extends StatefulWidget {
   final Map<String, Object?> item;
   final VoidCallback play, rename, external, relink;
-  final VoidCallback? history;
+  final bool initiallyEditing;
+  final Future<void> Function(int?)? onRating;
+  final Future<void> Function(String)? onTags;
+  final Future<List<Map<String, Object?>>> Function()? loadTags;
   const DetailEditor({
     super.key,
     required this.item,
@@ -16,14 +20,18 @@ class DetailEditor extends StatefulWidget {
     required this.rename,
     required this.external,
     required this.relink,
-    this.history,
+    this.initiallyEditing = false,
+    this.onRating,
+    this.onTags,
+    this.loadTags,
   });
   @override
   State<DetailEditor> createState() => _DetailEditorState();
 }
 
 class _DetailEditorState extends State<DetailEditor> {
-  bool editing = false;
+  late bool editing = widget.initiallyEditing;
+  bool savingRating = false;
   late final fields = {
     for (final key in ['title', 'actors', 'tags', 'description', 'note'])
       key: TextEditingController(text: widget.item[key] as String? ?? ''),
@@ -35,6 +43,106 @@ class _DetailEditorState extends State<DetailEditor> {
       field.dispose();
     }
     super.dispose();
+  }
+
+  Future<void> changeRating(int? value) async {
+    if (savingRating) return;
+    setState(() => savingRating = true);
+    try {
+      await widget.onRating?.call(value);
+      if (mounted) setState(() => rating = value);
+    } catch (e) {
+      if (mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('평점 저장 실패: $e')));
+    } finally {
+      if (mounted) setState(() => savingRating = false);
+    }
+  }
+
+  Future<void> chooseTags() async {
+    final entries = await widget.loadTags!();
+    if (!mounted) return;
+    final selected = fields['tags']!.text
+        .split(',')
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty)
+        .toSet();
+    final query = TextEditingController();
+    final result = await showDialog<String>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, update) => AlertDialog(
+          title: const Text('태그 지정'),
+          content: SizedBox(
+            width: 480,
+            height: 360,
+            child: Column(
+              children: [
+                TextField(
+                  controller: query,
+                  decoration: const InputDecoration(labelText: '태그 검색 또는 새 태그'),
+                  onChanged: (_) => update(() {}),
+                ),
+                if (query.text.trim().isNotEmpty)
+                  TextButton(
+                    onPressed: () =>
+                        update(() => selected.add(query.text.trim())),
+                    child: Text('“${query.text.trim()}” 추가'),
+                  ),
+                Expanded(
+                  child: ListView(
+                    children: [
+                      for (final name
+                          in {
+                            ...entries.map((e) => e['name'] as String),
+                            ...selected,
+                          }.where(
+                            (s) => s.toLowerCase().contains(
+                              query.text.trim().toLowerCase(),
+                            ),
+                          ))
+                        CheckboxListTile(
+                          title: Text(name),
+                          value: selected.contains(name),
+                          onChanged: (checked) => update(() {
+                            if (checked == true)
+                              selected.add(name);
+                            else
+                              selected.remove(name);
+                          }),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('취소'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, selected.join(', ')),
+              child: const Text('적용'),
+            ),
+          ],
+        ),
+      ),
+    );
+    // The closing dialog may still render during its reverse transition.
+    if (result == null || !mounted) return;
+    try {
+      if (!editing) await widget.onTags?.call(result);
+      if (mounted) setState(() => fields['tags']!.text = result);
+    } catch (e) {
+      if (mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('태그 저장 실패: $e')));
+    }
   }
 
   Widget field(String key, String label, {int lines = 1}) => Padding(
@@ -131,8 +239,7 @@ class _DetailEditorState extends State<DetailEditor> {
             ),
             const Divider(height: 1, color: Color(0xff323d49)),
             Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              child: _DetailColumns(
                 children: [
                   Expanded(
                     flex: 48,
@@ -166,7 +273,7 @@ class _DetailEditorState extends State<DetailEditor> {
                             ),
                             const SizedBox(height: 24),
                             Text(
-                              item['title'] as String,
+                              displayTitle(item),
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -174,7 +281,7 @@ class _DetailEditorState extends State<DetailEditor> {
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              p.basename(item['path'] as String),
+                              item['path'] as String,
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: DeckDesign.muted,
@@ -207,6 +314,13 @@ class _DetailEditorState extends State<DetailEditor> {
                                   '해상도': '${item['resolution'] ?? ''}',
                                   '코덱': '${item['codec'] ?? ''}',
                                   '재생 횟수': '${item['play_count'] ?? 0}회',
+                                  '시청 상태': item['watched'] == 1
+                                      ? '시청 완료'
+                                      : ((item['play_count'] as int? ?? 0) > 0
+                                            ? '재생한 적 있음'
+                                            : '미재생'),
+                                  '이어보기':
+                                      '${((item['resume_ms'] as int? ?? 0) / 60000).floor()}분 ${(((item['resume_ms'] as int? ?? 0) / 1000).floor() % 60)}초',
                                   '최근 재생': formatPlaybackDate(
                                     item['last_played'] as int? ?? 0,
                                   ),
@@ -235,12 +349,6 @@ class _DetailEditorState extends State<DetailEditor> {
                               ],
                             ),
                             const SizedBox(height: 22),
-                            if (widget.history != null)
-                              OutlinedButton.icon(
-                                onPressed: widget.history,
-                                icon: const Icon(Icons.history, size: 18),
-                                label: const Text('재생 이력'),
-                              ),
                             const Divider(color: Color(0xff323d49)),
                             const SizedBox(height: 18),
                             const Text(
@@ -288,7 +396,7 @@ class _DetailEditorState extends State<DetailEditor> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          field('title', '제목'),
+                          if (editing) field('title', '제목'),
                           const Text(
                             '평점',
                             style: TextStyle(
@@ -300,23 +408,34 @@ class _DetailEditorState extends State<DetailEditor> {
                             children: [
                               DeckStars(
                                 rating: rating,
-                                change: editing
-                                    ? (value) => setState(() => rating = value)
-                                    : null,
+                                change: savingRating ? null : changeRating,
                                 size: 23,
                                 gap: 9,
                               ),
-                              if (editing)
-                                OutlinedButton(
-                                  onPressed: () =>
-                                      setState(() => rating = null),
+                              if (editing || widget.onRating != null)
+                                TextButton(
+                                  onPressed: savingRating
+                                      ? null
+                                      : () => changeRating(null),
                                   child: const Text('초기화'),
                                 ),
                             ],
                           ),
                           const SizedBox(height: 14),
                           field('actors', editing ? '배우 · 쉼표로 구분' : '배우'),
-                          field('tags', editing ? '태그 · 쉼표로 구분' : '태그'),
+                          Row(
+                            children: [
+                              const Expanded(child: Text('태그')),
+                              if (widget.loadTags != null)
+                                TextButton(
+                                  onPressed: chooseTags,
+                                  child: const Text('태그 지정'),
+                                ),
+                            ],
+                          ),
+                          if (editing) field('tags', '태그 · 쉼표로 구분'),
+                          if (fields['tags']!.text.trim().isEmpty)
+                            const Text('지정된 태그 없음'),
                           ValueListenableBuilder<TextEditingValue>(
                             valueListenable: fields['tags']!,
                             builder: (_, value, _) => Padding(
@@ -398,7 +517,7 @@ class _DetailEditorState extends State<DetailEditor> {
                             ...fields.map(
                               (key, value) => MapEntry(key, value.text),
                             ),
-                            'rating': rating,
+                            if (widget.onRating == null) 'rating': rating,
                           }),
                     child: Text(editing ? '저장' : '정보 편집'),
                   ),
@@ -410,4 +529,29 @@ class _DetailEditorState extends State<DetailEditor> {
       ),
     );
   }
+}
+
+class _DetailColumns extends StatelessWidget {
+  final List<Widget> children;
+  const _DetailColumns({required this.children});
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, bounds) => bounds.maxWidth >= 800
+        ? Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: children,
+          )
+        : SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                for (final child in children)
+                  if (child is Expanded)
+                    child.child
+                  else
+                    const Divider(height: 1),
+              ],
+            ),
+          ),
+  );
 }

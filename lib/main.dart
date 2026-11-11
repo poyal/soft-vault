@@ -42,7 +42,7 @@ import 'privacy_ui.dart';
 import 'window_lifecycle.dart';
 import 'metadata_exchange_dialog.dart';
 import 'playback_history.dart';
-import 'playback_history_dialog.dart';
+import 'desktop_files.dart';
 export 'native_playback.dart';
 part 'home_features.dart';
 part 'extended_features.dart';
@@ -316,6 +316,8 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   List<Map<String, Object?>> items = [];
   List<String> folders = [];
   Map<String, Object?>? current;
+  double? sidebarWidth;
+  Timer? sidebarSave;
   String query = '';
   String? folder;
   String? error;
@@ -349,6 +351,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
         ),
       );
     }
+    sidebarSave?.cancel();
     poll?.cancel();
     debounce?.cancel();
     progressTimer?.cancel();
@@ -448,6 +451,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     nativeFullscreen.removeListener(fullscreenChanged);
     progressTimer?.cancel();
     FocusManager.instance.removeEarlyKeyEventHandler(onKey);
+    sidebarSave?.cancel();
     poll?.cancel();
     debounce?.cancel();
     for (final watcher in watchers) {
@@ -505,7 +509,9 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
             current = selectedRows.isEmpty ? null : selectedRows.single;
           }
         });
-      if (current?['online'] == 0 && playingView) {
+      if (playingView &&
+          playbackMediaId != null &&
+          (await widget.library.mediaById(playbackMediaId!))['online'] == 0) {
         await persistProgress();
         playbackMediaId = null;
         await playback.silence();
@@ -534,14 +540,9 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     unawaited(enrichLibrary());
   });
   Future<void> select(Map<String, Object?> item) => guard(() async {
-    await persistProgress();
-    playbackMediaId = null;
-    await playback.silence();
-    await player.stop();
     if (mounted)
       setState(() {
         current = item;
-        playingView = false;
         view = 'files';
       });
   });
@@ -571,8 +572,10 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     }
   }
 
-  Future<void> edit() async {
-    final selectedItem = current;
+  Future<void> edit({int? mediaId, bool editing = false}) async {
+    final selectedItem = mediaId == null
+        ? current
+        : await widget.library.mediaById(mediaId);
     if (selectedItem == null) return;
     await playbackSession?.pending;
     final item = await widget.library.mediaById(selectedItem['id'] as int);
@@ -582,14 +585,19 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
       builder: (context) => DetailEditor(
         item: item,
         play: () => openMedia(item),
-        rename: () => moveFiles(rename: true),
-        external: openExternal,
-        relink: relinkFile,
-        history: () => showDeckDialog<void>(
-          context: context,
-          builder: (_) =>
-              PlaybackHistoryDialog(library: widget.library, item: item),
-        ),
+        rename: () => moveFiles(rename: true, ids: [item['id'] as int]),
+        external: () => openExternal(mediaId: item['id'] as int),
+        relink: () => relinkFile(mediaId: item['id'] as int),
+        initiallyEditing: editing,
+        onRating: (value) async {
+          await widget.library.edit(item['id'] as int, {'rating': value});
+          await refresh();
+        },
+        loadTags: () => widget.library.entities('tags'),
+        onTags: (value) async {
+          await widget.library.edit(item['id'] as int, {'tags': value});
+          await refresh();
+        },
       ),
     );
     if (values != null)
@@ -598,6 +606,82 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
         update(() => current = {...item, ...values});
         await refresh();
       });
+  }
+
+  Future<void> fileAction(Map<String, Object?> item, String action) async {
+    final id = item['id'] as int;
+    final ids = selected.contains(id) ? selected.toList() : [id];
+    switch (action) {
+      case 'play':
+        await openMedia(item);
+      case 'detail':
+        await edit(mediaId: id);
+      case 'edit':
+        await edit(mediaId: id, editing: true);
+      case 'reveal':
+        await DesktopFiles.reveal(item['path'] as String);
+      case 'rename':
+        await moveFiles(rename: true, ids: [id]);
+      case 'move':
+        await moveFiles(ids: ids);
+      case 'trash':
+        final rows = [
+          for (final target in ids) await widget.library.mediaById(target),
+        ];
+        if (!mounted) return;
+        final confirmed = await showDeckDialog<bool>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('휴지통으로 이동 · ${ids.length}개'),
+            content: SingleChildScrollView(
+              child: Text(
+                '원본 영상 파일을 OS 휴지통으로 이동합니다.\n\n${rows.map((r) => p.basename(r['path'] as String)).join('\n')}',
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('취소'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('휴지통으로 이동'),
+              ),
+            ],
+          ),
+        );
+        if (confirmed != true) return;
+        await prepareFileWork();
+        final failures = <String>[];
+        await widget.library.fileOperation(() async {
+          for (final row in rows) {
+            final target = row['id'] as int;
+            var moved = false;
+            try {
+              await widget.library.setting('pending_trash', {
+                'id': target,
+                'path': row['path'],
+              });
+              await DesktopFiles.trash(row['path'] as String);
+              moved = true;
+              await widget.library.setting('pending_trash', {
+                'id': target,
+                'path': row['path'],
+                'moved': true,
+              });
+              await widget.library.forgetTrashed(target);
+              await widget.library.setting('pending_trash', {});
+              selected.remove(target);
+            } catch (e) {
+              failures.add('${p.basename(row['path'] as String)}: $e');
+              if (moved) break;
+              await widget.library.setting('pending_trash', {});
+            }
+          }
+        });
+        await refresh();
+        if (failures.isNotEmpty) throw StateError(failures.join('\n'));
+    }
   }
 
   @override
@@ -695,6 +779,18 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                   fit: StackFit.expand,
                   children: [
                     SideDeck(
+                      sidebarWidth: sidebarWidth,
+                      resizeSidebar: (value) {
+                        update(() => sidebarWidth = value);
+                        sidebarSave?.cancel();
+                        sidebarSave = Timer(
+                          const Duration(milliseconds: 300),
+                          () => guard(
+                            () =>
+                                widget.library.setting('sidebar_width', value),
+                          ),
+                        );
+                      },
                       filterCount: libraryFilter.groupCount,
                       settingsOnly: view == 'settings',
                       items: items,
@@ -713,6 +809,9 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                           if (!selected.add(id)) selected.remove(id);
                         }),
                         preview: select,
+                        playingId: playbackMediaId,
+                        action: (item, action) =>
+                            guard(() => fileAction(item, action)),
                         play: openMedia,
                         motionPreview: mediaTools.preview,
                       ),
@@ -796,7 +895,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                                   ),
                               ],
                             ),
-                      controls: !playingView || current?['type'] != 'video'
+                      controls: !playingView
                           ? null
                           : PlaybackControls(
                               player: player,
@@ -806,9 +905,22 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                                   guard(() => changeVolume(value)),
                               subtitle: externalSubtitle,
                               decoder: decoderSettings,
-                              detail: edit,
-                              rating: current?['rating'] as int?,
-                              rate: rateTargets,
+                              detail: () => edit(mediaId: playbackMediaId),
+                              rating:
+                                  items
+                                          .where(
+                                            (e) => e['id'] == playbackMediaId,
+                                          )
+                                          .firstOrNull?['rating']
+                                      as int?,
+                              rate: (value) => guard(() async {
+                                if (playbackMediaId != null) {
+                                  await widget.library.edit(playbackMediaId!, {
+                                    'rating': value,
+                                  });
+                                  await refresh();
+                                }
+                              }),
                             ),
                     ),
                     if (selected.isNotEmpty && view == 'files')
@@ -816,9 +928,13 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                         left: 0,
                         right: expanded
                             ? 0
-                            : MediaQuery.sizeOf(context).width <= 1280
-                            ? 340
-                            : 370,
+                            : (sidebarWidth ??
+                                      MediaQuery.sizeOf(context).width * .4)
+                                  .clamp(
+                                    400.0,
+                                    (MediaQuery.sizeOf(context).width - 486)
+                                        .clamp(400.0, 640.0),
+                                  ),
                         bottom: 24,
                         child: Align(
                           alignment: Alignment.bottomCenter,

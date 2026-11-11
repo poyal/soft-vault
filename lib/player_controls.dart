@@ -68,7 +68,10 @@ class PlaybackControls extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 22),
-          Row(
+          Wrap(
+            spacing: 4,
+            runSpacing: 10,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               DeckIconButton(
                 'prev',
@@ -141,7 +144,7 @@ class PlaybackControls extends StatelessWidget {
                   ),
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 16),
               DeckStars(rating: rating, change: rate, size: 17, gap: 3),
               Container(
                 height: 22,
@@ -171,12 +174,14 @@ class PlaybackControls extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(width: 8),
               DeckIconButton(
                 'info',
                 tooltip: '상세정보 보기',
                 onPressed: detail,
                 extent: 38,
               ),
+              const SizedBox(width: 8),
               DeckIconButton(
                 'expand',
                 tooltip: '전체 화면',
@@ -186,7 +191,10 @@ class PlaybackControls extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          const Row(
+          const Wrap(
+            spacing: 4,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               KeyCap('Esc'),
               SizedBox(width: 6),
@@ -194,7 +202,7 @@ class PlaybackControls extends StatelessWidget {
                 '소리 0% · 최소화',
                 style: TextStyle(fontSize: 14, color: DeckDesign.muted),
               ),
-              Spacer(),
+              SizedBox(width: 16),
               KeyCap('Q'),
               SizedBox(width: 4),
               KeyCap('E'),

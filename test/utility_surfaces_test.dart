@@ -4,12 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:soft_vault/library.dart';
 import 'package:soft_vault/file_dialogs.dart';
 import 'package:soft_vault/file_jobs.dart';
-import 'package:soft_vault/playback_history_dialog.dart';
 import 'package:soft_vault/settings_components.dart';
 
 void main() {
   testWidgets(
-    'folder, jobs and playback history dialogs fit minimum window and enlarged text',
+    'folder and jobs dialogs fit minimum window and enlarged text',
     (tester) async {
       final dir = (await tester.runAsync(
         () => Directory.systemTemp.createTemp('utility-ui-'),
@@ -20,7 +19,7 @@ void main() {
       try {
         await tester.binding.setSurfaceSize(const Size(1000, 700));
         for (final scale in [1.0, 1.25, 1.5]) {
-          for (final type in ['folders', 'jobs', 'history']) {
+          for (final type in ['folders', 'jobs']) {
             await tester.pumpWidget(
               MaterialApp(
                 key: ValueKey(type + scale.toString()),
@@ -47,14 +46,6 @@ void main() {
                               [],
                               prepare: () async {},
                               changed: () async {},
-                            );
-                          case 'history':
-                            showDialog<void>(
-                              context: context,
-                              builder: (_) => PlaybackHistoryDialog(
-                                library: library,
-                                item: {'id': 1, 'title': '긴 한글 제목 ' * 20},
-                              ),
                             );
                         }
                       },

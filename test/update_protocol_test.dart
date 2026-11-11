@@ -24,7 +24,7 @@ void main() {
   });
   test('stable semantic versions and build numbers', () {
     expect(compareVersions('v1.10.0', '1.9.9'), greaterThan(0));
-    expect(compareVersions('1.0.0+2', '1.0.0+1'), greaterThan(0));
+    expect(compareVersions('1.0.0+2', '1.0.0+1'), 0);
     expect(compareVersions('v1.0.0', '1.0.0'), 0);
     expect(() => compareVersions('1.0.0-beta', '1.0.0'), throwsFormatException);
   });

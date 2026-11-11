@@ -69,7 +69,10 @@ void main() {
             Icons.play_circle_filled,
           );
         }
-        tester.state<ScrollableState>(find.byType(Scrollable).first).position.jumpTo(0);
+        tester
+            .state<ScrollableState>(find.byType(Scrollable).first)
+            .position
+            .jumpTo(0);
         await tester.pumpAndSettle();
         final check = find.byTooltip('영상 1 선택');
         expect(

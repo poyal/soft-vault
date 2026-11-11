@@ -10,7 +10,7 @@ class AppUpdater extends ChangeNotifier {
   static AppUpdater? instance;
   final Directory root;
   AppUpdater(this.root);
-  String current = '', message = '', notes = '';
+  String current = '', message = '', notes = '', previousResult = '';
   DateTime? lastCheck;
   bool automatic = true, working = false, ready = false;
   double? progress;
@@ -24,7 +24,7 @@ class AppUpdater extends ChangeNotifier {
     config = jsonDecode(
       await rootBundle.loadString('assets/update-config.json'),
     );
-    current = config['version'];
+    current = (config['version'] as String).split('+').first;
     if (await preferences.exists()) {
       try {
         final prefs = jsonDecode(await preferences.readAsString());
@@ -34,6 +34,10 @@ class AppUpdater extends ChangeNotifier {
         /* Damaged preferences use safe defaults. */
       }
     }
+    final previousError = File(p.join(root.path, 'last-error.txt'));
+    if (await previousError.exists())
+      previousResult =
+          '이전 업데이트 실패 · 복구됨: ${await previousError.readAsString()}';
     if (automatic &&
         (lastCheck == null ||
             DateTime.now().difference(lastCheck!).inHours >= 24))
@@ -124,8 +128,8 @@ class AppUpdater extends ChangeNotifier {
       await File(p.join(root.path, 'update.json')).writeAsBytes(bytes);
       await File(p.join(root.path, 'update.json.sig')).writeAsString(signature);
       message = '새 버전 ${manifest['version']}을 사용할 수 있습니다.';
-    } catch (_) {
-      message = '업데이트 확인 실패. 네트워크와 릴리즈 파일을 확인한 뒤 다시 시도하세요.';
+    } catch (error) {
+      message = '업데이트 확인 실패: $error';
     } finally {
       _client?.close(force: true);
       _client = null;
@@ -172,7 +176,7 @@ class AppUpdater extends ChangeNotifier {
       await verifyPackage(package, asset!);
       ready = true;
       message = '설치 준비 완료';
-    } catch (_) {
+    } catch (error) {
       message = '다운로드가 중단되었습니다. 다시 시도할 수 있습니다.';
     } finally {
       await sink?.close();
@@ -200,12 +204,11 @@ class AppUpdater extends ChangeNotifier {
     final probe = File(p.join(p.dirname(target), '.soft-vault-write-$pid'));
     await probe.writeAsString('');
     await probe.delete();
-    await Process.start(copy.path, [
-      root.path,
-      target,
-      dataPath,
-      '$pid',
-      config['publicKey'],
-    ], mode: ProcessStartMode.detached);
+    await Process.start(
+      copy.path,
+      [root.path, target, dataPath, '$pid', config['publicKey']],
+      workingDirectory: root.path,
+      mode: ProcessStartMode.detached,
+    );
   }
 }

@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;
 import 'design.dart';
 import 'app_updater.dart';
-import 'scenes_dialog.dart';
 
 /// Measurements, colors and SVGs mirror design/side-deck.css.
 class SideDeck extends StatelessWidget {
   final Widget stage;
+  final double? sidebarWidth;
+  final ValueChanged<double>? resizeSidebar;
   final Widget? controls, content, navigation, toolbar, fileList;
   final List<Map<String, Object?>> items;
   final Map<String, Object?>? current;
@@ -27,6 +28,8 @@ class SideDeck extends StatelessWidget {
   const SideDeck({
     super.key,
     required this.stage,
+    this.sidebarWidth,
+    this.resizeSidebar,
     this.controls,
     this.content,
     this.navigation,
@@ -188,323 +191,6 @@ class SideDeck extends StatelessWidget {
       ],
     ),
   );
-  Widget preview(BuildContext context, double width, double height) {
-    final small = width <= 1280, padding = width <= 1280 ? 30.0 : 38.0;
-    final leftWidth = width - (small ? 340 : 370);
-    final stageHeight = math.max(
-      small ? 200.0 : 230.0,
-      math.min(
-        (leftWidth - padding * 2) * 9 / 16,
-        height - (small ? 440 : 465),
-      ),
-    );
-    return Column(
-      children: [
-        Padding(padding: const EdgeInsets.only(right: 10), child: header()),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.fromLTRB(
-                padding,
-                small ? 28 : 31,
-                padding + 10,
-                small ? 20 : 22,
-              ),
-              child: current == null
-                  ? SizedBox(
-                      height: height - 150,
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Image.asset(
-                              'design/assets/app-icon.png',
-                              width: 110,
-                            ),
-                            const SizedBox(height: 24),
-                            const Text(
-                              '나만의 영상을 한곳에',
-                              style: TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            const Text(
-                              '폴더를 연결하고, 원하는 장면을 쉽게 다시 찾아보세요.',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: DeckDesign.muted,
-                              ),
-                            ),
-                            const SizedBox(height: 28),
-                            FilledButton(
-                              onPressed: busy ? null : connect,
-                              child: const Text('폴더 연결'),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height:
-                              100 * MediaQuery.textScalerOf(context).scale(1),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const SizedBox(height: 7),
-                                    const Text(
-                                      'FILE PREVIEW',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        letterSpacing: 1.8,
-                                        color: Color(0xffb3c1cd),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      current!['title'] as String,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: -.8,
-                                        height: 1.25,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      p.basename(current!['path'] as String),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Color(0xffb3c1cd),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              DeckIconButton(
-                                'info',
-                                tooltip: '상세정보 보기',
-                                onPressed: edit,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 28),
-                        SizedBox(
-                          key: const ValueKey('preview-stage'),
-                          height: stageHeight,
-                          width: double.infinity,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                ColorFiltered(
-                                  colorFilter: const ColorFilter.matrix([
-                                    .85,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    .85,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    .85,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    0,
-                                    1,
-                                    0,
-                                  ]),
-                                  child: stage,
-                                ),
-                                const DecoratedBox(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.transparent,
-                                        Colors.transparent,
-                                        Color(0x80101c25),
-                                      ],
-                                      stops: [0, .55, 1],
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 15,
-                                  left: 17,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 8,
-                                      vertical: 5,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xcc13212b),
-                                      border: Border.all(
-                                        color: const Color(0x22b7c9d2),
-                                      ),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Text(
-                                      [
-                                            current!['resolution'],
-                                            current!['codec'],
-                                          ]
-                                          .where((v) => v != null && v != '')
-                                          .join(' · '),
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Color(0xffadc1ce),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  heightFactor: 1,
-                                  child: Transform.translate(
-                                    offset: const Offset(0, -14),
-                                    child: Tooltip(
-                                      message: '재생 화면 열기',
-                                      child: InkWell(
-                                        onTap: open,
-                                        borderRadius: BorderRadius.circular(30),
-                                        child: Container(
-                                          width: 55,
-                                          height: 55,
-                                          alignment: Alignment.center,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: const Color(0x6e1b354a),
-                                            border: Border.all(
-                                              color: const Color(0x55d6e7f0),
-                                            ),
-                                          ),
-                                          child: const DesignIcon(
-                                            'play',
-                                            size: 23,
-                                            color: const Color(0xffe5edf2),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Container(
-                          padding: const EdgeInsets.only(bottom: 15),
-                          margin: const EdgeInsets.only(bottom: 16),
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(color: Color(0xff2c3944)),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              const Text(
-                                '내 평점',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: DeckDesign.muted,
-                                ),
-                              ),
-                              const SizedBox(width: 15),
-                              DeckStars(
-                                rating: current!['rating'] as int?,
-                                change: rate,
-                              ),
-                              const Spacer(),
-                              Text(
-                                current!['type'] == 'video'
-                                    ? sceneTime(
-                                        ((current!['duration'] as num) * 1000)
-                                            .round(),
-                                      ).substring(3)
-                                    : '${((current!['size'] as num) / 1048576).toStringAsFixed(1)} MB',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: DeckDesign.muted,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        terms('actors', '배우'),
-                        terms('tags', '태그'),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: Text(
-                            current!['description'] as String,
-                            maxLines: 4,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: DeckDesign.muted,
-                              height: 1.9,
-                            ),
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 24),
-                          padding: const EdgeInsets.only(top: 18),
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              top: BorderSide(color: Color(0xff27333e)),
-                            ),
-                          ),
-                          child: const Row(
-                            children: [
-                              KeyCap('Esc'),
-                              SizedBox(width: 6),
-                              Text(
-                                '소리 0% · 최소화',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: DeckDesign.muted,
-                                ),
-                              ),
-                              Spacer(),
-                              Text(
-                                '목록 제목은 미리보기 · 썸네일은 열기',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: DeckDesign.muted,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget player() => ColoredBox(
     color: const Color(0xff0e1419),
     child: Stack(
@@ -513,7 +199,7 @@ class SideDeck extends StatelessWidget {
           child: Padding(
             padding: expanded
                 ? EdgeInsets.zero
-                : const EdgeInsets.only(bottom: 166),
+                : const EdgeInsets.only(bottom: 220),
             child: stage,
           ),
         ),
@@ -548,12 +234,54 @@ class SideDeck extends StatelessWidget {
                     content ??
                     (playing
                         ? player()
-                        : preview(context, bounds.maxWidth, bounds.maxHeight)),
+                        : Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Image.asset(
+                                  'design/assets/app-icon.png',
+                                  width: 80,
+                                  height: 80,
+                                ),
+                                const SizedBox(height: 24),
+                                const Text(
+                                  '재생 대기 중',
+                                  style: TextStyle(fontSize: 24),
+                                ),
+                                const SizedBox(height: 12),
+                                const Text('목록에서 영상을 더블클릭해 재생하세요'),
+                                if (current != null)
+                                  TextButton(
+                                    onPressed: edit,
+                                    child: const Text('선택 파일 상세정보'),
+                                  ),
+                              ],
+                            ),
+                          )),
               ),
+              if (!expanded && resizeSidebar != null)
+                MouseRegion(
+                  cursor: SystemMouseCursors.resizeColumn,
+                  child: GestureDetector(
+                    onHorizontalDragUpdate: (details) => resizeSidebar!(
+                      ((sidebarWidth ?? bounds.maxWidth * .4) -
+                              details.delta.dx)
+                          .clamp(400.0, math.min(640.0, bounds.maxWidth - 486)),
+                    ),
+                    child: const SizedBox(
+                      width: 6,
+                      height: double.infinity,
+                      child: ColoredBox(color: DeckDesign.line),
+                    ),
+                  ),
+                ),
               if (!expanded)
                 Container(
                   key: const ValueKey('library-sidebar'),
-                  width: bounds.maxWidth <= 1280 ? 340 : 370,
+                  width: (sidebarWidth ?? bounds.maxWidth * .4).clamp(
+                    400.0,
+                    math.max(400.0, math.min(640.0, bounds.maxWidth - 486)),
+                  ),
                   decoration: const BoxDecoration(
                     color: DeckDesign.sidebar,
                     border: Border(left: BorderSide(color: Color(0xff313c47))),

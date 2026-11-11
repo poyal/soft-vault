@@ -46,6 +46,8 @@ class UpdateSettings extends StatelessWidget {
               ),
             ],
           ),
+          if (updater.previousResult.isNotEmpty)
+            SettingsStatus(updater.previousResult),
           SettingsSection(
             title: '업데이트',
             children: [

@@ -110,3 +110,10 @@ Future<void> setRelations(
     await db.insert('media_$kind', {'media_id': id, column: entity['id']});
   }
 }
+
+Future<void> upgradePlaybackSummary(Database db) async {
+  await db.execute(
+    "UPDATE media SET play_count = max(play_count, (SELECT count(*) FROM playback_history WHERE media_id=media.id)), last_played = max(last_played, coalesce((SELECT max(started_at) FROM playback_history WHERE media_id=media.id),0))",
+  );
+  await db.execute('DROP TABLE playback_history');
+}

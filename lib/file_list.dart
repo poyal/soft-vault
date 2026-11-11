@@ -10,6 +10,8 @@ class VaultFileList extends StatelessWidget {
   final Set<int> selected;
   final int? current;
   final bool grid;
+  final void Function(Map<String, Object?>, String)? action;
+  final int? playingId;
   final ValueChanged<int> toggle;
   final ValueChanged<Map<String, Object?>> preview, play;
   final Future<String> Function(Map<String, Object?>)? motionPreview;
@@ -23,6 +25,8 @@ class VaultFileList extends StatelessWidget {
     required this.preview,
     required this.play,
     this.motionPreview,
+    this.action,
+    this.playingId,
   });
   Widget thumbnail(Map<String, Object?> item) {
     final path = (item['thumbnail'] as String? ?? '').isNotEmpty
@@ -134,7 +138,8 @@ class VaultFileList extends StatelessWidget {
           ),
         );
         final thumb = InkWell(
-          onTap: () => play(item),
+          onTap: () => preview(item),
+          onDoubleTap: () => play(item),
           child: Stack(
             fit: StackFit.expand,
             children: [
@@ -152,6 +157,15 @@ class VaultFileList extends StatelessWidget {
             ],
           ),
         );
+        final menuEntries = <String, String>{
+          'play': '재생',
+          'detail': '상세정보',
+          'edit': '정보 편집',
+          'reveal': '파일 위치 열기',
+          'rename': '이름 변경',
+          'move': '파일 이동',
+          'trash': '휴지통으로 이동',
+        };
         final label = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -159,7 +173,7 @@ class VaultFileList extends StatelessWidget {
             Tooltip(
               message: item['title'] as String,
               child: Text(
-                item['title'] as String,
+                displayTitle(item),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -179,10 +193,12 @@ class VaultFileList extends StatelessWidget {
                 color: isCurrent ? const Color(0xffb3c1cd) : DeckDesign.muted,
               ),
             ),
+            if (playingId == id)
+              const Text('재생 중', style: TextStyle(color: DeckDesign.accent)),
             const SizedBox(height: 3),
             DeckStars(rating: item['rating'] as int?, size: 10, gap: 1),
             metadata('actors', 'person', '배우', actors, '배우 미등록'),
-            metadata('tags', 'tag', '태그', tags, '태그 없음'),
+            metadata('tags', 'tag', '태그', tags, '지정된 태그 없음'),
           ],
         );
         return _HoverTile(
@@ -263,6 +279,30 @@ class VaultFileList extends StatelessWidget {
                         focusColor: const Color(0x4487b8d8),
                         onTap: () => preview(item),
                         onDoubleTap: () => play(item),
+                        onSecondaryTapDown: action == null
+                            ? null
+                            : (details) async {
+                                final overlay =
+                                    Overlay.of(
+                                          context,
+                                        ).context.findRenderObject()
+                                        as RenderBox;
+                                final choice = await showMenu<String>(
+                                  context: context,
+                                  position: RelativeRect.fromRect(
+                                    details.globalPosition & const Size(1, 1),
+                                    Offset.zero & overlay.size,
+                                  ),
+                                  items: [
+                                    for (final e in menuEntries.entries)
+                                      PopupMenuItem(
+                                        value: e.key,
+                                        child: Text(e.value),
+                                      ),
+                                  ],
+                                );
+                                if (choice != null) action!(item, choice);
+                              },
                         borderRadius: BorderRadius.circular(7),
                         child: Padding(
                           padding: grid
@@ -294,7 +334,25 @@ class VaultFileList extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Positioned(top: 6, right: 6, child: check),
+                    Positioned(
+                      top: action == null ? 6 : 40,
+                      right: 6,
+                      child: check,
+                    ),
+                    if (action != null)
+                      Positioned(
+                        top: 2,
+                        right: 6,
+                        child: PopupMenuButton<String>(
+                          tooltip: '파일 메뉴',
+                          icon: const Icon(Icons.more_vert),
+                          onSelected: (value) => action!(item, value),
+                          itemBuilder: (_) => [
+                            for (final e in menuEntries.entries)
+                              PopupMenuItem(value: e.key, child: Text(e.value)),
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -342,4 +400,23 @@ class _HoverTileState extends State<_HoverTile> {
     onExit: (_) => setState(() => hover = false),
     child: widget.builder(hover),
   );
+}
+
+String displayTitle(Map<String, Object?> item) {
+  var title = item['title'] as String? ?? '';
+  final actors = (item['actors'] as String? ?? '')
+      .split(',')
+      .map((s) => s.trim())
+      .where((s) => s.isNotEmpty)
+      .toList();
+  for (final actor in actors) {
+    for (final separator in [' · ', ' - ', ' / ']) {
+      if (title.endsWith('$separator$actor'))
+        title = title.substring(
+          0,
+          title.length - separator.length - actor.length,
+        );
+    }
+  }
+  return title;
 }

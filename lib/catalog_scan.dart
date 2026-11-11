@@ -106,11 +106,6 @@ extension _CatalogScan on Library {
               );
               if (changed) {
                 batch.delete(
-                  'playback_history',
-                  where: 'media_id=?',
-                  whereArgs: [old['id']],
-                );
-                batch.delete(
                   'bookmarks',
                   where: 'media_id=?',
                   whereArgs: [old['id']],

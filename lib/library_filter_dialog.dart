@@ -176,93 +176,58 @@ class _LibraryFilterDialogState extends State<LibraryFilterDialog> {
                             ),
                             SettingsSection(
                               title: '평점',
-                              description: '최소 평점 또는 정확한 점수로 범위를 좁힙니다.',
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                  ),
-                                  child: Wrap(
-                                    spacing: 8,
-                                    runSpacing: 8,
-                                    children: [
-                                      ChoiceChip(
-                                        label: const Text('전체'),
-                                        selected: rating == null && !unrated,
-                                        onSelected: (_) => setState(() {
-                                          rating = null;
-                                          unrated = false;
-                                        }),
-                                      ),
-                                      ChoiceChip(
-                                        label: const Text('별점 지정'),
-                                        selected: rating != null,
-                                        onSelected: (_) => setState(() {
-                                          rating ??= 1;
-                                          unrated = false;
-                                        }),
-                                      ),
-                                      ChoiceChip(
-                                        label: const Text('미평가'),
-                                        selected: unrated,
-                                        onSelected: (_) => setState(() {
-                                          rating = null;
-                                          unrated = true;
-                                        }),
-                                      ),
-                                    ],
-                                  ),
-                                ),
                                 Wrap(
-                                  spacing: 16,
+                                  spacing: 12,
                                   runSpacing: 12,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
-                                    Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        for (var i = 1; i <= 5; i++)
-                                          IconButton(
-                                            key: ValueKey('filter-star-$i'),
-                                            tooltip: '$i점 선택',
-                                            isSelected:
-                                                rating != null && i <= rating!,
-                                            onPressed: () => setState(() {
-                                              rating = i;
-                                              unrated = false;
-                                            }),
-                                            icon: Icon(
-                                              rating != null && i <= rating!
-                                                  ? Icons.star
-                                                  : Icons.star_border,
-                                              color: DeckDesign.gold,
-                                              size: 28,
+                                    DropdownButton<int>(
+                                      key: const ValueKey('filter-rating'),
+                                      value: unrated ? -1 : rating ?? 0,
+                                      items: [
+                                        for (final value in [
+                                          -1,
+                                          0,
+                                          1,
+                                          2,
+                                          3,
+                                          4,
+                                          5,
+                                        ])
+                                          DropdownMenuItem(
+                                            value: value,
+                                            child: Text(
+                                              value == -1
+                                                  ? '미평가'
+                                                  : value == 0
+                                                  ? '전체 평점'
+                                                  : '$value점',
                                             ),
                                           ),
                                       ],
+                                      onChanged: (value) => setState(() {
+                                        unrated = value == -1;
+                                        rating = value != null && value > 0
+                                            ? value
+                                            : null;
+                                      }),
                                     ),
-                                    SegmentedButton<bool>(
-                                      segments: const [
-                                        ButtonSegment(
-                                          value: false,
-                                          label: Text('이상'),
-                                        ),
-                                        ButtonSegment(
-                                          value: true,
-                                          label: Text('정확히'),
-                                        ),
-                                      ],
-                                      selected: {exact},
-                                      onSelectionChanged: rating == null
-                                          ? null
-                                          : (value) => setState(
-                                              () => exact = value.single,
-                                            ),
-                                    ),
-                                    Text(
-                                      draft.ratingLabel,
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
+                                    if (rating != null)
+                                      DropdownButton<bool>(
+                                        value: exact,
+                                        items: const [
+                                          DropdownMenuItem(
+                                            value: false,
+                                            child: Text('이상'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: true,
+                                            child: Text('정확히'),
+                                          ),
+                                        ],
+                                        onChanged: (value) =>
+                                            setState(() => exact = value!),
+                                      ),
                                   ],
                                 ),
                               ],

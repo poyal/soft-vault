@@ -11,7 +11,7 @@ int compareVersions(String a, String b) {
   }
 
   final x = parse(a), y = parse(b);
-  for (var i = 0; i < 4; i++) {
+  for (var i = 0; i < 3; i++) {
     if (x[i] != y[i]) return x[i].compareTo(y[i]);
   }
   return 0;

@@ -1,14 +1,14 @@
 [
   {
     "file": "library.png",
-    "source": "build/e2e/design-library-1280.png",
-    "capturedAt": "2026-11-11T08:35:42.465Z",
+    "source": "build/review-031/library.png",
+    "capturedAt": "2026-11-11T14:32:06.610442+00:00",
     "platform": "Windows x64",
-    "mode": "Flutter native integration test, debug",
+    "mode": "Flutter native integration test, profile",
     "data": "Synthetic test catalog and sample video",
-    "sourceCommit": "4493eadcd91862e13962716c9885535e2d526138",
-    "version": "0.3.0+4",
-    "sha256": "5738c64f080b2cfd0aa9ce80484e97f491dbb5c593f1acf251337e6f93b44aa8"
+    "sourceCommit": "working tree based on v0.3.0",
+    "version": "0.3.1",
+    "sha256": "a472443ce09ccdee7eb1122a00a4c4eb8aca455734c88562b122f1c2f08fd1bd"
   },
   {
     "file": "settings-library.png",
@@ -45,14 +45,14 @@
   },
   {
     "file": "details.png",
-    "source": "build/e2e/design-detail-1280.png",
-    "capturedAt": "2026-11-11T08:35:43.932Z",
+    "source": "build/review-031/details.png",
+    "capturedAt": "2026-11-11T14:32:06.613402+00:00",
     "platform": "Windows x64",
-    "mode": "Flutter native integration test, debug",
+    "mode": "Flutter native integration test, profile",
     "data": "Synthetic test catalog and sample video",
-    "sourceCommit": "4493eadcd91862e13962716c9885535e2d526138",
-    "version": "0.3.0+4",
-    "sha256": "48f83432fe372655c79577937a202cde13b7a407d991fe43e13123e353bf8efa"
+    "sourceCommit": "working tree based on v0.3.0",
+    "version": "0.3.1",
+    "sha256": "4f82e0e0a1558275b93d3754a1f3ec59c06a6a314774eced23ebdd37a3a7c04b"
   },
   {
     "file": "scenes.png",

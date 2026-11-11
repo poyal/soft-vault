@@ -11,25 +11,7 @@ extension PlaybackHistory on Library {
       [startedAt.millisecondsSinceEpoch, mediaId],
     );
     if (changed != 1) throw StateError('재생 기록을 저장할 영상을 찾지 못했습니다.');
-    await tx.insert('playback_history', {
-      'media_id': mediaId,
-      'started_at': startedAt.millisecondsSinceEpoch,
-      'start_position_ms': start.inMilliseconds.clamp(0, 1 << 50),
-    });
   });
-
-  Future<List<Map<String, Object?>>> playbackHistory(
-    int mediaId, {
-    int offset = 0,
-    int limit = 50,
-  }) => db.query(
-    'playback_history',
-    where: 'media_id=?',
-    whereArgs: [mediaId],
-    orderBy: 'started_at DESC, id DESC',
-    offset: offset,
-    limit: limit,
-  );
 }
 
 /// A new open is one session; pause, resume and seek keep the same session.
@@ -56,4 +38,11 @@ class PlaybackSession {
       rethrow;
     }
   }
+}
+
+String formatPlaybackDate(int milliseconds) {
+  if (milliseconds <= 0) return '기록 없음';
+  final date = DateTime.fromMillisecondsSinceEpoch(milliseconds);
+  String two(int n) => n.toString().padLeft(2, '0');
+  return '${date.year}-${two(date.month)}-${two(date.day)} ${two(date.hour)}:${two(date.minute)}';
 }

@@ -25,7 +25,6 @@ class CatalogPanel extends StatefulWidget {
 
 class _CatalogPanelState extends State<CatalogPanel> {
   List<Map<String, Object?>> rows = [];
-  Map<int, List<String>> previews = {};
   String? error;
   int total = 0;
   @override
@@ -41,22 +40,10 @@ class _CatalogPanelState extends State<CatalogPanel> {
               "SELECT count(*) AS n FROM media WHERE type='video'",
             )).single['n']
             as int;
-    final thumbnails = <int, List<String>>{};
-    final field = widget.kind == 'actors' ? 'actor_id' : 'tag_id';
-    for (final row in data) {
-      final media = await widget.library.db.rawQuery(
-        "SELECT m.path, m.thumbnail, m.type FROM media m JOIN media_${widget.kind} r ON r.media_id=m.id WHERE r.$field=? AND m.type='video' ORDER BY m.id LIMIT 3",
-        [row['id']],
-      );
-      thumbnails[row['id'] as int] = media
-          .map((item) => item['thumbnail'] as String)
-          .toList();
-    }
     if (mounted)
       setState(() {
         rows = data;
         total = count;
-        previews = thumbnails;
       });
   }
 
@@ -201,7 +188,7 @@ class _CatalogPanelState extends State<CatalogPanel> {
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 360,
                     mainAxisExtent:
-                        (widget.kind == 'actors' ? 300 : 100) *
+                        (widget.kind == 'actors' ? 240 : 100) *
                         MediaQuery.textScalerOf(context).scale(1),
                     crossAxisSpacing: widget.kind == 'actors' ? 22 : 18,
                     mainAxisSpacing: 18,
@@ -274,13 +261,21 @@ class _CatalogPanelState extends State<CatalogPanel> {
                       child: InkWell(
                         onTap: () => widget.open(row['name'] as String),
                         child: Padding(
-                          padding: const EdgeInsets.all(29),
+                          padding: const EdgeInsets.fromLTRB(20, 4, 12, 16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: IconButton(
+                                  onPressed: () => edit(row),
+                                  tooltip: '정보 편집',
+                                  icon: const DesignIcon('more', size: 18),
+                                ),
+                              ),
                               if (widget.kind == 'actors')
                                 Padding(
-                                  padding: const EdgeInsets.only(bottom: 21),
+                                  padding: const EdgeInsets.only(bottom: 12),
                                   child: CircleAvatar(
                                     radius: 35,
                                     foregroundColor: const Color(0xffcbdce4),
@@ -330,11 +325,6 @@ class _CatalogPanelState extends State<CatalogPanel> {
                                       ),
                                     ),
                                   ),
-                                  IconButton(
-                                    onPressed: () => edit(row),
-                                    tooltip: '정보 편집',
-                                    icon: const DesignIcon('more', size: 18),
-                                  ),
                                 ],
                               ),
                               Text(
@@ -346,41 +336,6 @@ class _CatalogPanelState extends State<CatalogPanel> {
                                   color: DeckDesign.muted,
                                 ),
                               ),
-                              if (widget.kind == 'actors') ...[
-                                const Spacer(),
-                                SizedBox(
-                                  height: 55,
-                                  child: Row(
-                                    children: [
-                                      for (final path
-                                          in previews[row['id']] ?? <String>[])
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                              right: 5,
-                                            ),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
-                                              child: Image.file(
-                                                File(path),
-                                                height: 55,
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (_, _, _) =>
-                                                    const ColoredBox(
-                                                      color: Color(0xff233b4e),
-                                                      child: Icon(
-                                                        Icons.movie_outlined,
-                                                      ),
-                                                    ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ],
                             ],
                           ),
                         ),
