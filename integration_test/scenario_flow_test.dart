@@ -103,7 +103,19 @@ void main() {
     (app) async {
       await app.mount();
       await openSettings(app.tester, '재생');
-      for (final label in ['이어보기', '처음부터 재생', 'NFO 가져오기', 'NFO 내보내기']) {
+      for (final label in ['이어보기', '처음부터 재생']) {
+        expect(
+          app.tester
+              .widget<OutlinedButton>(
+                find.widgetWithText(OutlinedButton, label),
+              )
+              .onPressed,
+          isNull,
+        );
+      }
+      await openSettings(app.tester, '메타데이터');
+      await app.tap('NFO 관리');
+      for (final label in ['NFO 가져오기', 'NFO 내보내기']) {
         expect(
           app.tester
               .widget<OutlinedButton>(
@@ -171,6 +183,8 @@ void main() {
                 .data,
             '태그 없음',
           );
+          await app.tester.ensureVisible(actor);
+          await app.settle();
           await app.tester.tap(actor);
           await app.settle();
           expect(
