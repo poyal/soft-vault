@@ -1,6 +1,6 @@
 # Soft Vault 0.3.0
 
-Windows x64·Apple Silicon Mac용 0.3.0+4입니다. 자동 검사와 EXE·DMG 설치 검증을 완료했습니다. 공개 게시 확인은 [검증 기록](VERIFICATION.md)에 별도로 기록합니다.
+Windows x64·Apple Silicon Mac용 0.3.0+4입니다. 자동 검사와 EXE·DMG 설치 검증 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.3.0)했습니다. 공개 파일 8개의 재다운로드 크기·해시도 확인했습니다. [검증 기록](VERIFICATION.md)
 
 ## 변경 사항
 
