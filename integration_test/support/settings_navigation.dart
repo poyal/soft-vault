@@ -14,6 +14,15 @@ Future<void> openSettings(
 }
 
 Future<void> settingsAction(WidgetTester tester, String label) async {
+  if (label == '다시 검색') {
+    if (find.text('영상으로 돌아가기').evaluate().isNotEmpty) {
+      await tester.tap(find.text('영상으로 돌아가기'));
+      await tester.pumpAndSettle();
+    }
+    await tester.tap(find.byTooltip('전체 폴더 새로고침'));
+    await tester.pumpAndSettle();
+    return;
+  }
   const playback = {
     '이어보기',
     '처음부터 재생',
@@ -23,7 +32,19 @@ Future<void> settingsAction(WidgetTester tester, String label) async {
     'NFO 가져오기',
     'NFO 내보내기',
   };
-  await openSettings(tester, playback.contains(label) ? '재생' : '라이브러리');
+  await openSettings(
+    tester,
+    label.startsWith('NFO') || label == '영상정보 내보내기·입력하기'
+        ? '메타데이터'
+        : playback.contains(label)
+        ? '재생'
+        : '라이브러리',
+  );
+  if (label == '영상정보 내보내기·입력하기') return;
+  if (label.startsWith('NFO')) {
+    await tester.tap(find.text('NFO 관리'));
+    await tester.pumpAndSettle();
+  }
   await tester.ensureVisible(find.text(label));
   await tester.tap(find.text(label));
   for (var i = 0; i < 5; i++) {

@@ -131,7 +131,7 @@ extension _ExtendedFeatures on _VaultHomeState {
           ),
         ),
         actions: [
-          TextButton(
+          OutlinedButton(
             onPressed: () => Navigator.pop(context, false),
             child: const Text('취소'),
           ),
@@ -177,7 +177,7 @@ extension _ExtendedFeatures on _VaultHomeState {
               title: const Text('기존 NFO 교체'),
               content: const Text('기존 파일을 백업한 뒤 새 메타데이터로 교체합니다.'),
               actions: [
-                TextButton(
+                OutlinedButton(
                   onPressed: () => Navigator.pop(context, false),
                   child: const Text('취소'),
                 ),
@@ -196,6 +196,17 @@ extension _ExtendedFeatures on _VaultHomeState {
     ).write(item['id'] as int, File(target.path), overwrite: overwrite);
   });
   void settingsAction(String action) {
+    if (action == 'metadata') {
+      guard(() async {
+        final changed = await showDeckDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => MetadataExchangeDialog(library: widget.library),
+        );
+        if (changed == true) await refresh();
+      });
+      return;
+    }
     update(() => view = 'files');
     switch (action) {
       case 'grid':

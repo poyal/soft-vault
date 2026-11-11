@@ -4,13 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'design_icons.dart';
 
 abstract final class DeckDesign {
-  static const background = Color(0xff15191e),
-      sidebar = Color(0xff1c2229),
-      surface = Color(0xff242c35),
-      line = Color(0xff323d49),
-      text = Color(0xffe3eaf1),
-      muted = Color(0xff8a9baa),
-      accent = Color(0xff87b8d8),
+  static const background = Color(0xff12161c),
+      sidebar = Color(0xff1b222b),
+      surface = Color(0xff242e3a),
+      line = Color(0xff46576a),
+      text = Color(0xfff0f4f8),
+      muted = Color(0xffbcc8d5),
+      accent = Color(0xff92c9f5),
       gold = Color(0xffbdaf8c);
   static const font = 'Segoe UI';
 }
@@ -55,17 +55,19 @@ class DeckIconButton extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => SizedBox(
-    width: extent,
-    height: extent,
+    width: extent < 40 ? 40 : extent,
+    height: extent < 40 ? 40 : extent,
     child: IconButton(
       onPressed: onPressed,
       tooltip: tooltip,
       padding: EdgeInsets.zero,
-      constraints: BoxConstraints.tightFor(width: extent, height: extent),
+      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
       icon: DesignIcon(name, size: size),
       style: IconButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-        minimumSize: Size.zero,
+        backgroundColor: DeckDesign.surface,
+        side: const BorderSide(color: DeckDesign.line),
+        minimumSize: const Size(40, 40),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
     ),
@@ -77,7 +79,7 @@ class KeyCap extends StatelessWidget {
   const KeyCap(this.text, {super.key});
   @override
   Widget build(BuildContext context) => Container(
-    height: 20,
+    height: 28,
     constraints: const BoxConstraints(minWidth: 20),
     padding: const EdgeInsets.symmetric(horizontal: 5),
     alignment: Alignment.center,
@@ -89,8 +91,8 @@ class KeyCap extends StatelessWidget {
     child: Text(
       text,
       style: const TextStyle(
-        fontSize: 9,
-        color: Color(0xff7696ac),
+        fontSize: 14,
+        color: Color(0xffb3c1cd),
         fontWeight: FontWeight.w400,
       ),
     ),

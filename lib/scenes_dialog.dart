@@ -85,7 +85,7 @@ class _ScenesDialogState extends State<ScenesDialog> {
             ),
           ),
           actions: [
-            TextButton(
+            OutlinedButton(
               onPressed: () => Navigator.pop(context, false),
               child: const Text('취소'),
             ),
@@ -190,7 +190,7 @@ class _ScenesDialogState extends State<ScenesDialog> {
       ),
     ),
     actions: [
-      TextButton(
+      OutlinedButton(
         onPressed: () => Navigator.pop(context),
         child: const Text('닫기'),
       ),

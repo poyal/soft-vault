@@ -121,7 +121,7 @@ Future<void> showFileJobs(
                                       folder,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(fontSize: 11),
+                                      style: const TextStyle(fontSize: 14),
                                     ),
                                     trailing: Icon(
                                       destination == folder
@@ -191,12 +191,12 @@ Future<void> showFileJobs(
           ),
           actions: [
             if (running)
-              TextButton(
+              OutlinedButton(
                 onPressed: () => jobs.cancelled = true,
                 child: const Text('남은 작업 취소'),
               ),
             if (!running)
-              TextButton(
+              OutlinedButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text('닫기'),
               ),
@@ -204,7 +204,7 @@ Future<void> showFileJobs(
                 history.any(
                   (job) => ['failed', 'cleanup_failed'].contains(job['state']),
                 ))
-              TextButton(
+              OutlinedButton(
                 onPressed: () => execute(true),
                 child: const Text('실패 항목 재시도'),
               ),
@@ -260,8 +260,8 @@ Future<void> showFolderManager(
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: 11,
-                            color: Color(0xff8a9baa),
+                            fontSize: 14,
+                            color: DeckDesign.muted,
                           ),
                         ),
                         trailing: IconButton(
@@ -285,7 +285,7 @@ Future<void> showFolderManager(
         actions: [
           if (error != null)
             Text(error!, style: const TextStyle(color: Colors.orange)),
-          TextButton(
+          OutlinedButton(
             onPressed: () => Navigator.pop(context),
             child: const Text('닫기'),
           ),

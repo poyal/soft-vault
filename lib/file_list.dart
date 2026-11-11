@@ -55,7 +55,7 @@ class VaultFileList extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
             child: Text(
               '표시할 파일이 없습니다.',
-              style: TextStyle(fontSize: 11, color: Color(0xff7792a6)),
+              style: TextStyle(fontSize: 14, color: DeckDesign.muted),
             ),
           ),
         );
@@ -121,10 +121,10 @@ class VaultFileList extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      fontSize: 9,
+                      fontSize: 14,
                       height: 1.3,
                       color: value.isEmpty
-                          ? const Color(0xff668397)
+                          ? const Color(0xffb3c1cd)
                           : const Color(0xff9eb9cc),
                     ),
                   ),
@@ -156,11 +156,18 @@ class VaultFileList extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              item['title'] as String,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 10, color: Color(0xffbbccd9)),
+            Tooltip(
+              message: item['title'] as String,
+              child: Text(
+                item['title'] as String,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: DeckDesign.text,
+                ),
+              ),
             ),
             const SizedBox(height: 6),
             Text(
@@ -168,10 +175,8 @@ class VaultFileList extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
-                fontSize: 8,
-                color: isCurrent
-                    ? const Color(0xff7d9eb3)
-                    : const Color(0xff668397),
+                fontSize: 14,
+                color: isCurrent ? const Color(0xffb3c1cd) : DeckDesign.muted,
               ),
             ),
             const SizedBox(height: 3),
@@ -190,8 +195,8 @@ class VaultFileList extends StatelessWidget {
                 child: InkWell(
                   onTap: () => toggle(id),
                   child: SizedBox(
-                    width: 24,
-                    height: 24,
+                    width: 40,
+                    height: 40,
                     child: Center(
                       child: Container(
                         width: 14,
@@ -226,53 +231,67 @@ class VaultFileList extends StatelessWidget {
                 ),
               ),
               child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 2),
+                margin: const EdgeInsets.symmetric(vertical: 5),
                 decoration: BoxDecoration(
-                  color: isCurrent
+                  color: selected.contains(id)
+                      ? const Color(0xff30485b)
+                      : isCurrent
                       ? const Color(0xff283a49)
                       : hovered
                       ? const Color(0xff25313c)
-                      : Colors.transparent,
+                      : DeckDesign.sidebar,
                   border: Border.all(
-                    color: isCurrent
-                        ? const Color(0xff3b5366)
-                        : Colors.transparent,
+                    color: isCurrent ? DeckDesign.accent : DeckDesign.line,
                   ),
                   borderRadius: BorderRadius.circular(7),
                 ),
                 child: Stack(
                   children: [
-                    InkWell(
-                      onTap: () => preview(item),
-                      onDoubleTap: () => play(item),
-                      borderRadius: BorderRadius.circular(7),
-                      child: Padding(
-                        padding: grid
-                            ? const EdgeInsets.all(8)
-                            : EdgeInsets.fromLTRB(small ? 7 : 10, 10, 32, 10),
-                        child: grid
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                    child: SizedBox.expand(child: thumb),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  label,
-                                ],
-                              )
-                            : Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: small ? 70 : 78,
-                                    height: small ? 47 : 51,
-                                    child: thumb,
-                                  ),
-                                  SizedBox(width: small ? 8 : 10),
-                                  Expanded(child: label),
-                                ],
-                              ),
+                    if (isCurrent)
+                      const Positioned(
+                        left: 0,
+                        top: 8,
+                        bottom: 8,
+                        child: ColoredBox(
+                          color: DeckDesign.accent,
+                          child: SizedBox(width: 3),
+                        ),
+                      ),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        focusColor: const Color(0x4487b8d8),
+                        onTap: () => preview(item),
+                        onDoubleTap: () => play(item),
+                        borderRadius: BorderRadius.circular(7),
+                        child: Padding(
+                          padding: grid
+                              ? const EdgeInsets.all(8)
+                              : EdgeInsets.fromLTRB(small ? 7 : 10, 12, 48, 12),
+                          child: grid
+                              ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                      child: SizedBox.expand(child: thumb),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    label,
+                                  ],
+                                )
+                              : Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: small ? 70 : 78,
+                                      height: small ? 47 : 51,
+                                      child: thumb,
+                                    ),
+                                    SizedBox(width: small ? 8 : 10),
+                                    Expanded(child: label),
+                                  ],
+                                ),
+                        ),
                       ),
                     ),
                     Positioned(top: 6, right: 6, child: check),
@@ -289,11 +308,12 @@ class VaultFileList extends StatelessWidget {
               key: const PageStorageKey('library-grid-scroll'),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               itemCount: items.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisExtent: 206,
-                crossAxisSpacing: 6,
-                mainAxisSpacing: 6,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: (bounds.maxWidth / 220).floor().clamp(1, 6),
+                mainAxisExtent:
+                    300 + (MediaQuery.textScalerOf(context).scale(16) - 16) * 7,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
               ),
               itemBuilder: tile,
             )

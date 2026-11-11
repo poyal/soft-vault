@@ -126,7 +126,19 @@ void main() {
       );
       await key(LogicalKeyboardKey.digit0);
       expect(player.state.volume, 0);
+      final volumeSlider = find
+          .descendant(
+            of: find.byType(PlaybackControls),
+            matching: find.byType(Slider),
+          )
+          .last;
+      await tester.tap(volumeSlider);
+      await settle();
+      final volumeBeforeSeek = player.state.volume;
+      final focusBeforeSeek = FocusManager.instance.primaryFocus;
       await key(LogicalKeyboardKey.arrowRight);
+      expect(player.state.volume, volumeBeforeSeek);
+      expect(FocusManager.instance.primaryFocus, same(focusBeforeSeek));
       expect(player.state.position.inSeconds, greaterThanOrEqualTo(4));
       await key(LogicalKeyboardKey.bracketRight);
       expect(player.state.rate, 1.25);
@@ -135,6 +147,12 @@ void main() {
       await key(LogicalKeyboardKey.digit5);
       expect((await library.items()).single['rating'], 5);
       await shot('02-player');
+      await resizeNativeSurface(tester, const Size(1000, 700));
+      tester.platformDispatcher.textScaleFactorTestValue = 1.5;
+      await settle();
+      tester.platformDispatcher.clearTextScaleFactorTestValue();
+      await resizeNativeSurface(tester, const Size(1280, 800));
+      await settle();
       await key(LogicalKeyboardKey.keyF);
       expect(await windowManager.isFullScreen(), isTrue);
       expect(find.byTooltip('연결 폴더 관리'), findsNothing);
@@ -193,6 +211,7 @@ void main() {
       await shot('11-offline');
       expect((await library.items()).single['online'], 0);
     } finally {
+      tester.platformDispatcher.clearTextScaleFactorTestValue();
       debugPrint('E2E playback cleanup');
       await setNativeFullscreen(false);
       await restoreNativeWindow(tester);

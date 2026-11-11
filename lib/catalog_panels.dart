@@ -1,7 +1,8 @@
+import 'dart:ui' as ui;
+import 'actor_images.dart';
 import 'design.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:file_selector/file_selector.dart';
 import 'library.dart';
 
 class CatalogPanel extends StatefulWidget {
@@ -83,27 +84,15 @@ class _CatalogPanelState extends State<CatalogPanel> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 for (final field in fields.entries)
-                  TextField(
-                    controller: field.value,
-                    maxLines: field.key == 'description' ? 3 : 1,
-                    decoration: InputDecoration(labelText: labels[field.key]),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: TextField(
+                      controller: field.value,
+                      maxLines: field.key == 'description' ? 3 : 1,
+                      decoration: InputDecoration(labelText: labels[field.key]),
+                    ),
                   ),
-                if (actor)
-                  TextButton.icon(
-                    icon: const Icon(Icons.image_outlined),
-                    label: const Text('대표 이미지 선택'),
-                    onPressed: () async {
-                      final picked = await openFile(
-                        acceptedTypeGroups: [
-                          const XTypeGroup(
-                            label: '이미지',
-                            extensions: ['png', 'jpg', 'jpeg', 'webp'],
-                          ),
-                        ],
-                      );
-                      if (picked != null) fields['image']!.text = picked.path;
-                    },
-                  ),
+                if (actor) ActorImagePicker(controller: fields['image']!),
                 if (!actor)
                   const Padding(
                     padding: EdgeInsets.only(top: 16),
@@ -114,7 +103,7 @@ class _CatalogPanelState extends State<CatalogPanel> {
           ),
         ),
         actions: [
-          TextButton(
+          OutlinedButton(
             onPressed: () => Navigator.pop(context, false),
             child: const Text('취소'),
           ),
@@ -128,6 +117,15 @@ class _CatalogPanelState extends State<CatalogPanel> {
     if (result != true) return;
     try {
       if (actor) {
+        final path = fields['image']!.text.trim();
+        if (path.isNotEmpty && path != row?['image']) {
+          final codec = await ui.instantiateImageCodec(
+            await File(path).readAsBytes(),
+          );
+          final frame = await codec.getNextFrame();
+          frame.image.dispose();
+          codec.dispose();
+        }
         await widget.library.saveActor(
           id: row?['id'] as int?,
           name: fields['name']!.text,
@@ -163,7 +161,7 @@ class _CatalogPanelState extends State<CatalogPanel> {
             const SizedBox(width: 12),
             Text(
               '${rows.length}',
-              style: const TextStyle(fontSize: 12, color: DeckDesign.muted),
+              style: const TextStyle(fontSize: 14, color: DeckDesign.muted),
             ),
             const Spacer(),
             FilledButton.icon(
@@ -178,7 +176,7 @@ class _CatalogPanelState extends State<CatalogPanel> {
           widget.kind == 'actors'
               ? '이름 하나로, 연결된 모든 장면을 만나보세요.'
               : '하나의 파일에 여러 가지 이야기를 붙여보세요.',
-          style: const TextStyle(color: Color(0xff8a9baa), fontSize: 12),
+          style: const TextStyle(color: DeckDesign.muted, fontSize: 14),
         ),
         if (error != null)
           Text(error!, style: const TextStyle(color: Colors.orange)),
@@ -202,7 +200,9 @@ class _CatalogPanelState extends State<CatalogPanel> {
               : GridView.builder(
                   gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 360,
-                    mainAxisExtent: widget.kind == 'actors' ? 280 : 89,
+                    mainAxisExtent:
+                        (widget.kind == 'actors' ? 300 : 100) *
+                        MediaQuery.textScalerOf(context).scale(1),
                     crossAxisSpacing: widget.kind == 'actors' ? 22 : 18,
                     mainAxisSpacing: 18,
                   ),
@@ -239,13 +239,13 @@ class _CatalogPanelState extends State<CatalogPanel> {
                                     children: [
                                       Text(
                                         row['name'] as String,
-                                        style: const TextStyle(fontSize: 14),
+                                        style: const TextStyle(fontSize: 16),
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
                                         '${row['count']}개 파일',
                                         style: const TextStyle(
-                                          fontSize: 11,
+                                          fontSize: 14,
                                           color: DeckDesign.muted,
                                         ),
                                       ),
@@ -342,8 +342,8 @@ class _CatalogPanelState extends State<CatalogPanel> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
-                                  fontSize: 11,
-                                  color: Color(0xff8a9baa),
+                                  fontSize: 14,
+                                  color: DeckDesign.muted,
                                 ),
                               ),
                               if (widget.kind == 'actors') ...[

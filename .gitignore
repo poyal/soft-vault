@@ -6,3 +6,5 @@ sample-media/
 *.log
 .idea/
 *.iml
+
+artifacts/

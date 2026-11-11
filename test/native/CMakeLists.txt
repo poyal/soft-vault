@@ -1,0 +1,4 @@
+cmake_minimum_required(VERSION 3.14)
+project(media_kit_cache_test LANGUAGES CXX)
+add_executable(media_kit_cache_test media_kit_cache_test.cpp)
+target_compile_features(media_kit_cache_test PRIVATE cxx_std_17)

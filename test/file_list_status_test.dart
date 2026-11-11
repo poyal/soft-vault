@@ -59,11 +59,18 @@ void main() {
           Icons.play_circle_outline,
         );
         for (final id in [2, 3, 4]) {
+          await tester.scrollUntilVisible(
+            find.byKey(ValueKey('file-playback-$id')),
+            150,
+            scrollable: find.byType(Scrollable).first,
+          );
           expect(
             tester.widget<Icon>(find.byKey(ValueKey('file-playback-$id'))).icon,
             Icons.play_circle_filled,
           );
         }
+        tester.state<ScrollableState>(find.byType(Scrollable).first).position.jumpTo(0);
+        await tester.pumpAndSettle();
         final check = find.byTooltip('영상 1 선택');
         expect(
           tester.getTopLeft(check).dy,

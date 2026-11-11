@@ -1,3 +1,4 @@
+import 'design.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -76,18 +77,18 @@ class _LibrarySearchDialogState extends State<LibrarySearchDialog> {
           title,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 13),
+          style: const TextStyle(fontSize: 14),
         ),
         subtitle: Text(
           subtitle,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 11, color: Color(0xff8a9baa)),
+          style: const TextStyle(fontSize: 14, color: DeckDesign.muted),
         ),
         trailing: const Icon(
           Icons.subdirectory_arrow_left,
           size: 14,
-          color: Color(0xff8a9baa),
+          color: DeckDesign.muted,
         ),
         onTap: () => choose(index),
       );
@@ -161,7 +162,7 @@ class _LibrarySearchDialogState extends State<LibrarySearchDialog> {
                   padding: EdgeInsets.all(12),
                   child: Text(
                     '빠르게 찾아보기',
-                    style: TextStyle(fontSize: 11, color: Color(0xff8a9baa)),
+                    style: TextStyle(fontSize: 14, color: DeckDesign.muted),
                   ),
                 ),
                 row(
@@ -177,7 +178,7 @@ class _LibrarySearchDialogState extends State<LibrarySearchDialog> {
                       borderRadius: BorderRadius.circular(4),
                       child: SizedBox(
                         width: 58,
-                        height: 36,
+                        height: 44,
                         child: Image.file(
                           File(matches[index]['thumbnail'] as String),
                           fit: BoxFit.cover,
@@ -211,15 +212,18 @@ class _LibrarySearchDialogState extends State<LibrarySearchDialog> {
               children: [
                 const Text(
                   '↑ ↓ 선택 · Enter 열기',
-                  style: TextStyle(fontSize: 10, color: Color(0xff8a9baa)),
+                  style: TextStyle(fontSize: 14, color: DeckDesign.muted),
                 ),
                 const Spacer(),
                 const Text(
                   'Esc 소리 0% · 최소화',
-                  style: TextStyle(fontSize: 10, color: Color(0xff8a9baa)),
+                  style: TextStyle(fontSize: 14, color: DeckDesign.muted),
                 ),
                 const SizedBox(width: 16),
-                TextButton(onPressed: () => choose(0), child: const Text('검색')),
+                OutlinedButton(
+                  onPressed: () => choose(0),
+                  child: const Text('검색'),
+                ),
               ],
             ),
           ),

@@ -71,7 +71,7 @@ class _PlaybackHistoryDialogState extends State<PlaybackHistoryDialog> {
           const SizedBox(height: 8),
           const Text(
             '횟수와 이력은 기능 추가 이후 앱에서 재생한 기록입니다.\n일시정지·탐색은 횟수를 늘리지 않습니다.',
-            style: TextStyle(fontSize: 12),
+            style: TextStyle(fontSize: 14),
           ),
           const SizedBox(height: 16),
           if (loading) const LinearProgressIndicator(),
@@ -97,7 +97,7 @@ class _PlaybackHistoryDialogState extends State<PlaybackHistoryDialog> {
                   ),
           ),
           if ((more || error != null) && !loading)
-            TextButton(
+            OutlinedButton(
               onPressed: load,
               child: Text(error == null ? '더 보기' : '다시 시도'),
             ),
@@ -105,7 +105,7 @@ class _PlaybackHistoryDialogState extends State<PlaybackHistoryDialog> {
       ),
     ),
     actions: [
-      TextButton(
+      OutlinedButton(
         onPressed: () => Navigator.pop(context),
         child: const Text('닫기'),
       ),

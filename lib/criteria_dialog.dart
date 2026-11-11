@@ -219,7 +219,7 @@ class _CriteriaDialogState extends State<CriteriaDialog> {
       ),
     ),
     actions: [
-      TextButton(
+      OutlinedButton(
         onPressed: saving ? null : () => Navigator.pop(context),
         child: const Text('취소'),
       ),

@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:soft_vault/library.dart';
+import 'package:soft_vault/settings_panel.dart';
+import 'package:soft_vault/key_bindings.dart';
 import 'package:soft_vault/metadata_exchange.dart';
 import 'package:soft_vault/metadata_exchange_dialog.dart';
 
@@ -244,14 +246,18 @@ void main() {
         () => Future<void>.delayed(const Duration(milliseconds: 100)),
       );
       await tester.pumpAndSettle();
+      await tester.ensureVisible(find.byTooltip('요청 도구'));
+      await tester.tap(find.byTooltip('요청 도구'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('사용 가이드와 복사용 요청문 보기'));
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
       await tester.tap(find.text('닫기'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('입력하기'));
+      await tester.tap(find.text('결과 입력으로 이동'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField), jsonEncode(result));
+      await tester.pump();
       await tester.tap(find.text('변경 비교'));
       await tester.pumpAndSettle();
       expect(find.byType(CheckboxListTile), findsOneWidget);
@@ -267,6 +273,103 @@ void main() {
         isNull,
       );
       await tester.pumpWidget(const SizedBox.shrink());
+    },
+  );
+  testWidgets('metadata draft survives settings category navigation', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1000, 700));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.runAsync(service.create);
+    final keys = KeyBindings(library);
+    await tester.runAsync(keys.load);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SettingsPanel(
+            keys: keys,
+            folderCount: 0,
+            mediaTitle: null,
+            busy: false,
+            connect: () {},
+            folders: () {},
+            action: (_) {},
+            close: () {},
+            capturing: (_) {},
+            backup: () {},
+            restore: () {},
+            external: () {},
+          ),
+        ),
+      ),
+    );
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('settings-section-메타데이터')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('결과 입력으로 이동'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), '입력 중인 결과');
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('settings-section-재생')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('settings-section-메타데이터')));
+    await tester.pumpAndSettle();
+    expect(find.text('입력 중인 결과'), findsOneWidget);
+    expect(find.text('AI가 반환한 결과를 입력하세요'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox());
+  });
+  testWidgets(
+    'actor image review fits large text and requires loading before selection',
+    (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1000, 700));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      final request = (await tester.runAsync(service.create))!;
+      final result = jsonDecode(service.encode(request));
+      result['videos'][0]['actors'] = ['배우 A'];
+      result['actorImages'] = [
+        {'name': '배우 A', 'imageUrl': 'https://example.com/actor.png'},
+      ];
+      await tester.pumpWidget(
+        MaterialApp(
+          builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(
+              context,
+            ).copyWith(textScaler: const TextScaler.linear(1.5)),
+            child: child!,
+          ),
+          home: MetadataExchangeDialog(library: library),
+        ),
+      );
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 100)),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('결과 입력으로 이동'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), jsonEncode(result));
+      await tester.pump();
+      await tester.tap(find.text('변경 비교'));
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('이 배우 이미지 적용'),
+        250,
+        scrollable: find.descendant(
+          of: find.byKey(const ValueKey('metadata-review')),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      final checkbox = tester.widget<CheckboxListTile>(
+        find.widgetWithText(CheckboxListTile, '이 배우 이미지 적용'),
+      );
+      expect(checkbox.value, isFalse);
+      expect(checkbox.onChanged, isNull);
+      expect(find.text('이미지 불러오기'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox());
     },
   );
 }

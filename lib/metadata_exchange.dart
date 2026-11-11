@@ -1,29 +1,43 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:path/path.dart' as p;
 import 'library.dart';
 import 'catalog_schema.dart';
+import 'metadata_actor_image.dart';
 
 class MetadataProposal {
   final Map<String, dynamic> request;
   final Map<int, Map<String, Object?>> changes;
   final int missing;
-  MetadataProposal(this.request, this.changes, this.missing);
+  final List<MetadataActorImage> actorImages;
+  MetadataProposal(
+    this.request,
+    this.changes,
+    this.missing, [
+    this.actorImages = const [],
+  ]);
 }
 
 class MetadataExchange {
   final Library library;
   final Future<void> Function(File)? backupWriter;
-  MetadataExchange(this.library, {this.backupWriter});
+  final Future<Uint8List> Function(String) imageDownloader;
+  MetadataExchange(
+    this.library, {
+    this.backupWriter,
+    this.imageDownloader = downloadActorImage,
+  });
   static const key = 'metadata_exchange_request_v1';
   static const fields = ['title', 'actors', 'tags', 'description'];
   static const guide = '''아래 전체 영상 목록의 제목·배우·태그·설명을 조사하고 보완해 주세요.
 파일명과 기존 정보를 단서로 사용하되 동일 작품인지 확인해 주세요. 확인할 수 없는 정보나 배우 이름은 추측하지 마세요. 확인되지 않은 필드는 생략하세요.
 모든 영상을 한 JSON의 videos 배열로 반환하세요. version, requestId, 각 영상의 id는 그대로 유지하세요. 파일명은 식별 참고용입니다.
 각 영상의 변경 제안은 title(문자열), actors(문자열 배열), tags(문자열 배열), description(문자열)만 사용하세요. 배우·태그는 추가분이 아닌 최종 전체 목록으로 작성하세요.
+배우 대표 이미지도 찾아 최상위 actorImages 배열에 {"name":"배우 이름","imageUrl":"https://..."} 형식으로 반환하세요. name은 영상의 actors와 정확히 일치해야 합니다. 실제 인물이 맞는지 확인한 공개 이미지 파일의 직접 HTTPS 주소만 사용하세요. 검색 결과 페이지·로그인 필요 주소·추측한 주소는 넣지 마세요. 확인할 수 없는 이미지는 생략하세요. 같은 배우는 한 번만 포함하세요.
 개인 평점이나 재생 기록은 작성하지 마세요. 설명 밖에 해설을 덧붙이지 말고 JSON만 반환하세요.
-반환 예시: {"version":1,"requestId":"입력의 requestId","videos":[{"id":"입력의 id","title":"확인한 제목","actors":["확인한 배우"],"tags":["태그"],"description":"확인한 설명"}]}''';
+반환 예시: {"version":1,"requestId":"입력의 requestId","videos":[{"id":"입력의 id","title":"확인한 제목","actors":["확인한 배우"],"tags":["태그"],"description":"확인한 설명"}],"actorImages":[{"name":"확인한 배우","imageUrl":"https://example.com/actor.jpg"}]}''';
 
   Future<Map<String, dynamic>?> load() async {
     final value = await library.readSetting(key);
@@ -43,6 +57,10 @@ class MetadataExchange {
         (_) => Random.secure().nextInt(256).toRadixString(16).padLeft(2, '0'),
       ).join(),
       'created': DateTime.now().toIso8601String(),
+      'actorImages': [
+        for (final actor in await library.entities('actors'))
+          {'name': actor['name'], 'image': actor['image']},
+      ],
       'rows': [
         for (final row in rows)
           {
@@ -134,13 +152,69 @@ class MetadataExchange {
       }
       if (delta.isNotEmpty) changes[old['id'] as int] = delta;
     }
-    return MetadataProposal(request, changes, originals.length - seen.length);
+    final actorImages = <MetadataActorImage>[];
+    final imageRows = data['actorImages'] ?? [];
+    if (imageRows is! List)
+      throw const FormatException('actorImages는 배열이어야 합니다.');
+    final allowedActors = <String>{
+      for (final row in request['rows']) ...names(row['actors'] as String),
+      for (final delta in changes.values)
+        if (delta['actors'] is String) ...names(delta['actors'] as String),
+    };
+    final imageNames = <String>{};
+    for (final row in imageRows) {
+      if (row is! Map || row['name'] is! String || row['imageUrl'] is! String) {
+        throw const FormatException('배우 이미지에는 name·imageUrl이 필요합니다.');
+      }
+      final name = (row['name'] as String).trim();
+      final url = (row['imageUrl'] as String).trim();
+      final uri = Uri.tryParse(url);
+      if (!allowedActors.contains(name))
+        throw FormatException('$name: 영상정보에 없는 배우입니다.');
+      if (!imageNames.add(name))
+        throw FormatException('$name: 배우 이미지가 중복되었습니다.');
+      if (uri == null ||
+          uri.scheme != 'https' ||
+          uri.host.isEmpty ||
+          uri.userInfo.isNotEmpty) {
+        throw FormatException('$name: HTTPS 이미지 주소가 필요합니다.');
+      }
+      final previous = (request['actorImages'] as List? ?? []).where(
+        (a) => a['name'] == name,
+      );
+      actorImages.add(
+        MetadataActorImage(
+          name,
+          url,
+          previous.isEmpty ? '' : previous.first['image'] as String? ?? '',
+        ),
+      );
+    }
+    return MetadataProposal(
+      request,
+      changes,
+      originals.length - seen.length,
+      actorImages,
+    );
+  }
+
+  Future<void> loadActorImage(MetadataActorImage image) async {
+    image.error = null;
+    image.bytes = null;
+    try {
+      image.bytes = await validateActorImage(
+        await imageDownloader(image.imageUrl),
+      );
+    } catch (_) {
+      image.error = '이미지를 불러올 수 없습니다. 주소를 수정하거나 이 이미지를 제외하고 적용하세요.';
+    }
   }
 
   Future<void> apply(
     MetadataProposal proposal,
-    Map<int, Set<String>> selection,
-  ) => library.fileOperation(() async {
+    Map<int, Set<String>> selection, {
+    Set<String> selectedImages = const {},
+  }) => library.fileOperation(() async {
     final backup = File(
       p.join(
         p.dirname(library.db.path),
@@ -148,44 +222,90 @@ class MetadataExchange {
       ),
     );
     await (backupWriter ?? library.exportTo)(backup);
-    await library.db.transaction((tx) async {
-      final stored = await tx.query(
-        'settings',
-        where: 'key=?',
-        whereArgs: [key],
-      );
-      if (stored.isEmpty ||
-          (jsonDecode(stored.single['value'] as String))['requestId'] !=
-              proposal.request['requestId']) {
-        throw StateError('내보내기 요청이 바뀌었습니다. 새 요청의 결과를 입력해 주세요.');
+    final images = proposal.actorImages
+        .where((i) => selectedImages.contains(i.name))
+        .toList();
+    final saved = <String, File>{};
+    try {
+      for (final image in images) {
+        if (image.bytes == null)
+          throw StateError('${image.name}: 먼저 이미지를 확인해 주세요.');
+        final directory = await Directory(
+          p.join(p.dirname(library.db.path), 'actor-images'),
+        ).create(recursive: true);
+        final file = File(
+          p.join(
+            directory.path,
+            '${DateTime.now().microsecondsSinceEpoch}-${Random.secure().nextInt(1 << 32)}.png',
+          ),
+        );
+        saved[image.name] = file;
+        await file.writeAsBytes(image.bytes!, flush: true);
       }
-      for (final original in proposal.request['rows']) {
-        final id = original['id'] as int;
-        final chosen = selection[id] ?? {};
-        final delta = proposal.changes[id];
-        if (chosen.isEmpty || delta == null) continue;
-        final rows = await tx.query('media', where: 'id=?', whereArgs: [id]);
-        if (rows.isEmpty ||
-            [
-              ...fields,
-              'fingerprint',
-            ].any((f) => rows.single[f] != original[f])) {
-          throw StateError(
-            '${original['filename']}: 내보낸 뒤 정보가 변경되었습니다. 새 요청을 만들어 다시 비교해 주세요.',
+      await library.db.transaction((tx) async {
+        final stored = await tx.query(
+          'settings',
+          where: 'key=?',
+          whereArgs: [key],
+        );
+        if (stored.isEmpty ||
+            (jsonDecode(stored.single['value'] as String))['requestId'] !=
+                proposal.request['requestId']) {
+          throw StateError('내보내기 요청이 바뀌었습니다. 새 요청의 결과를 입력해 주세요.');
+        }
+        for (final original in proposal.request['rows']) {
+          final id = original['id'] as int;
+          final chosen = selection[id] ?? {};
+          final delta = proposal.changes[id];
+          if (chosen.isEmpty || delta == null) continue;
+          final rows = await tx.query('media', where: 'id=?', whereArgs: [id]);
+          if (rows.isEmpty ||
+              [
+                ...fields,
+                'fingerprint',
+              ].any((f) => rows.single[f] != original[f])) {
+            throw StateError(
+              '${original['filename']}: 내보낸 뒤 정보가 변경되었습니다. 새 요청을 만들어 다시 비교해 주세요.',
+            );
+          }
+          final values = {
+            for (final f in chosen)
+              if (delta.containsKey(f)) f: delta[f],
+          };
+          if (values.isEmpty) continue;
+          await tx.update('media', values, where: 'id=?', whereArgs: [id]);
+          for (final f in ['actors', 'tags']) {
+            if (values.containsKey(f))
+              await setRelations(tx, id, f, values[f] as String);
+          }
+        }
+        for (final image in images) {
+          final actors = await tx.query(
+            'actors',
+            where: 'name=?',
+            whereArgs: [image.name],
+          );
+          if (actors.isEmpty)
+            throw StateError('${image.name}: 해당 배우가 포함된 영상정보도 선택해 주세요.');
+          if ((actors.single['image'] ?? '') != image.previousImage) {
+            throw StateError(
+              '${image.name}: 기존 이미지가 변경되었습니다. 새 요청을 만들어 다시 확인해 주세요.',
+            );
+          }
+          await tx.update(
+            'actors',
+            {'image': saved[image.name]!.path},
+            where: 'id=?',
+            whereArgs: [actors.single['id']],
           );
         }
-        final values = {
-          for (final f in chosen)
-            if (delta.containsKey(f)) f: delta[f],
-        };
-        if (values.isEmpty) continue;
-        await tx.update('media', values, where: 'id=?', whereArgs: [id]);
-        for (final f in ['actors', 'tags']) {
-          if (values.containsKey(f))
-            await setRelations(tx, id, f, values[f] as String);
-        }
+        await tx.delete('settings', where: 'key=?', whereArgs: [key]);
+      });
+    } catch (_) {
+      for (final file in saved.values) {
+        if (await file.exists()) await file.delete();
       }
-      await tx.delete('settings', where: 'key=?', whereArgs: [key]);
-    });
+      rethrow;
+    }
   });
 }

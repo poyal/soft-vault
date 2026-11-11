@@ -123,7 +123,7 @@ class _LibraryFilterDialogState extends State<LibraryFilterDialog> {
                       child: Text(
                         '라이브러리 필터',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 22,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -144,118 +144,142 @@ class _LibraryFilterDialogState extends State<LibraryFilterDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (notice != null) SettingsStatus(notice!),
-                      SettingsSection(
-                        title: '재생 여부',
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
+                      LayoutBuilder(
+                        builder: (context, bounds) {
+                          final groups = <Widget>[
+                            SettingsSection(
+                              title: '재생 여부',
+                              description: '찾고 싶은 영상의 시청 상태를 선택하세요.',
                               children: [
-                                for (final value in PlaybackFilter.values)
-                                  ChoiceChip(
-                                    key: ValueKey(
-                                      'filter-playback-${value.name}',
-                                    ),
-                                    label: Text(value.label),
-                                    selected: playback == value,
-                                    onSelected: (_) =>
-                                        setState(() => playback = value),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
                                   ),
+                                  child: Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: [
+                                      for (final value in PlaybackFilter.values)
+                                        ChoiceChip(
+                                          key: ValueKey(
+                                            'filter-playback-${value.name}',
+                                          ),
+                                          label: Text(value.label),
+                                          selected: playback == value,
+                                          onSelected: (_) =>
+                                              setState(() => playback = value),
+                                        ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                      SettingsSection(
-                        title: '평점',
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
+                            SettingsSection(
+                              title: '평점',
+                              description: '최소 평점 또는 정확한 점수로 범위를 좁힙니다.',
                               children: [
-                                ChoiceChip(
-                                  label: const Text('전체'),
-                                  selected: rating == null && !unrated,
-                                  onSelected: (_) => setState(() {
-                                    rating = null;
-                                    unrated = false;
-                                  }),
-                                ),
-                                ChoiceChip(
-                                  label: const Text('별점 지정'),
-                                  selected: rating != null,
-                                  onSelected: (_) => setState(() {
-                                    rating ??= 1;
-                                    unrated = false;
-                                  }),
-                                ),
-                                ChoiceChip(
-                                  label: const Text('미평가'),
-                                  selected: unrated,
-                                  onSelected: (_) => setState(() {
-                                    rating = null;
-                                    unrated = true;
-                                  }),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Wrap(
-                            spacing: 16,
-                            runSpacing: 12,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  for (var i = 1; i <= 5; i++)
-                                    IconButton(
-                                      key: ValueKey('filter-star-$i'),
-                                      tooltip: '$i점 선택',
-                                      isSelected:
-                                          rating != null && i <= rating!,
-                                      onPressed: () => setState(() {
-                                        rating = i;
-                                        unrated = false;
-                                      }),
-                                      icon: Icon(
-                                        rating != null && i <= rating!
-                                            ? Icons.star
-                                            : Icons.star_border,
-                                        color: DeckDesign.gold,
-                                        size: 28,
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
+                                  child: Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: [
+                                      ChoiceChip(
+                                        label: const Text('전체'),
+                                        selected: rating == null && !unrated,
+                                        onSelected: (_) => setState(() {
+                                          rating = null;
+                                          unrated = false;
+                                        }),
                                       ),
+                                      ChoiceChip(
+                                        label: const Text('별점 지정'),
+                                        selected: rating != null,
+                                        onSelected: (_) => setState(() {
+                                          rating ??= 1;
+                                          unrated = false;
+                                        }),
+                                      ),
+                                      ChoiceChip(
+                                        label: const Text('미평가'),
+                                        selected: unrated,
+                                        onSelected: (_) => setState(() {
+                                          rating = null;
+                                          unrated = true;
+                                        }),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Wrap(
+                                  spacing: 16,
+                                  runSpacing: 12,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        for (var i = 1; i <= 5; i++)
+                                          IconButton(
+                                            key: ValueKey('filter-star-$i'),
+                                            tooltip: '$i점 선택',
+                                            isSelected:
+                                                rating != null && i <= rating!,
+                                            onPressed: () => setState(() {
+                                              rating = i;
+                                              unrated = false;
+                                            }),
+                                            icon: Icon(
+                                              rating != null && i <= rating!
+                                                  ? Icons.star
+                                                  : Icons.star_border,
+                                              color: DeckDesign.gold,
+                                              size: 28,
+                                            ),
+                                          ),
+                                      ],
                                     ),
-                                ],
-                              ),
-                              SegmentedButton<bool>(
-                                segments: const [
-                                  ButtonSegment(
-                                    value: false,
-                                    label: Text('이상'),
-                                  ),
-                                  ButtonSegment(
-                                    value: true,
-                                    label: Text('정확히'),
-                                  ),
-                                ],
-                                selected: {exact},
-                                onSelectionChanged: rating == null
-                                    ? null
-                                    : (value) =>
-                                          setState(() => exact = value.single),
-                              ),
-                              Text(
-                                draft.ratingLabel,
-                                style: const TextStyle(fontSize: 13),
-                              ),
+                                    SegmentedButton<bool>(
+                                      segments: const [
+                                        ButtonSegment(
+                                          value: false,
+                                          label: Text('이상'),
+                                        ),
+                                        ButtonSegment(
+                                          value: true,
+                                          label: Text('정확히'),
+                                        ),
+                                      ],
+                                      selected: {exact},
+                                      onSelectionChanged: rating == null
+                                          ? null
+                                          : (value) => setState(
+                                              () => exact = value.single,
+                                            ),
+                                    ),
+                                    Text(
+                                      draft.ratingLabel,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ];
+                          if (bounds.maxWidth < 840 ||
+                              MediaQuery.textScalerOf(context).scale(16) > 20)
+                            return Column(children: groups);
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(child: groups[0]),
+                              const SizedBox(width: 20),
+                              Expanded(child: groups[1]),
                             ],
-                          ),
-                        ],
+                          );
+                        },
                       ),
                       LayoutBuilder(
                         builder: (context, bounds) => bounds.maxWidth < 752
@@ -281,15 +305,33 @@ class _LibraryFilterDialogState extends State<LibraryFilterDialog> {
               ),
               const Divider(height: 1, color: DeckDesign.line),
               Padding(
+                padding: const EdgeInsets.fromLTRB(24, 12, 24, 0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '재생: ' +
+                        playback.label +
+                        ' · ' +
+                        draft.ratingLabel +
+                        ' · 배우 ' +
+                        actors.length.toString() +
+                        '명 · 태그 ' +
+                        tags.length.toString() +
+                        '개',
+                    style: const TextStyle(color: DeckDesign.muted),
+                  ),
+                ),
+              ),
+              Padding(
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    TextButton(
+                    OutlinedButton(
                       onPressed: saving ? null : reset,
                       child: const Text('필터 초기화'),
                     ),
                     const Spacer(),
-                    TextButton(
+                    OutlinedButton(
                       onPressed: saving ? null : () => Navigator.pop(context),
                       child: const Text('취소'),
                     ),
@@ -366,7 +408,7 @@ class _EntityFilterPanelState extends State<EntityFilterPanel> {
                   ),
                 ),
               ),
-              TextButton(
+              OutlinedButton(
                 onPressed: widget.selected.isEmpty ? null : widget.onClear,
                 child: const Text('초기화'),
               ),

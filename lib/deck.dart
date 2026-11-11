@@ -14,7 +14,7 @@ class SideDeck extends StatelessWidget {
   final List<String> folders;
   final String? folder;
   final String query;
-  final bool expanded, busy, playing;
+  final bool expanded, busy, playing, scanning;
   final int filterCount;
   final bool settingsOnly;
   final VoidCallback connect, search, edit, rescan, clearSearch, settings;
@@ -51,22 +51,23 @@ class SideDeck extends StatelessWidget {
     required this.searchTerm,
     this.folderDrop,
     this.playing = false,
+    this.scanning = false,
     this.settingsOnly = false,
     this.filterCount = 0,
     this.filters,
     this.open,
   });
   static const mutedColor = DeckDesign.muted, line = DeckDesign.line;
-  Widget folderButton(String? path) => TextButton(
+  Widget folderButton(String? path) => OutlinedButton(
     style: TextButton.styleFrom(
-      minimumSize: const Size(0, 26),
+      minimumSize: const Size(0, 44),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       backgroundColor: folder == path
           ? const Color(0xff2b4050)
           : Colors.transparent,
       foregroundColor: folder == path
           ? const Color(0xffb9d3e5)
-          : const Color(0xff8299a9),
+          : DeckDesign.muted,
       side: BorderSide(
         color: folder == path
             ? const Color(0xff466073)
@@ -77,7 +78,7 @@ class SideDeck extends StatelessWidget {
     onPressed: () => chooseFolder(path),
     child: Text(
       path == null ? '전체 폴더' : p.basename(path),
-      style: const TextStyle(fontSize: 9, height: 1.1),
+      style: const TextStyle(fontSize: 14, height: 1.1),
     ),
   );
   Widget terms(String field, String label) => Padding(
@@ -89,7 +90,7 @@ class SideDeck extends StatelessWidget {
           width: 51,
           child: Text(
             label,
-            style: const TextStyle(fontSize: 10, color: Color(0xff5b7b92)),
+            style: const TextStyle(fontSize: 14, color: DeckDesign.muted),
           ),
         ),
         Expanded(
@@ -128,7 +129,7 @@ class SideDeck extends StatelessWidget {
                           Text(
                             field == 'tags' ? '# $term' : term,
                             style: const TextStyle(
-                              fontSize: 10,
+                              fontSize: 14,
                               color: Color(0xff8baac0),
                             ),
                           ),
@@ -141,17 +142,17 @@ class SideDeck extends StatelessWidget {
           ),
         ),
         if (field == 'actors')
-          TextButton(
+          OutlinedButton(
             onPressed: edit,
             style: TextButton.styleFrom(
-              minimumSize: const Size(0, 27),
+              minimumSize: const Size(0, 44),
               padding: const EdgeInsets.symmetric(horizontal: 8),
             ),
             child: const Row(
               children: [
                 DesignIcon('sliders', size: 12),
                 SizedBox(width: 5),
-                Text('상세정보', style: TextStyle(fontSize: 10)),
+                Text('상세정보', style: TextStyle(fontSize: 14)),
               ],
             ),
           ),
@@ -170,7 +171,7 @@ class SideDeck extends StatelessWidget {
         const SizedBox(width: 20),
         const Text(
           '라이브러리',
-          style: TextStyle(fontSize: 11, color: Color(0xff6e8190)),
+          style: TextStyle(fontSize: 14, color: DeckDesign.muted),
         ),
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
@@ -178,7 +179,7 @@ class SideDeck extends StatelessWidget {
         ),
         const Text(
           '전체 파일',
-          style: TextStyle(fontSize: 11, color: Color(0xffa4b6c4)),
+          style: TextStyle(fontSize: 14, color: Color(0xffa4b6c4)),
         ),
         const Spacer(),
         DeckIconButton('search', tooltip: '검색 · Ctrl/Cmd+K', onPressed: search),
@@ -187,7 +188,7 @@ class SideDeck extends StatelessWidget {
       ],
     ),
   );
-  Widget preview(double width, double height) {
+  Widget preview(BuildContext context, double width, double height) {
     final small = width <= 1280, padding = width <= 1280 ? 30.0 : 38.0;
     final leftWidth = width - (small ? 340 : 370);
     final stageHeight = math.max(
@@ -232,7 +233,7 @@ class SideDeck extends StatelessWidget {
                             const Text(
                               '폴더를 연결하고, 원하는 장면을 쉽게 다시 찾아보세요.',
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: 14,
                                 color: DeckDesign.muted,
                               ),
                             ),
@@ -249,7 +250,8 @@ class SideDeck extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
-                          height: 80,
+                          height:
+                              100 * MediaQuery.textScalerOf(context).scale(1),
                           child: Row(
                             children: [
                               Expanded(
@@ -260,9 +262,9 @@ class SideDeck extends StatelessWidget {
                                     const Text(
                                       'FILE PREVIEW',
                                       style: TextStyle(
-                                        fontSize: 8,
+                                        fontSize: 14,
                                         letterSpacing: 1.8,
-                                        color: Color(0xff66869d),
+                                        color: Color(0xffb3c1cd),
                                       ),
                                     ),
                                     const SizedBox(height: 10),
@@ -283,8 +285,8 @@ class SideDeck extends StatelessWidget {
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
-                                        fontSize: 10,
-                                        color: Color(0xff597589),
+                                        fontSize: 14,
+                                        color: Color(0xffb3c1cd),
                                       ),
                                     ),
                                   ],
@@ -370,7 +372,7 @@ class SideDeck extends StatelessWidget {
                                           .where((v) => v != null && v != '')
                                           .join(' · '),
                                       style: const TextStyle(
-                                        fontSize: 9,
+                                        fontSize: 14,
                                         color: Color(0xffadc1ce),
                                       ),
                                     ),
@@ -424,8 +426,8 @@ class SideDeck extends StatelessWidget {
                               const Text(
                                 '내 평점',
                                 style: TextStyle(
-                                  fontSize: 10,
-                                  color: Color(0xff718c9f),
+                                  fontSize: 14,
+                                  color: DeckDesign.muted,
                                 ),
                               ),
                               const SizedBox(width: 15),
@@ -442,8 +444,8 @@ class SideDeck extends StatelessWidget {
                                       ).substring(3)
                                     : '${((current!['size'] as num) / 1048576).toStringAsFixed(1)} MB',
                                 style: const TextStyle(
-                                  fontSize: 11,
-                                  color: Color(0xff688a9f),
+                                  fontSize: 14,
+                                  color: DeckDesign.muted,
                                 ),
                               ),
                             ],
@@ -458,8 +460,8 @@ class SideDeck extends StatelessWidget {
                             maxLines: 4,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
-                              fontSize: 11,
-                              color: Color(0xff738da0),
+                              fontSize: 14,
+                              color: DeckDesign.muted,
                               height: 1.9,
                             ),
                           ),
@@ -479,16 +481,16 @@ class SideDeck extends StatelessWidget {
                               Text(
                                 '소리 0% · 최소화',
                                 style: TextStyle(
-                                  fontSize: 9,
-                                  color: Color(0xff4e6d82),
+                                  fontSize: 14,
+                                  color: DeckDesign.muted,
                                 ),
                               ),
                               Spacer(),
                               Text(
                                 '목록 제목은 미리보기 · 썸네일은 열기',
                                 style: TextStyle(
-                                  fontSize: 9,
-                                  color: Color(0xff4e6d82),
+                                  fontSize: 14,
+                                  color: DeckDesign.muted,
                                 ),
                               ),
                             ],
@@ -546,7 +548,7 @@ class SideDeck extends StatelessWidget {
                     content ??
                     (playing
                         ? player()
-                        : preview(bounds.maxWidth, bounds.maxHeight)),
+                        : preview(context, bounds.maxWidth, bounds.maxHeight)),
               ),
               if (!expanded)
                 Container(
@@ -570,14 +572,17 @@ class SideDeck extends StatelessWidget {
                                 height: 28,
                               ),
                               const SizedBox(width: 9),
-                              const Text(
-                                'soft vault.',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
+                              const Expanded(
+                                child: Text(
+                                  'soft vault.',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ),
-                              const Spacer(),
                               if (AppUpdater.instance != null)
                                 ListenableBuilder(
                                   listenable: AppUpdater.instance!,
@@ -593,6 +598,35 @@ class SideDeck extends StatelessWidget {
                                           ),
                                         ),
                                 ),
+                              SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: IconButton(
+                                  tooltip: scanning
+                                      ? '전체 폴더 새로고침 중'
+                                      : '전체 폴더 새로고침',
+                                  onPressed: busy || scanning ? null : rescan,
+                                  style: IconButton.styleFrom(
+                                    backgroundColor: DeckDesign.surface,
+                                    side: const BorderSide(
+                                      color: DeckDesign.line,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                  ),
+                                  icon: scanning
+                                      ? const SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
+                                      : const Icon(Icons.refresh, size: 20),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
                               DeckIconButton(
                                 'settings',
                                 tooltip: '설정',
@@ -606,7 +640,7 @@ class SideDeck extends StatelessWidget {
                       ),
                       if (navigation != null) navigation!,
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(19, 20, 19, 12),
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                         child: Row(
                           children: [
                             Expanded(
@@ -644,13 +678,13 @@ class SideDeck extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(22, 5, 22, 4),
+                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
                         child: Row(
                           children: [
                             Text(
                               playing ? '재생 목록' : '전체 파일',
                               style: const TextStyle(
-                                fontSize: 12,
+                                fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 color: Color(0xffc4d3df),
                               ),
@@ -659,25 +693,32 @@ class SideDeck extends StatelessWidget {
                             Text(
                               '${items.length}',
                               style: const TextStyle(
-                                fontSize: 10,
-                                color: Color(0xff6f8ca1),
+                                fontSize: 14,
+                                color: Color(0xffb3c1cd),
                               ),
                             ),
                             const Spacer(),
-                            DeckIconButton(
-                              'filter',
-                              tooltip: '필터',
-                              onPressed: filters,
-                              size: 18,
-                            ),
-                            if (filterCount > 0)
-                              Text(
-                                '$filterCount',
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: DeckDesign.accent,
+                            Tooltip(
+                              message: '필터',
+                              child: OutlinedButton.icon(
+                                onPressed: filters,
+                                icon: const DesignIcon('filter', size: 18),
+                                label: Text(
+                                  filterCount > 0 ? '필터 $filterCount' : '필터',
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
+                                  backgroundColor: filterCount > 0
+                                      ? DeckDesign.surface
+                                      : null,
+                                  foregroundColor: filterCount > 0
+                                      ? DeckDesign.accent
+                                      : DeckDesign.text,
                                 ),
                               ),
+                            ),
                           ],
                         ),
                       ),
@@ -689,8 +730,8 @@ class SideDeck extends StatelessWidget {
                             child: Text(
                               '파일을 열 때마다 볼륨 0%로 시작',
                               style: TextStyle(
-                                fontSize: 9,
-                                color: Color(0xff6a899e),
+                                fontSize: 14,
+                                color: Color(0xffb3c1cd),
                               ),
                             ),
                           ),
@@ -712,7 +753,7 @@ class SideDeck extends StatelessWidget {
                                   child: Text(
                                     '검색: $query',
                                     style: const TextStyle(
-                                      fontSize: 10,
+                                      fontSize: 14,
                                       color: Color(0xffabc5d9),
                                     ),
                                   ),

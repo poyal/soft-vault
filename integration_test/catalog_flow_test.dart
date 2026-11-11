@@ -170,7 +170,7 @@ void main() {
         await tester.tap(find.byTooltip('검색 · Ctrl/Cmd+K'));
         await tester.pumpAndSettle();
         await tester.enterText(find.byType(TextField).first, '없는 결과');
-        await tester.tap(find.widgetWithText(TextButton, '검색'));
+        await tester.tap(find.widgetWithText(OutlinedButton, '검색'));
         await shot('13-no-results-1280');
         await openSettings(tester, '단축키');
         await shot('09-settings-1280');

@@ -115,7 +115,7 @@ class _PrivacyGateState extends State<PrivacyGate> {
                       },
                     ),
                   if (!busy && error == null && status?.configured == false)
-                    TextButton(
+                    OutlinedButton(
                       onPressed: () async {
                         setState(() => busy = true);
                         try {
@@ -131,7 +131,7 @@ class _PrivacyGateState extends State<PrivacyGate> {
                       child: const Text('나중에 설정'),
                     ),
                   const SizedBox(height: 12),
-                  TextButton(
+                  OutlinedButton(
                     onPressed: closeAppWindow,
                     child: const Text('앱 종료'),
                   ),
@@ -296,7 +296,7 @@ class _PrivacyFormState extends State<PrivacyForm> {
             : widget.mode == PrivacyFormMode.disable
             ? '현재 비밀번호를 확인하면 다음 실행부터 입력 없이 열립니다.'
             : '잠금을 풀기 전에는 라이브러리가 표시되지 않습니다.',
-        style: const TextStyle(fontSize: 12, color: DeckDesign.muted),
+        style: const TextStyle(fontSize: 14, color: DeckDesign.muted),
       ),
       const SizedBox(height: 20),
       if (asksCurrent)
@@ -397,7 +397,7 @@ class _PrivacySettingsState extends State<PrivacySettings> {
       const SizedBox(height: 10),
       const Text(
         '앱을 새로 열 때 비밀번호를 확인합니다.\n앱 접근을 잠그는 기능이며 원본 영상 파일을 암호화하지 않습니다.',
-        style: TextStyle(fontSize: 12, color: DeckDesign.muted),
+        style: TextStyle(fontSize: 14, color: DeckDesign.muted),
       ),
       const SizedBox(height: 20),
       if (widget.privacy == null)
@@ -423,7 +423,7 @@ class _PrivacySettingsState extends State<PrivacySettings> {
                   await load();
                 },
               ),
-              TextButton(
+              OutlinedButton(
                 onPressed: () => setState(() => mode = null),
                 child: const Text('돌아가기'),
               ),

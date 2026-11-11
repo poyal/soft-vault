@@ -103,7 +103,7 @@ class _OrganizePanelState extends State<OrganizePanel> {
         title: const Text('저장한 조건 삭제'),
         content: Text('${row['name']} 조건을 삭제합니다. 미디어 파일은 유지됩니다.'),
         actions: [
-          TextButton(
+          OutlinedButton(
             onPressed: () => Navigator.pop(context, false),
             child: const Text('취소'),
           ),
@@ -156,7 +156,7 @@ class _OrganizePanelState extends State<OrganizePanel> {
           ),
         ),
         actions: [
-          TextButton(
+          OutlinedButton(
             onPressed: () => Navigator.pop(context, false),
             child: const Text('취소'),
           ),
@@ -240,51 +240,69 @@ class _OrganizePanelState extends State<OrganizePanel> {
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    DropdownButton<int>(
-                                      value: side == 0 ? left : right,
-                                      isExpanded: true,
-                                      items: [
-                                        for (var i = 0; i < group.length; i++)
-                                          DropdownMenuItem(
-                                            value: i,
-                                            child: Text(
-                                              '${i + 1}. ${group[i]['title']}',
+                                    Expanded(
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            DropdownButton<int>(
+                                              value: side == 0 ? left : right,
+                                              isExpanded: true,
+                                              items: [
+                                                for (
+                                                  var i = 0;
+                                                  i < group.length;
+                                                  i++
+                                                )
+                                                  DropdownMenuItem(
+                                                    value: i,
+                                                    child: Text(
+                                                      '${i + 1}. ${group[i]['title']}',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                              ],
+                                              onChanged: (value) => update(() {
+                                                if (side == 0) {
+                                                  left = value!;
+                                                } else {
+                                                  right = value!;
+                                                }
+                                                result = null;
+                                              }),
+                                            ),
+                                            SizedBox(
+                                              height: 180,
+                                              width: double.infinity,
+                                              child: thumbnail(item),
+                                            ),
+                                            const SizedBox(height: 12),
+                                            SelectableText(
+                                              item['path'] as String,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 12),
+                                            Text(
+                                              '${((item['size'] as num) / 1048576).toStringAsFixed(1)} MB · ${item['resolution']} · ${(item['duration'] as num).round()}초',
+                                            ),
+                                            Text(
+                                              '평점 ${item['rating'] ?? '미평가'} · ${item['tags']}',
+                                            ),
+                                            Text(
+                                              item['note'] as String,
+                                              maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
                                             ),
-                                          ),
-                                      ],
-                                      onChanged: (value) => update(() {
-                                        if (side == 0) {
-                                          left = value!;
-                                        } else {
-                                          right = value!;
-                                        }
-                                        result = null;
-                                      }),
-                                    ),
-                                    SizedBox(
-                                      height: 180,
-                                      width: double.infinity,
-                                      child: thumbnail(item),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                     const SizedBox(height: 12),
-                                    SelectableText(
-                                      item['path'] as String,
-                                      style: const TextStyle(fontSize: 11),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Text(
-                                      '${item['size']} bytes · ${item['resolution']} · ${item['duration']}초',
-                                    ),
-                                    Text(
-                                      '평점 ${item['rating'] ?? '미평가'} · ${item['tags']}',
-                                    ),
-                                    Text(
-                                      item['note'] as String,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    TextButton(
+                                    OutlinedButton(
                                       onPressed: () {
                                         Navigator.pop(context);
                                         widget.openMedia(item);
@@ -306,7 +324,7 @@ class _OrganizePanelState extends State<OrganizePanel> {
             ),
           ),
           actions: [
-            TextButton(
+            OutlinedButton(
               onPressed: checking || left == right
                   ? null
                   : () async {
@@ -329,7 +347,7 @@ class _OrganizePanelState extends State<OrganizePanel> {
                     },
               child: const Text('내용 재검증'),
             ),
-            TextButton(
+            OutlinedButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('닫기'),
             ),
@@ -350,7 +368,9 @@ class _OrganizePanelState extends State<OrganizePanel> {
           style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 22),
-        Row(
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
           children: [
             for (final entry in {
               'collections': '스마트 컬렉션',
@@ -359,7 +379,7 @@ class _OrganizePanelState extends State<OrganizePanel> {
             }.entries)
               Padding(
                 padding: const EdgeInsets.only(right: 8),
-                child: TextButton(
+                child: OutlinedButton(
                   style: TextButton.styleFrom(
                     backgroundColor: tab == entry.key
                         ? const Color(0xff233b4e)
@@ -372,7 +392,6 @@ class _OrganizePanelState extends State<OrganizePanel> {
                   child: Text(entry.value),
                 ),
               ),
-            const Spacer(),
             if (tab != 'duplicates')
               FilledButton.icon(
                 onPressed: loading ? null : () => edit(),

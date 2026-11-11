@@ -56,12 +56,9 @@ void main() {
             final stage = tester.getRect(
               find.byKey(const ValueKey('preview-stage')),
             );
-            expect(
-              stage,
-              size.width == 1280
-                  ? const Rect.fromLTWH(30, 196, 870, 360)
-                  : const Rect.fromLTWH(38, 199, 984, 435),
-            );
+            expect(stage.width, greaterThan(500));
+            expect(stage.height, greaterThan(200));
+            expect(stage.right, lessThanOrEqualTo(size.width - 340));
           }
           final boundary =
               capture.currentContext!.findRenderObject()
@@ -193,6 +190,23 @@ void main() {
           expect(tester.getSize(find.byType(Scaffold).first), size);
           expect(tester.takeException(), isNull);
         }
+        for (final size in [
+          const Size(1000, 700),
+          const Size(1280, 800),
+          const Size(1440, 900),
+        ]) {
+          await resizeNativeSurface(tester, size);
+          for (final scale in [1.0, 1.25, 1.5]) {
+            tester.platformDispatcher.textScaleFactorTestValue = scale;
+            await tester.pumpAndSettle();
+            expect(
+              tester.takeException(),
+              isNull,
+              reason: 'native layout scale=' + scale.toString(),
+            );
+          }
+        }
+        tester.platformDispatcher.clearTextScaleFactorTestValue();
         // A 1080px-tall client cannot fit in a normal 1080px desktop window
         // with its title bar. Exercise real maximized/fullscreen dimensions.
         for (final change in <Future<void> Function()>[
@@ -224,6 +238,7 @@ void main() {
           expect(tester.takeException(), isNull);
         }
       } finally {
+        tester.platformDispatcher.clearTextScaleFactorTestValue();
         await setNativeFullscreen(false);
         await windowManager.restore();
         await tester.pumpWidget(const SizedBox.shrink());

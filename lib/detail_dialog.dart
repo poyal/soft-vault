@@ -44,17 +44,17 @@ class _DetailEditorState extends State<DetailEditor> {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 12, color: Color(0xff8a9baa)),
+          style: const TextStyle(fontSize: 14, color: DeckDesign.muted),
         ),
         const SizedBox(height: 8),
         if (!editing)
           SelectableText(
             fields[key]!.text.isEmpty ? '—' : fields[key]!.text,
-            style: const TextStyle(fontSize: 14, height: 1.5),
+            style: const TextStyle(fontSize: 16, height: 1.5),
           )
         else
           TextField(
-            style: const TextStyle(fontSize: 14, height: 1.5),
+            style: const TextStyle(fontSize: 16, height: 1.5),
             controller: fields[key],
             autofocus: key == 'title',
             maxLines: lines,
@@ -114,8 +114,8 @@ class _DetailEditorState extends State<DetailEditor> {
                         Text(
                           '영상 정보와 기록을 확인하세요.',
                           style: TextStyle(
-                            fontSize: 11,
-                            color: Color(0xff8a9baa),
+                            fontSize: 14,
+                            color: DeckDesign.muted,
                           ),
                         ),
                       ],
@@ -176,8 +176,8 @@ class _DetailEditorState extends State<DetailEditor> {
                             Text(
                               p.basename(item['path'] as String),
                               style: const TextStyle(
-                                fontSize: 10,
-                                color: Color(0xff8a9baa),
+                                fontSize: 14,
+                                color: DeckDesign.muted,
                               ),
                             ),
                             const SizedBox(height: 20),
@@ -220,14 +220,14 @@ class _DetailEditorState extends State<DetailEditor> {
                                         Text(
                                           entry.key,
                                           style: const TextStyle(
-                                            fontSize: 11,
-                                            color: Color(0xff8a9baa),
+                                            fontSize: 14,
+                                            color: DeckDesign.muted,
                                           ),
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
                                           entry.value,
-                                          style: const TextStyle(fontSize: 11),
+                                          style: const TextStyle(fontSize: 14),
                                         ),
                                       ],
                                     ),
@@ -236,7 +236,7 @@ class _DetailEditorState extends State<DetailEditor> {
                             ),
                             const SizedBox(height: 22),
                             if (widget.history != null)
-                              TextButton.icon(
+                              OutlinedButton.icon(
                                 onPressed: widget.history,
                                 icon: const Icon(Icons.history, size: 18),
                                 label: const Text('재생 이력'),
@@ -246,8 +246,8 @@ class _DetailEditorState extends State<DetailEditor> {
                             const Text(
                               '파일을 다른 연결 폴더로 옮겨도\n평점과 기록은 그대로 따라갑니다.',
                               style: TextStyle(
-                                fontSize: 11,
-                                color: Color(0xff8a9baa),
+                                fontSize: 14,
+                                color: DeckDesign.muted,
                                 height: 1.8,
                               ),
                             ),
@@ -255,18 +255,18 @@ class _DetailEditorState extends State<DetailEditor> {
                             Wrap(
                               spacing: 8,
                               children: [
-                                TextButton(
+                                OutlinedButton(
                                   onPressed: () {
                                     Navigator.pop(context);
                                     widget.rename();
                                   },
                                   child: const Text('이름 변경'),
                                 ),
-                                TextButton(
+                                OutlinedButton(
                                   onPressed: widget.external,
                                   child: const Text('외부 앱으로 열기'),
                                 ),
-                                TextButton(
+                                OutlinedButton(
                                   onPressed: () {
                                     Navigator.pop(context);
                                     widget.relink();
@@ -292,8 +292,8 @@ class _DetailEditorState extends State<DetailEditor> {
                           const Text(
                             '평점',
                             style: TextStyle(
-                              fontSize: 12,
-                              color: Color(0xff8a9baa),
+                              fontSize: 14,
+                              color: DeckDesign.muted,
                             ),
                           ),
                           Row(
@@ -307,7 +307,7 @@ class _DetailEditorState extends State<DetailEditor> {
                                 gap: 9,
                               ),
                               if (editing)
-                                TextButton(
+                                OutlinedButton(
                                   onPressed: () =>
                                       setState(() => rating = null),
                                   child: const Text('초기화'),
@@ -345,7 +345,7 @@ class _DetailEditorState extends State<DetailEditor> {
                                       child: Text(
                                         tag,
                                         style: const TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 14,
                                           color: Color(0xffa0c4df),
                                         ),
                                       ),
@@ -360,7 +360,7 @@ class _DetailEditorState extends State<DetailEditor> {
                             title: const Text(
                               '개인 메모',
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 14,
                                 color: DeckDesign.muted,
                               ),
                             ),
@@ -383,10 +383,10 @@ class _DetailEditorState extends State<DetailEditor> {
                       editing
                           ? '변경 내용은 이 기기에 저장됩니다.'
                           : '정보 편집을 눌러 기록을 수정할 수 있습니다.',
-                      style: TextStyle(fontSize: 10, color: Color(0xff8a9baa)),
+                      style: TextStyle(fontSize: 14, color: DeckDesign.muted),
                     ),
                   ),
-                  TextButton(
+                  OutlinedButton(
                     onPressed: () => Navigator.pop(context),
                     child: Text(editing ? '취소' : '닫기'),
                   ),

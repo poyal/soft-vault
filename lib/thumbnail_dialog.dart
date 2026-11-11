@@ -129,7 +129,7 @@ class _ThumbnailDialogState extends State<ThumbnailDialog> {
       ),
     ),
     actions: [
-      TextButton(
+      OutlinedButton(
         onPressed: saving
             ? null
             : () async {
@@ -149,7 +149,7 @@ class _ThumbnailDialogState extends State<ThumbnailDialog> {
               },
         child: const Text('이미지 파일 선택'),
       ),
-      TextButton(
+      OutlinedButton(
         onPressed: saving
             ? null
             : () async {
@@ -165,7 +165,7 @@ class _ThumbnailDialogState extends State<ThumbnailDialog> {
               },
         child: const Text('자동 썸네일로 복원'),
       ),
-      TextButton(
+      OutlinedButton(
         onPressed: () => Navigator.pop(context),
         child: const Text('취소'),
       ),

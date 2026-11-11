@@ -1,3 +1,4 @@
+import 'settings_components.dart';
 import 'library_filter.dart';
 import 'library_filter_dialog.dart';
 import 'design.dart';
@@ -134,7 +135,7 @@ class VaultApp extends StatelessWidget {
         SingleActivator(LogicalKeyboardKey.escape):
             DoNothingAndStopPropagationIntent(),
       },
-      child: child!,
+      child: SettingsTheme(child: child!),
     ),
     theme: ThemeData(
       fontFamily: DeckDesign.font,
@@ -142,16 +143,44 @@ class VaultApp extends StatelessWidget {
       visualDensity: VisualDensity.standard,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       splashFactory: NoSplash.splashFactory,
+      dialogTheme: DialogThemeData(
+        backgroundColor: DeckDesign.sidebar,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: const BorderSide(color: DeckDesign.line),
+        ),
+        titleTextStyle: const TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: DeckDesign.text,
+        ),
+        contentTextStyle: const TextStyle(
+          fontSize: 16,
+          height: 1.5,
+          color: DeckDesign.text,
+        ),
+      ),
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: DeckDesign.accent,
+        selectionColor: Color(0x6687b8d8),
+      ),
+      tooltipTheme: const TooltipThemeData(
+        textStyle: TextStyle(fontSize: 14, color: DeckDesign.background),
+      ),
       dividerColor: DeckDesign.line,
       textTheme: const TextTheme(
-        bodyMedium: TextStyle(fontSize: 14, letterSpacing: 0),
-        bodySmall: TextStyle(fontSize: 11, letterSpacing: 0),
-        labelLarge: TextStyle(fontSize: 12, letterSpacing: 0),
+        bodyMedium: TextStyle(
+          fontSize: 16,
+          color: DeckDesign.text,
+          letterSpacing: 0,
+        ),
+        bodySmall: TextStyle(fontSize: 14, letterSpacing: 0),
+        labelLarge: TextStyle(fontSize: 15, letterSpacing: 0),
       ),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           padding: const EdgeInsets.all(6),
-          minimumSize: const Size(30, 30),
+          minimumSize: const Size(40, 40),
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),
       ),
@@ -182,19 +211,19 @@ class VaultApp extends StatelessWidget {
         ),
       ),
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: const Color(0xff15191e),
+      scaffoldBackgroundColor: DeckDesign.background,
       colorScheme: const ColorScheme.dark(
-        primary: Color(0xff87b8d8),
-        secondary: Color(0xff87b8d8),
+        primary: DeckDesign.accent,
+        secondary: DeckDesign.accent,
         secondaryContainer: Color(0xff233b4e),
         onSecondaryContainer: Color(0xffe3eaf1),
-        surface: Color(0xff1c2229),
-        onSurface: Color(0xffe3eaf1),
+        surface: DeckDesign.sidebar,
+        onSurface: DeckDesign.text,
       ),
       useMaterial3: true,
       chipTheme: const ChipThemeData(
         selectedColor: Color(0xff233b4e),
-        side: BorderSide(color: Color(0xff323d49)),
+        side: BorderSide(color: DeckDesign.line),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(4)),
         ),
@@ -213,14 +242,6 @@ class VaultApp extends StatelessWidget {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-        ),
-      ),
-      dialogTheme: DialogThemeData(
-        backgroundColor: const Color(0xff1d2934),
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Color(0xff3b5366)),
         ),
       ),
     ),
@@ -416,7 +437,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     windowManager.addListener(this);
     nativeFullscreen.addListener(fullscreenChanged);
     syncNativeFullscreen();
-    HardwareKeyboard.instance.addHandler(onKey);
+    FocusManager.instance.addEarlyKeyEventHandler(onKey);
     initialize();
   }
 
@@ -426,7 +447,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     windowManager.removeListener(this);
     nativeFullscreen.removeListener(fullscreenChanged);
     progressTimer?.cancel();
-    HardwareKeyboard.instance.removeHandler(onKey);
+    FocusManager.instance.removeEarlyKeyEventHandler(onKey);
     poll?.cancel();
     debounce?.cancel();
     for (final watcher in watchers) {
@@ -494,8 +515,8 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     });
   }
 
-  bool onKey(KeyEvent event) {
-    return handleKey(event);
+  KeyEventResult onKey(KeyEvent event) {
+    return handleKey(event) ? KeyEventResult.handled : KeyEventResult.ignored;
   }
 
   Future<void> connect() => guard(() async {
@@ -595,7 +616,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text('잠금을 마무리하지 못했습니다. 앱을 종료해 주세요.'),
-                    TextButton(
+                    OutlinedButton(
                       onPressed: onWindowClose,
                       child: const Text('앱 종료'),
                     ),
@@ -614,7 +635,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                 MaterialBanner(
                   content: Text(error!),
                   actions: [
-                    TextButton(
+                    OutlinedButton(
                       onPressed: () => setState(() => error = null),
                       child: const Text('닫기'),
                     ),
@@ -642,10 +663,10 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                             enrichmentPaused && enrichmentFuture == null
                                 ? '썸네일 준비 중지됨 · 목록을 사용할 수 있습니다'
                                 : '썸네일 준비 $enrichmentDone / $enrichmentTotal · 목록을 사용할 수 있습니다',
-                            style: const TextStyle(fontSize: 12),
+                            style: const TextStyle(fontSize: 14),
                           ),
                         ),
-                        TextButton(
+                        OutlinedButton(
                           onPressed: enrichmentFuture == null
                               ? () {
                                   enrichmentPaused = false;
@@ -700,7 +721,8 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                       folder: folder,
                       query: query,
                       expanded: expanded,
-                      busy: busy,
+                      busy: busy || jobs.running || scanFuture != null,
+                      scanning: scanFuture != null,
                       playing: playingView,
                       filters: filters,
                       open: () {
@@ -731,7 +753,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                       rescan: () => guard(() async {
                         setState(() => busy = true);
                         try {
-                          await rescanLibrary();
+                          await rescanLibrary(notify: true);
                         } finally {
                           if (mounted) setState(() => busy = false);
                         }

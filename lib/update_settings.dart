@@ -37,7 +37,7 @@ class UpdateSettings extends StatelessWidget {
                     Text(
                       updater.current,
                       style: const TextStyle(
-                        fontSize: 13,
+                        fontSize: 14,
                         color: DeckDesign.text,
                       ),
                     ),
@@ -95,7 +95,7 @@ class UpdateSettings extends StatelessWidget {
                           child: const Text('다운로드'),
                         ),
                       if (updater.working && updater.progress != null)
-                        TextButton(
+                        OutlinedButton(
                           onPressed: updater.cancel,
                           child: const Text('취소'),
                         ),
@@ -117,7 +117,7 @@ class UpdateSettings extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   child: SelectableText(
                     updater.notes,
-                    style: const TextStyle(fontSize: 13, height: 1.6),
+                    style: const TextStyle(fontSize: 14, height: 1.6),
                   ),
                 ),
               ],

@@ -22,7 +22,7 @@ extension _HomeFeatures on _VaultHomeState {
                 '선택한 경로가 이미 등록되어 있습니다. 해당 경로의 목록 항목을 현재 파일의 기록으로 교체합니다. 실제 파일은 삭제하지 않습니다.',
               ),
               actions: [
-                TextButton(
+                OutlinedButton(
                   onPressed: () => Navigator.pop(context, false),
                   child: const Text('취소'),
                 ),
@@ -116,7 +116,7 @@ extension _HomeFeatures on _VaultHomeState {
                       );
                   },
                 ),
-                TextButton(
+                OutlinedButton(
                   onPressed: externalSubtitle,
                   child: const Text('외부 자막 열기'),
                 ),
@@ -168,7 +168,7 @@ extension _HomeFeatures on _VaultHomeState {
             ),
           ),
           actions: [
-            TextButton(
+            OutlinedButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('닫기'),
             ),
@@ -265,7 +265,7 @@ extension _HomeFeatures on _VaultHomeState {
     }
   }
 
-  Future<void> rescanLibrary() async {
+  Future<void> rescanLibrary({bool notify = false}) async {
     if (closing || scanFuture != null || jobs.running || !mounted) return;
     final work = guard(() async {
       for (final root in await widget.library.folders()) {
@@ -276,12 +276,18 @@ extension _HomeFeatures on _VaultHomeState {
         skipIds: {if (playbackMediaId != null) playbackMediaId!},
       );
       await refresh();
+      if (notify && mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('전체 폴더 새로고침을 마쳤습니다.')));
     });
     scanFuture = work;
+    if (mounted) update(() {});
     try {
       await work;
     } finally {
       scanFuture = null;
+      if (mounted) update(() {});
     }
     unawaited(enrichLibrary());
   }
@@ -473,7 +479,7 @@ extension _HomeFeatures on _VaultHomeState {
       if (event is KeyDownEvent) guard(playback.panic);
       return true;
     }
-    if (capturing) return false;
+    if (capturing || ModalRoute.of(context)?.isCurrent == false) return false;
     final focus = FocusManager.instance.primaryFocus?.context;
     if (focus?.widget is EditableText ||
         focus?.findAncestorStateOfType<EditableTextState>() != null)
@@ -487,6 +493,9 @@ extension _HomeFeatures on _VaultHomeState {
       return true;
     }
     final action = keys.resolve(event);
+    // Settings owns activation/navigation; global search and help still work.
+    if (view == 'settings' && action != 'search' && action != 'help')
+      return false;
     if (action == null) return false;
     if (event is KeyRepeatEvent &&
         ![
@@ -564,7 +573,7 @@ extension _HomeFeatures on _VaultHomeState {
             ),
           ),
           actions: [
-            TextButton(
+            OutlinedButton(
               onPressed: () => Navigator.pop(context, false),
               child: const Text('취소'),
             ),
@@ -663,7 +672,7 @@ extension _HomeFeatures on _VaultHomeState {
           '현재 메타데이터를 백업 내용으로 교체합니다. 현재 기록은 자동 백업하며 원본 미디어 파일은 변경하지 않습니다.',
         ),
         actions: [
-          TextButton(
+          OutlinedButton(
             onPressed: () => Navigator.pop(context, false),
             child: const Text('취소'),
           ),
@@ -723,16 +732,16 @@ extension _HomeFeatures on _VaultHomeState {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.only(right: 7),
-              child: TextButton(
+              child: OutlinedButton(
                 style: TextButton.styleFrom(
-                  minimumSize: const Size(0, 34),
+                  minimumSize: const Size(0, 44),
                   padding: const EdgeInsets.symmetric(horizontal: 6),
                   backgroundColor: view == entry.key
                       ? const Color(0xff2a3b4b)
                       : Colors.transparent,
                   foregroundColor: view == entry.key
                       ? const Color(0xffa9cbe1)
-                      : const Color(0xff8498a9),
+                      : DeckDesign.muted,
                 ),
                 onPressed: () => update(() => view = entry.key),
                 child: Row(
@@ -743,10 +752,10 @@ extension _HomeFeatures on _VaultHomeState {
                       size: 15,
                       color: view == entry.key
                           ? const Color(0xffa9cbe1)
-                          : const Color(0xff8498a9),
+                          : DeckDesign.muted,
                     ),
                     const SizedBox(width: 7),
-                    Text(entry.value.$1, style: const TextStyle(fontSize: 11)),
+                    Text(entry.value.$1, style: const TextStyle(fontSize: 14)),
                   ],
                 ),
               ),
@@ -757,96 +766,62 @@ extension _HomeFeatures on _VaultHomeState {
     ),
   );
   Widget get toolbar => Padding(
-    padding: const EdgeInsets.fromLTRB(19, 3, 19, 12),
+    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
     child: Column(
       children: [
         if (activeCriteria != null)
           InputChip(
             label: Text(
               collectionName ?? '스마트 컬렉션',
-              style: const TextStyle(fontSize: 9),
+              style: const TextStyle(fontSize: 14),
             ),
             onDeleted: clearCollection,
           ),
         Row(
           children: [
-            for (final entry in {'': '전체 영상'}.entries)
-              Padding(
-                padding: const EdgeInsets.only(right: 3),
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    minimumSize: const Size(0, 25),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 7,
-                      vertical: 5,
-                    ),
-                    backgroundColor: (typeFilter ?? '') == entry.key
-                        ? const Color(0xff2a3845)
-                        : null,
-                    foregroundColor: (typeFilter ?? '') == entry.key
-                        ? const Color(0xffb1c8d7)
-                        : const Color(0xff748d9f),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                  ),
-                  onPressed: () {
-                    activeCriteria = null;
-                    activeCollectionId = null;
-                    collectionName = null;
-                    typeFilter = entry.key.isEmpty ? null : entry.key;
-                    selected.clear();
+            const Text(
+              '정렬',
+              style: TextStyle(fontSize: 14, color: DeckDesign.muted),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                constraints: const BoxConstraints(minHeight: 44),
+                decoration: BoxDecoration(
+                  color: DeckDesign.surface,
+                  border: Border.all(color: DeckDesign.line),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: DropdownButton<String>(
+                  value: sort,
+                  isExpanded: true,
+                  underline: const SizedBox.shrink(),
+                  icon: const DesignIcon('down', size: 16),
+                  items:
+                      {
+                            'recent': '최근 추가순',
+                            'name': '이름순',
+                            'rating': '평점순',
+                            'duration': '길이순',
+                          }.entries
+                          .map(
+                            (entry) => DropdownMenuItem(
+                              value: entry.key,
+                              child: Text(
+                                entry.value,
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          )
+                          .toList(),
+                  onChanged: (value) {
+                    if (value == null) return;
+                    sort = value;
                     refresh();
                   },
-                  child: Text(
-                    '${entry.value} ${entry.key.isEmpty ? items.length : items.where((item) => item['type'] == entry.key).length}',
-                    style: const TextStyle(fontSize: 9, height: 1),
-                  ),
                 ),
               ),
-            const Spacer(),
-            IconButton(
-              tooltip: '영상정보 내보내기·입력하기',
-              icon: const Icon(Icons.import_export, size: 19),
-              onPressed: () => guard(() async {
-                final changed = await showDeckDialog<bool>(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (_) =>
-                      MetadataExchangeDialog(library: widget.library),
-                );
-                if (changed == true) await refresh();
-              }),
-            ),
-            DropdownButton<String>(
-              value: sort,
-              isDense: true,
-              underline: const SizedBox.shrink(),
-              icon: const DesignIcon('down', size: 12),
-              items:
-                  {
-                        'recent': '최근 추가순',
-                        'name': '이름순',
-                        'rating': '평점순',
-                        'duration': '길이순',
-                      }.entries
-                      .map(
-                        (entry) => DropdownMenuItem(
-                          value: entry.key,
-                          child: Text(
-                            entry.value,
-                            style: const TextStyle(
-                              fontSize: 9,
-                              color: Color(0xff708ca1),
-                            ),
-                          ),
-                        ),
-                      )
-                      .toList(),
-              onChanged: (value) {
-                sort = value!;
-                refresh();
-              },
             ),
           ],
         ),
@@ -868,7 +843,7 @@ extension _HomeFeatures on _VaultHomeState {
                   InputChip(
                     label: Text(
                       libraryFilter.ratingLabel,
-                      style: const TextStyle(fontSize: 10),
+                      style: const TextStyle(fontSize: 14),
                     ),
                     onDeleted: () =>
                         changeLibraryFilter(libraryFilter.withoutRating()),
@@ -881,7 +856,7 @@ extension _HomeFeatures on _VaultHomeState {
                     ActionChip(
                       label: Text(
                         '${kind == 'actors' ? '배우' : '태그'} · ${(kind == 'actors' ? libraryFilter.actorsAll : libraryFilter.tagsAll) ? '모두' : '하나라도'}',
-                        style: const TextStyle(fontSize: 10),
+                        style: const TextStyle(fontSize: 14),
                       ),
                       onPressed: filters,
                     ),
@@ -898,7 +873,7 @@ extension _HomeFeatures on _VaultHomeState {
                                   ? filterActorNames[id]
                                   : filterTagNames[id]) ??
                               '삭제된 항목',
-                          style: const TextStyle(fontSize: 10),
+                          style: const TextStyle(fontSize: 14),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -930,7 +905,7 @@ extension _HomeFeatures on _VaultHomeState {
                       onPressed: filters,
                     ),
                 ],
-                TextButton(
+                OutlinedButton(
                   onPressed: () => changeLibraryFilter(LibraryFilter()),
                   child: const Text('필터 해제'),
                 ),
@@ -985,6 +960,7 @@ extension _HomeFeatures on _VaultHomeState {
             ? null
             : lockSession,
         keys: keys,
+        metadataChanged: refresh,
         folderCount: folders.length,
         mediaTitle: current?['title'] as String?,
         busy: busy,
@@ -1019,7 +995,7 @@ extension _HomeFeatures on _VaultHomeState {
               const SizedBox(width: 20),
               const Text(
                 '라이브러리',
-                style: TextStyle(color: Color(0xff8a9baa), fontSize: 12),
+                style: TextStyle(color: Color(0xffb3c1cd), fontSize: 14),
               ),
               const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
@@ -1033,7 +1009,7 @@ extension _HomeFeatures on _VaultHomeState {
                     : view == 'organize'
                     ? '라이브러리 정리'
                     : '설정',
-                style: const TextStyle(fontSize: 12),
+                style: const TextStyle(fontSize: 14),
               ),
               const Spacer(),
               DeckIconButton(
@@ -1060,9 +1036,12 @@ extension _HomeFeatures on _VaultHomeState {
     elevation: 12,
     child: Padding(
       padding: const EdgeInsets.all(9),
-      child: Row(
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          Text('${selected.length}개 선택', style: const TextStyle(fontSize: 11)),
+          Text('${selected.length}개 선택', style: const TextStyle(fontSize: 14)),
           const SizedBox(width: 9),
           for (var rating = 1; rating <= 5; rating++)
             IconButton(
@@ -1073,13 +1052,12 @@ extension _HomeFeatures on _VaultHomeState {
                 style: TextStyle(fontSize: 15, color: DeckDesign.gold),
               ),
             ),
-          TextButton(
+          OutlinedButton(
             onPressed: () => rateTargets(null),
             child: const Text('평점 초기화'),
           ),
-          TextButton(onPressed: batchTags, child: const Text('태그 편집')),
-          TextButton(onPressed: moveFiles, child: const Text('폴더 이동')),
-          const Spacer(),
+          OutlinedButton(onPressed: batchTags, child: const Text('태그 편집')),
+          OutlinedButton(onPressed: moveFiles, child: const Text('폴더 이동')),
           IconButton(
             onPressed: () => update(selected.clear),
             tooltip: '선택 해제',

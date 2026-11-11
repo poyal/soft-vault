@@ -40,7 +40,7 @@ class PlaybackControls extends StatelessWidget {
             children: [
               Text(
                 clockText(snapshot.data!),
-                style: const TextStyle(fontSize: 10, color: Color(0xffa0b59e)),
+                style: const TextStyle(fontSize: 14, color: Color(0xffa0b59e)),
               ),
               const SizedBox(width: 15),
               Expanded(
@@ -63,7 +63,7 @@ class PlaybackControls extends StatelessWidget {
               const SizedBox(width: 15),
               Text(
                 clockText(player.state.duration),
-                style: const TextStyle(fontSize: 10, color: Color(0xffa0b59e)),
+                style: const TextStyle(fontSize: 14, color: Color(0xffa0b59e)),
               ),
             ],
           ),
@@ -89,6 +89,10 @@ class PlaybackControls extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     onPressed: () => command('pause'),
                     tooltip: '재생 / 일시정지',
+                    style: IconButton.styleFrom(
+                      shape: const CircleBorder(),
+                      side: BorderSide.none,
+                    ),
                     icon: DesignIcon(
                       player.state.playing ? 'pause' : 'play',
                       color: const Color(0xff243e51),
@@ -126,12 +130,12 @@ class PlaybackControls extends StatelessWidget {
                 stream: player.stream.volume,
                 initialData: player.state.volume,
                 builder: (_, snapshot) => SizedBox(
-                  width: 33,
+                  width: 48,
                   child: Text(
                     '${snapshot.data!.round()}%',
                     key: const ValueKey('volume-label'),
                     style: const TextStyle(
-                      fontSize: 11,
+                      fontSize: 14,
                       color: Color(0xffa9c8de),
                     ),
                   ),
@@ -152,12 +156,16 @@ class PlaybackControls extends StatelessWidget {
                   for (final speed in [.25, .5, .75, 1.0, 1.25, 1.5, 2.0, 3.0])
                     PopupMenuItem(value: speed, child: Text('${speed}×')),
                 ],
-                child: Padding(
+                child: Container(
                   padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: DeckDesign.line),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
                   child: Text(
                     '${player.state.rate.toStringAsFixed(1)}×',
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                       color: Color(0xff95b6cf),
                     ),
                   ),
@@ -184,7 +192,7 @@ class PlaybackControls extends StatelessWidget {
               SizedBox(width: 6),
               Text(
                 '소리 0% · 최소화',
-                style: TextStyle(fontSize: 10, color: Color(0xff597a93)),
+                style: TextStyle(fontSize: 14, color: DeckDesign.muted),
               ),
               Spacer(),
               KeyCap('Q'),
@@ -193,7 +201,7 @@ class PlaybackControls extends StatelessWidget {
               SizedBox(width: 6),
               Text(
                 '파일 이동',
-                style: TextStyle(fontSize: 10, color: Color(0xff597a93)),
+                style: TextStyle(fontSize: 14, color: DeckDesign.muted),
               ),
               SizedBox(width: 16),
               KeyCap('W'),
@@ -202,7 +210,7 @@ class PlaybackControls extends StatelessWidget {
               SizedBox(width: 6),
               Text(
                 '음량',
-                style: TextStyle(fontSize: 10, color: Color(0xff597a93)),
+                style: TextStyle(fontSize: 14, color: DeckDesign.muted),
               ),
             ],
           ),

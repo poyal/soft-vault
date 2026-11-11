@@ -123,6 +123,9 @@ void main() {
   }
 
   Future<void> unlock(ScenarioApp app, String value) async {
+    await app.until(
+      () => find.byKey(const ValueKey('privacy-current')).evaluate().isNotEmpty,
+    );
     await input(app.tester, 'privacy-current', value);
     await submit(app.tester);
     await app.until(() => find.byType(VaultHome).evaluate().isNotEmpty);

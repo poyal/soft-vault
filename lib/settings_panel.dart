@@ -1,3 +1,4 @@
+import 'metadata_workspace.dart';
 import 'settings_components.dart';
 import 'design.dart';
 import 'update_settings.dart';
@@ -18,8 +19,10 @@ class SettingsPanel extends StatefulWidget {
   final int folderCount;
   final String? mediaTitle;
   final bool busy;
+  final VoidCallback? metadataChanged;
   const SettingsPanel({
     super.key,
+    this.metadataChanged,
     this.installUpdate,
     this.privacy,
     this.lockNow,
@@ -111,7 +114,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
               ),
               content: Text(error ?? '지정할 키 조합을 누르세요.\nEsc와 0은 변경할 수 없습니다.'),
               actions: [
-                TextButton(
+                OutlinedButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text('취소'),
                 ),
@@ -162,7 +165,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
             ),
           ),
           actions: [
-            TextButton(
+            OutlinedButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('닫기'),
             ),
@@ -186,26 +189,13 @@ class _SettingsPanelState extends State<SettingsPanel> {
 
   Widget keyButton(String command, int slot) {
     final values = widget.keys.values[command] ?? [];
-    return InkWell(
-      onTap: () => capture(command, slot),
-      borderRadius: BorderRadius.circular(5),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-        child: slot >= values.length
-            ? const Text(
-                '지정 안 됨',
-                style: TextStyle(fontSize: 11, color: Color(0xff5f7485)),
-              )
-            : Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (final key in chordLabel(values[slot]).split(' + '))
-                    Padding(
-                      padding: const EdgeInsets.only(right: 5),
-                      child: KeyCap(key),
-                    ),
-                ],
-              ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+      child: OutlinedButton(
+        onPressed: () => capture(command, slot),
+        child: Text(
+          slot >= values.length ? '지정 안 됨' : chordLabel(values[slot]),
+        ),
       ),
     );
   }
@@ -271,7 +261,6 @@ class _SettingsPanelState extends State<SettingsPanel> {
           onPressed: widget.folders,
           child: const Text('연결 폴더 관리'),
         ),
-        action('다시 검색', 'rescan'),
       ],
     ),
     section('목록과 정리', '보기 방식을 바꾸고, 현재 조건을 저장하거나 파일을 정리합니다.', [
@@ -303,12 +292,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
         child: const Text('선택 파일 외부 앱으로 열기'),
       ),
     ]),
-    section('영상 메타데이터', '선택한 영상의 제목·배우·태그·평점을 NFO 파일과 주고받습니다.', [
-      action('NFO 가져오기', 'nfoImport', enabled: widget.mediaTitle != null),
-      action('NFO 내보내기', 'nfoExport', enabled: widget.mediaTitle != null),
-    ]),
   ];
-
   List<Widget> get backupSettings => [
     section(
       '카탈로그와 기록 백업',
@@ -332,10 +316,10 @@ class _SettingsPanelState extends State<SettingsPanel> {
         const Expanded(
           child: Text(
             '키를 클릭해 변경하세요. 변경 내용은 자동 저장됩니다.',
-            style: TextStyle(fontSize: 12, color: DeckDesign.muted),
+            style: TextStyle(fontSize: 14, color: DeckDesign.muted),
           ),
         ),
-        TextButton(
+        OutlinedButton(
           onPressed: () async {
             widget.keys.values = KeyBindings.defaults();
             await widget.keys.save();
@@ -363,11 +347,11 @@ class _SettingsPanelState extends State<SettingsPanel> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('소리를 끄고, 바로 최소화', style: TextStyle(fontSize: 12)),
+                Text('소리를 끄고, 바로 최소화', style: TextStyle(fontSize: 14)),
                 SizedBox(height: 9),
                 Text(
                   '볼륨을 0%로 만든 뒤 창을 최소화합니다. 다시 열어도 소리는 켜지지 않아요.',
-                  style: TextStyle(fontSize: 10, color: DeckDesign.muted),
+                  style: TextStyle(fontSize: 14, color: DeckDesign.muted),
                 ),
               ],
             ),
@@ -380,35 +364,37 @@ class _SettingsPanelState extends State<SettingsPanel> {
             ),
             child: const Text(
               '고정 단축키',
-              style: TextStyle(fontSize: 10, color: DeckDesign.accent),
+              style: TextStyle(fontSize: 14, color: DeckDesign.accent),
             ),
           ),
         ],
       ),
     ),
     const SizedBox(height: 26),
-    Row(
+    Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         const Text(
           'PRESET',
           style: TextStyle(
-            fontSize: 9,
+            fontSize: 14,
             letterSpacing: 1.5,
             color: DeckDesign.muted,
           ),
         ),
         const SizedBox(width: 10),
         SizedBox(
-          height: 36,
+          height: 44,
           child: OutlinedButton(
             onPressed: managePresets,
             child: const Text('표준 + 왼손 보조'),
           ),
         ),
-        const Spacer(),
         const Text(
           '키를 클릭하고 새 조합을 눌러보세요',
-          style: TextStyle(fontSize: 11, color: DeckDesign.muted),
+          style: TextStyle(fontSize: 14, color: DeckDesign.muted),
         ),
       ],
     ),
@@ -423,21 +409,21 @@ class _SettingsPanelState extends State<SettingsPanel> {
               flex: 42,
               child: Text(
                 '기능',
-                style: TextStyle(fontSize: 10, color: DeckDesign.muted),
+                style: TextStyle(fontSize: 14, color: DeckDesign.muted),
               ),
             ),
             Expanded(
               flex: 29,
               child: Text(
                 '기본키',
-                style: TextStyle(fontSize: 10, color: DeckDesign.muted),
+                style: TextStyle(fontSize: 14, color: DeckDesign.muted),
               ),
             ),
             Expanded(
               flex: 27,
               child: Text(
                 '보조키',
-                style: TextStyle(fontSize: 10, color: DeckDesign.muted),
+                style: TextStyle(fontSize: 14, color: DeckDesign.muted),
               ),
             ),
           ],
@@ -452,7 +438,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
       color: const Color(0xff1b2a37),
       child: const Text(
         '재생 조작',
-        style: TextStyle(fontSize: 11, color: DeckDesign.muted),
+        style: TextStyle(fontSize: 14, color: DeckDesign.muted),
       ),
     ),
     for (final command in [
@@ -463,7 +449,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
       ),
     ])
       Container(
-        height: 57,
+        constraints: const BoxConstraints(minHeight: 64),
         padding: const EdgeInsets.symmetric(horizontal: 17),
         decoration: const BoxDecoration(
           border: Border(top: BorderSide(color: Color(0xff2f4456))),
@@ -474,7 +460,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
               flex: 42,
               child: Text(
                 KeyBindings.labels[command]!,
-                style: const TextStyle(fontSize: 12),
+                style: const TextStyle(fontSize: 14),
               ),
             ),
             for (var slot = 0; slot < 2; slot++)
@@ -490,7 +476,15 @@ class _SettingsPanelState extends State<SettingsPanel> {
       ),
   ];
 
-  static const sections = ['라이브러리', '재생', '단축키', '사생활 보호', '백업', '앱 정보 · 업데이트'];
+  static const sections = [
+    '라이브러리',
+    '재생',
+    '단축키',
+    '메타데이터',
+    '사생활 보호',
+    '백업',
+    '앱 정보 · 업데이트',
+  ];
   @override
   Widget build(BuildContext context) => SettingsTheme(
     child: LayoutBuilder(
@@ -512,7 +506,7 @@ class _SettingsPanelState extends State<SettingsPanel> {
                       ),
                     ),
                   ),
-                  TextButton.icon(
+                  OutlinedButton.icon(
                     onPressed: widget.close,
                     icon: const Icon(Icons.arrow_back, size: 16),
                     label: const Text('영상으로 돌아가기'),
@@ -521,98 +515,138 @@ class _SettingsPanelState extends State<SettingsPanel> {
               ),
             ),
             const Divider(height: 1, color: DeckDesign.line),
+            if (bounds.maxWidth < 760)
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: DropdownButtonFormField<String>(
+                  initialValue: tab,
+                  decoration: const InputDecoration(labelText: '설정 카테고리'),
+                  items: [
+                    for (final name in sections)
+                      DropdownMenuItem(value: name, child: Text(name)),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) setState(() => tab = value);
+                  },
+                ),
+              ),
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
-                    width: 200,
-                    decoration: const BoxDecoration(
-                      border: Border(right: BorderSide(color: DeckDesign.line)),
-                    ),
-                    child: ListView(
-                      padding: const EdgeInsets.all(12),
-                      children: [
-                        for (final name in sections)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
-                            child: ListTile(
-                              key: ValueKey('settings-section-$name'),
-                              dense: true,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              title: Text(
-                                name,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: tab == name
-                                      ? DeckDesign.text
-                                      : DeckDesign.muted,
+                  if (bounds.maxWidth >= 760)
+                    Container(
+                      width: 224,
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          right: BorderSide(color: DeckDesign.line),
+                        ),
+                      ),
+                      child: ListView(
+                        padding: const EdgeInsets.all(12),
+                        children: [
+                          for (final name in sections)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: ListTile(
+                                key: ValueKey('settings-section-$name'),
+                                minTileHeight: 56,
+                                leading: Icon(switch (name) {
+                                  '라이브러리' => Icons.video_library_outlined,
+                                  '재생' => Icons.play_circle_outline,
+                                  '메타데이터' => Icons.edit_note,
+                                  '단축키' => Icons.keyboard_outlined,
+                                  '사생활 보호' => Icons.lock_outline,
+                                  '백업' => Icons.backup_outlined,
+                                  _ => Icons.info_outline,
+                                }, size: 20),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
+                                title: Text(
+                                  name == '앱 정보 · 업데이트' ? '정보·업데이트' : name,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: tab == name
+                                        ? DeckDesign.text
+                                        : DeckDesign.muted,
+                                  ),
+                                ),
+                                selected: tab == name,
+                                selectedTileColor: DeckDesign.surface,
+                                onTap: () => setState(() => tab = name),
                               ),
-                              selected: tab == name,
-                              selectedTileColor: DeckDesign.surface,
-                              onTap: () => setState(() => tab = name),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
                   Expanded(
                     child: Align(
                       alignment: Alignment.topCenter,
                       child: ConstrainedBox(
                         constraints: const BoxConstraints(maxWidth: 944),
-                        child: SingleChildScrollView(
-                          key: PageStorageKey('settings-body-$tab'),
-                          padding: EdgeInsets.all(padding),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 24),
-                                child: Text(
-                                  tab,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
+                        child: IndexedStack(
+                          index: tab == '메타데이터' ? 0 : 1,
+                          children: [
+                            MetadataWorkspace(
+                              library: widget.keys.library,
+                              action: widget.action,
+                              hasMedia: widget.mediaTitle != null,
+                              onApplied: widget.metadataChanged,
+                            ),
+                            SingleChildScrollView(
+                              key: PageStorageKey('settings-body-$tab'),
+                              padding: EdgeInsets.all(padding),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 24),
+                                    child: Text(
+                                      tab,
+                                      style: const TextStyle(
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                                   ),
-                                ),
+                                  ...switch (tab) {
+                                    '재생' => playbackSettings,
+                                    '단축키' => [
+                                      SettingsSection(
+                                        title: '키보드 단축키',
+                                        children: [
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: shortcutSettings,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                    '사생활 보호' => [
+                                      SettingsSection(
+                                        title: '앱 접근 보호',
+                                        children: [
+                                          PrivacySettings(
+                                            privacy: widget.privacy,
+                                            lockNow: widget.lockNow,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                    '백업' => backupSettings,
+                                    '앱 정보 · 업데이트' => [
+                                      UpdateSettings(
+                                        install: widget.installUpdate,
+                                      ),
+                                    ],
+                                    _ => librarySettings,
+                                  },
+                                ],
                               ),
-                              ...switch (tab) {
-                                '재생' => playbackSettings,
-                                '단축키' => [
-                                  SettingsSection(
-                                    title: '키보드 단축키',
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: shortcutSettings,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                                '사생활 보호' => [
-                                  SettingsSection(
-                                    title: '앱 접근 보호',
-                                    children: [
-                                      PrivacySettings(
-                                        privacy: widget.privacy,
-                                        lockNow: widget.lockNow,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                                '백업' => backupSettings,
-                                '앱 정보 · 업데이트' => [
-                                  UpdateSettings(install: widget.installUpdate),
-                                ],
-                                _ => librarySettings,
-                              },
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
