@@ -100,7 +100,10 @@ void main() {
         await app.tap('변경 비교');
         Focus.of(tester.element(find.text('모두 해제'))).requestFocus();
         await app.settle();
-        await tester.sendKeyEvent(LogicalKeyboardKey.space);
+        await tester.sendKeyEvent(
+          LogicalKeyboardKey.space,
+          physicalKey: PhysicalKeyboardKey.space,
+        );
         await app.settle();
         expect(
           tester
