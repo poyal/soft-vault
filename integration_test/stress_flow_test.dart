@@ -71,14 +71,31 @@ void main() {
           await tester.pump(const Duration(milliseconds: 20));
         }
         final expected = app.visible[1];
-        await app.until(
-          () =>
-              find.byType(PlaybackControls).evaluate().isNotEmpty &&
-              app.player.state.playlist.medias.isNotEmpty &&
-              app.player.state.playlist.medias.last.uri ==
-                  Media(expected['path'] as String).uri,
+        // A preceding queued open can briefly expose the same URI while later
+        // opens are still clearing/loading the playlist. Require the player and
+        // selection to agree continuously, rather than sampling that midpoint.
+        var stableTicks = 0;
+        for (var tick = 0; tick < 150 && stableTicks < 10; tick++) {
+          await tester.pump(const Duration(milliseconds: 100));
+          final ready = find.byType(PlaybackControls).evaluate().isNotEmpty;
+          final media = ready ? app.player.state.playlist.medias : <Media>[];
+          final settled =
+              ready &&
+              media.isNotEmpty &&
+              media.last.uri == Media(expected['path'] as String).uri &&
+              tester
+                      .widget<VaultFileList>(find.byType(VaultFileList))
+                      .current ==
+                  expected['id'] &&
+              app.player.state.volume == 0;
+          stableTicks = settled ? stableTicks + 1 : 0;
+        }
+        expect(
+          stableTicks,
+          10,
+          reason:
+              'The last requested video and selection must remain settled at zero volume',
         );
-        await app.settle(3);
         expect(app.player.state.volume, 0);
         expect(
           tester.widget<VaultFileList>(find.byType(VaultFileList)).current,
