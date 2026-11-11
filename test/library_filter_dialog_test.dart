@@ -40,8 +40,10 @@ void main() {
     );
     await tester.tap(find.text('열기'));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const ValueKey('filter-star-4')));
     await tester.tap(find.byKey(const ValueKey('filter-star-4')));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('정확히'));
     await tester.tap(find.text('정확히'));
     await tester.pumpAndSettle();
     expect(find.byType(CheckboxListTile).evaluate().length, lessThan(50));
@@ -58,6 +60,7 @@ void main() {
     expect(result!.actorIds, [1000]);
     await tester.tap(find.text('열기'));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('미평가'));
     await tester.tap(find.text('미평가'));
     await tester.tap(find.text('취소'));
     await tester.pumpAndSettle();
