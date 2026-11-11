@@ -28,6 +28,7 @@
 | SV-10 | 백업·손상 JSON·없는 참조·구버전 복원 | 정상 왕복, 실패 시 기존 카탈로그 유지, 잠금 정보 독립 | `library_test`, `scenario_regression_test`, `privacy_lock_test` |
 | SV-11 | 첫 비밀번호 설정·틀린 확인·재시작·오입력·변경·해제·지금 잠그기 | 인증 전 목록/플레이어 없음, 대기 영속, 현재 암호 확인, 재생 정지·0% | `privacy_lock_test`, `privacy_flow_test` |
 | SV-12 | 통합 설정 탐색·단축키 변경·작은 창·전체화면·복원 | 입력·설정 유지, 버튼 접근 가능, 앱 바깥 검은 띠 없음 | `key_bindings_test`, `scenario_flow_test`, `design_parity_test` |
+| SV-14 | AI 영상정보·배우 이미지 검토와 선택 적용 | 개인 필드 제외, 미확인 이미지 선택 방지, 실패 시 영상정보만 적용, 충돌 시 전체 롤백·임시 파일 정리 | `metadata_exchange_test`, `metadata_actor_image_test`, `metadata_exchange_flow_test` |
 | SV-13 | 1만 목록·빠른 영상 전환·반복 최소화·동시 파일 작업 | 상한 충족, 데이터 무결성, 종료 후 잔류 작업 확인 | `stress_flow_test`, `stress_scenarios_test`, 부하 검사 |
 
 서비스 파일은 `test/<이름>.dart`, UI 파일은 `integration_test/<이름>.dart`에 있다. 현재 코덱 자료는 11개 파일이며 한 테스트 안에서 여러 코덱을 확인한다. 이를 11개의 독립 E2E로 집계하지 않는다.

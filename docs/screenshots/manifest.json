@@ -1,83 +1,101 @@
 [
-    {
-        "file":  "library.png",
-        "source":  "build/e2e/design-library-1280.png",
-        "capturedAt":  "2026-11-08T22:41:58.6125703+09:00",
-        "platform":  "Windows x64",
-        "mode":  "Flutter native integration test, debug",
-        "data":  "Synthetic test catalog and sample video",
-        "sha256":  "5F3FC3CE759E18FB2BEE19B496A3C70525924F0D503F670BDFA1F4A534567710"
-    },
-    {
-        "file":  "settings-library.png",
-        "source":  "build/e2e/design-settings-1280.png",
-        "capturedAt":  "2026-11-08T22:42:03.7158075+09:00",
-        "platform":  "Windows x64",
-        "mode":  "Flutter native integration test, debug",
-        "data":  "Synthetic test catalog and sample video",
-        "sha256":  "7DD605EB17C2AFD8467B6614B1BEB4CA86390B63CF66136560CC9018BA819809"
-    },
-    {
-        "file":  "actors.png",
-        "source":  "build/e2e/design-actors-1280.png",
-        "capturedAt":  "2026-11-08T22:42:01.1666383+09:00",
-        "platform":  "Windows x64",
-        "mode":  "Flutter native integration test, debug",
-        "data":  "Synthetic test catalog and sample video",
-        "sha256":  "6D1BD62E5FB41B08007C5B4D8CAA93466D9F69D4ED6E4F80B63B58D6E8C43465"
-    },
-    {
-        "file":  "playback.png",
-        "source":  "build/e2e/02-player-1280.png",
-        "capturedAt":  "2026-11-08T22:43:10.0825885+09:00",
-        "platform":  "Windows x64",
-        "mode":  "Flutter native integration test, debug",
-        "data":  "Synthetic test catalog and sample video",
-        "sha256":  "05B366AF516421C0CA01AF1D0378D8A33C014BA74DE6A5D77A49164544AF9E30"
-    },
-    {
-        "file":  "details.png",
-        "source":  "build/e2e/design-detail-1280.png",
-        "capturedAt":  "2026-11-08T22:41:59.8936117+09:00",
-        "platform":  "Windows x64",
-        "mode":  "Flutter native integration test, debug",
-        "data":  "Synthetic test catalog and sample video",
-        "sha256":  "3F2D823051708F23C3782383DA621BE72FA6FAB47B1B1B1008E6A617B475B121"
-    },
-    {
-        "file":  "scenes.png",
-        "source":  "build/e2e/14-scenes-1280.png",
-        "capturedAt":  "2026-11-08T21:53:51.5059785+09:00",
-        "platform":  "Windows x64",
-        "mode":  "Flutter native integration test, debug",
-        "data":  "Synthetic test catalog and sample video",
-        "sha256":  "C2468012AB4AF4B5A86D152B6CD09DC80AD936AD33BB15FAEEDA34DCE22CD777"
-    },
-    {
-        "file":  "privacy.png",
-        "source":  "build/e2e/privacy-settings-1280.png",
-        "capturedAt":  "2026-11-08T22:26:43.1528980+09:00",
-        "platform":  "Windows x64",
-        "mode":  "Flutter native integration test, debug",
-        "data":  "Synthetic test catalog and sample video",
-        "sha256":  "A284CA45AE3451092546FE83166B21AAEBD07F1B151965BFDF2473A5AFD8F2F7"
-    },
-    {
-        "file":  "backup.png",
-        "source":  "build/e2e/design-settings-backup-1280.png",
-        "capturedAt":  "2026-11-08T22:42:06.5944612+09:00",
-        "platform":  "Windows x64",
-        "mode":  "Flutter native integration test, debug",
-        "data":  "Synthetic test catalog and sample video",
-        "sha256":  "A3107B73F0CFED824EB2982637F2AD3FCC733D56545CB3F1F9DD060199328DDD"
-    },
-    {
-        "file":  "macos-playback.png",
-        "source":  "mac-mini-m4:build/e2e/02-player-1280.png",
-        "capturedAt":  "2026-11-09T00:22:50.0000000+09:00",
-        "platform":  "macOS 27.0.1 / Apple M4",
-        "mode":  "Flutter native integration test, debug",
-        "data":  "Synthetic catalog and Sintel sample video",
-        "sha256":  "F43C303E1142EC10C970DDD41C83E1340FC35355402DB76FD024278AFC9F7FAC"
-    }
+  {
+    "file": "library.png",
+    "source": "build/e2e/design-library-1280.png",
+    "capturedAt": "2026-11-11T08:35:42.465Z",
+    "platform": "Windows x64",
+    "mode": "Flutter native integration test, debug",
+    "data": "Synthetic test catalog and sample video",
+    "sourceCommit": "4493eadcd91862e13962716c9885535e2d526138",
+    "version": "0.3.0+4",
+    "sha256": "5738c64f080b2cfd0aa9ce80484e97f491dbb5c593f1acf251337e6f93b44aa8"
+  },
+  {
+    "file": "settings-library.png",
+    "source": "build/e2e/design-settings-1280.png",
+    "capturedAt": "2026-11-11T08:35:47.812Z",
+    "platform": "Windows x64",
+    "mode": "Flutter native integration test, debug",
+    "data": "Synthetic test catalog and sample video",
+    "sourceCommit": "4493eadcd91862e13962716c9885535e2d526138",
+    "version": "0.3.0+4",
+    "sha256": "e1e043ebd70511825c7b8c9fe9d76041916857e8dfc4724f76989c5922472005"
+  },
+  {
+    "file": "actors.png",
+    "source": "build/e2e/design-actors-1280.png",
+    "capturedAt": "2026-11-11T08:35:45.230Z",
+    "platform": "Windows x64",
+    "mode": "Flutter native integration test, debug",
+    "data": "Synthetic test catalog and sample video",
+    "sourceCommit": "4493eadcd91862e13962716c9885535e2d526138",
+    "version": "0.3.0+4",
+    "sha256": "c123e36cc8cd55b8be98b1d3177ebafd76dea0435112391a554c4e58993a2305"
+  },
+  {
+    "file": "playback.png",
+    "source": "build/e2e/02-player-1280.png",
+    "capturedAt": "2026-11-11T08:33:00.264Z",
+    "platform": "Windows x64",
+    "mode": "Flutter native integration test, debug",
+    "data": "Synthetic test catalog and sample video",
+    "sourceCommit": "4493eadcd91862e13962716c9885535e2d526138",
+    "version": "0.3.0+4",
+    "sha256": "ee9c019fd4fb18af951c39b8ce373df41ffdaeec90b40c896bd540631c3ae59e"
+  },
+  {
+    "file": "details.png",
+    "source": "build/e2e/design-detail-1280.png",
+    "capturedAt": "2026-11-11T08:35:43.932Z",
+    "platform": "Windows x64",
+    "mode": "Flutter native integration test, debug",
+    "data": "Synthetic test catalog and sample video",
+    "sourceCommit": "4493eadcd91862e13962716c9885535e2d526138",
+    "version": "0.3.0+4",
+    "sha256": "48f83432fe372655c79577937a202cde13b7a407d991fe43e13123e353bf8efa"
+  },
+  {
+    "file": "scenes.png",
+    "source": "build/e2e/14-scenes-1280.png",
+    "capturedAt": "2026-11-11T08:34:23.607Z",
+    "platform": "Windows x64",
+    "mode": "Flutter native integration test, debug",
+    "data": "Synthetic test catalog and sample video",
+    "sourceCommit": "4493eadcd91862e13962716c9885535e2d526138",
+    "version": "0.3.0+4",
+    "sha256": "e79618a1fc07444265ea66b7d1aa925162c155f0a80a7c962e33271eef4da496"
+  },
+  {
+    "file": "backup.png",
+    "source": "build/e2e/design-settings-backup-1280.png",
+    "capturedAt": "2026-11-11T08:35:50.589Z",
+    "platform": "Windows x64",
+    "mode": "Flutter native integration test, debug",
+    "data": "Synthetic test catalog and sample video",
+    "sourceCommit": "4493eadcd91862e13962716c9885535e2d526138",
+    "version": "0.3.0+4",
+    "sha256": "4c38b39c10caf8b8ef63df0571558c63cd9da2e4f117108ebb5a80a4a476bf29"
+  },
+  {
+    "file": "macos-playback.png",
+    "source": "Mac release-030-20261111/build/e2e/02-player-1280.png",
+    "capturedAt": "2026-11-11T08:32:26.000Z",
+    "platform": "macOS arm64 / Mac mini M4",
+    "mode": "Flutter native integration test, debug",
+    "data": "Synthetic test catalog and sample video",
+    "sourceCommit": "4493eadcd91862e13962716c9885535e2d526138",
+    "version": "0.3.0+4",
+    "sha256": "8b104eecb26608854d5d4fe13ced90d5751c86c282e870574bb4047a3d68f4ee"
+  },
+  {
+    "file": "privacy.png",
+    "source": "build/e2e/privacy-settings-1280.png",
+    "capturedAt": "2026-11-11T08:44:28.076Z",
+    "platform": "Windows x64",
+    "mode": "Flutter native integration test, debug",
+    "data": "Synthetic test catalog and sample video",
+    "sourceCommit": "1ece9fbdaa4cbae7562a2d6e78adced1e6cea320",
+    "version": "0.3.0+4",
+    "sha256": "3899cd38fb33cfc4a96efd6ddf5e41e331b4d260f12bd6be55b343ebb107400a"
+  }
 ]
