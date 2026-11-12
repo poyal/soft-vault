@@ -182,7 +182,7 @@ void main() {
             app.tester
                 .widget<Text>(find.byKey(ValueKey('file-tags-${b['id']}')))
                 .data,
-            '태그 없음',
+            '지정된 태그 없음',
           );
           await app.tester.ensureVisible(actor);
           await app.settle();
