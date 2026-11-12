@@ -40,12 +40,13 @@ void main() {
     final library = await Library.open(dbPath);
     final capture = GlobalKey();
     final previousClipboard = await Clipboard.getData(Clipboard.kTextPlain);
+    const releaseReview = bool.fromEnvironment('RELEASE_SCREEN_REVIEW');
     Future<void> settle() async {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
     }
 
-    Future<void> shot(String name) async {
+    Future<void> saveShot(String name) async {
       await settle();
       expectNativeSurface(tester);
       final image =
@@ -54,7 +55,12 @@ void main() {
               .toImage(pixelRatio: 1);
       final bytes = await image.toByteData(format: ui.ImageByteFormat.png);
       final out = Directory(
-        p.join(repo, 'artifacts/ux-v3-comparison/assets/to-be'),
+        p.join(
+          repo,
+          releaseReview
+              ? 'build/release-screen-review'
+              : 'artifacts/ux-v3-comparison/assets/to-be',
+        ),
       );
       await out.create(recursive: true);
       await File(
@@ -62,6 +68,23 @@ void main() {
       ).writeAsBytes(bytes!.buffer.asUint8List());
       image.dispose();
       debugPrint('CAPTURED to-be ' + name);
+    }
+
+    Future<void> shot(String name) async {
+      if (releaseReview) {
+        for (final size in [
+          const Size(1000, 700),
+          const Size(1280, 800),
+          const Size(1440, 900),
+        ]) {
+          await resizeNativeSurface(tester, size);
+          await saveShot('$name-${size.width.toInt()}');
+        }
+        await resizeNativeSurface(tester, const Size(1280, 800));
+        await settle();
+        return;
+      }
+      await saveShot(name);
     }
 
     try {

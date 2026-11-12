@@ -45,9 +45,13 @@ void main() {
       await app.settle(15);
       await tester.tap(find.byTooltip('필터'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('filter-star-4')));
+      await tester.tap(find.byKey(const ValueKey('filter-rating')));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('정확히'));
+      await tester.tap(find.text('4점').last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('이상'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('정확히').last);
       await tester.pumpAndSettle();
       for (final key in ['배우-$actor', '태그-$tag']) {
         await tester.ensureVisible(find.byKey(ValueKey(key)));
