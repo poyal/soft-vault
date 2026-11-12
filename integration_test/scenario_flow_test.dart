@@ -320,8 +320,10 @@ void main() {
       await app.key(LogicalKeyboardKey.space);
       await app.until(() => find.byType(MaterialBanner).evaluate().isNotEmpty);
       await app.tap('닫기');
-      await app.tap('video-0');
-      await app.key(LogicalKeyboardKey.space);
+      final validVideo = find.text('video-0').last;
+      await app.tester.ensureVisible(validVideo);
+      await playFileCard(app.tester, validVideo);
+      await app.settle();
       final player = app.player;
       await app.until(
         () =>
