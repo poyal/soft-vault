@@ -50,16 +50,19 @@ void main() {
               tester
                   .getSize(find.byKey(const ValueKey('library-sidebar')))
                   .width,
-              size.width <= 1280 ? 340 : 370,
+              size.width <= 1280 ? 512 : 576,
             );
           }
           if (name == 'design-library') {
-            final stage = tester.getRect(
-              find.byKey(const ValueKey('preview-stage')),
+            final sidebar = tester.getRect(
+              find.byKey(const ValueKey('library-sidebar')),
             );
-            expect(stage.width, greaterThan(500));
-            expect(stage.height, greaterThan(200));
-            expect(stage.right, lessThanOrEqualTo(size.width - 340));
+            expect(find.text('재생 대기 중'), findsOneWidget);
+            expect(
+              tester.getRect(find.text('재생 대기 중')).right,
+              lessThan(sidebar.left),
+            );
+            expect(sidebar.right, size.width);
           }
           final boundary =
               capture.currentContext!.findRenderObject()
