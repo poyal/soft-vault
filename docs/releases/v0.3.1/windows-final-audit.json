@@ -1,0 +1,32 @@
+﻿{
+    "passed":  true,
+    "sourceSHA256":  "57dc11054535e8a3b6ecac8ac3214901cbd260e4fe9440788121aa40c8b0cf96",
+    "checks":  [
+                   "unit",
+                   "library-e2e",
+                   "catalog-e2e",
+                   "playback-e2e",
+                   "app-playback-e2e",
+                   "extended-e2e",
+                   "design-e2e",
+                   "codec-e2e",
+                   "ui-scenarios",
+                   "privacy-e2e",
+                   "library_filter_flow_test",
+                   "playback_history_flow_test",
+                   "settings_native_review_test",
+                   "resize_profile_test",
+                   "metadata_exchange_flow_test",
+                   "stress",
+                   "performance",
+                   "native-stress",
+                   "native-profile",
+                   "native-ui-profile",
+                   "redesign-031",
+                   "screenshots-031"
+               ],
+    "shutdownCases":  18,
+    "zipSHA256":  "A9897B9434D6ADC31C484745F21F7D29832F5116D0B12ECA20D5CAE1A43EF1FD",
+    "installerSHA256":  "2C7ED463AC1B13CC03F85AC163E413049F357F050F73E5AED50011A2BCF03807",
+    "verifiedAtUTC":  "2026-11-12T14:44:37.3252421Z"
+}

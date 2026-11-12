@@ -1,0 +1,1970 @@
+﻿[
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "01-grid-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "b252cccdff23f611653921326f005649cb2c3d97d6155e07f70c684e474d9c48"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "01-grid-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "55ceee209aef6a20b41dca5b580b90500dbcd8e869d1989cb5c4fdf6c5cbea41"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "01-library-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "3bdb934720b130a0192bea4cd3bcaaf664f4bc7f336ca1bcff65032e9d5dd4cf"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "01-library-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "748ed602345cff2094b84d468be3a9af9cc40df80c8f520a91ce09a762d3e8eb"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "02-decoder-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "67e54e3c15b9acdf9e8b7eaaa8da863728cb9e965642ab3904ad899a6e2b432c"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "02-decoder-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "3482c842b1565e0112b50899efab79a8f7eba2100fa08230a1dfe8e3dcba7969"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "02-fullscreen-native.png",
+        "width":  1920,
+        "height":  1080,
+        "sha256":  "9540990413d8417b6c1d20f268660ffd9fe0b1c7efc7e6c3182cf942b5d26306"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "02-player-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "78c3ba97cc8203b51c9ad64dfd722d9198f1753692ea541f89b9da75116422c2"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "02-player-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "c2eaad631be9e3cfd23cf2b86f95bb2259d8e60f34ca8208274988c89c665c8c"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "03-detail-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "1aa720681b42914d163307d6a10f05cbb0f5fd90008ca7c45189b0426e26732d"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "03-detail-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "aed762a787cc43839c84d9ece577d907115ba6265e2722d6d5f2ab1a23d9ea9d"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "04-actors-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "e7d5f735ddd26ee439cd455b8a7165b07553b77304d28d11ede8927fdcf770ae"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "04-actors-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "da8adcf83d4a28c1c08f97caf1a7e2704d471fc86283008c00a6f68def65d8e5"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "05-tags-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "2575b8760f95d7abcc159e1882ffa5c27a1ddbc0581777711e696056bb3582a1"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "05-tags-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "25cda6490ef11ec0832755d50d6c82f68fe826082eea4e89e8f78f69c0772145"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "06-folders-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "cb7650a2afd37fb3a131012553cf2e3fc41a4c0cd459c71116d35c9501e54318"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "06-folders-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "c6add54044a2eef7c542413390a5f06931d5aa76bec99f78f50c0ec599897ef9"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "07-move-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "b05e81b8299646238fc8e58c8a9593c5ea39db0db6aa8a07a014c616969049bd"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "07-move-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "2de4ec0d0b4020ec1918833611faf8ed002d7a5c6d0e3e9aa047dc8b3d6975c2"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "07-move-complete-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "78f28807405693f39bd7ceec3729aa09c03e6c6dd8ed00ee12fe1c960fa4a58a"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "07-move-complete-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "74cc6f35682342bb02b751de6fe7a9e7008b27dbe6e14cb9932b9efdc7a35009"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "08-search-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "02ae40b29fedad397e31e9168e657e789bfe57b0827614cb84dc18bcc74c787f"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "08-search-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "211ede9766f2e50d5fec17316ed7ab942446afdc6019ef0beb309deefbd0a340"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "09-settings-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "6b11b37142002a4d12b3b69ea18678c074c9d3190323d9aab4d0e1649da32cab"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "09-settings-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "a01dfe032261fba85f79a17c8344b6b19708e0f93acb0a666749d252dfed11d8"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "10-empty-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "27ee560ff3521cf9a96ca65f2156c9e18e0ee53388ae3b723d9eacc79b7a0de0"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "10-empty-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "3b95da2b06116132becfa5a596ca300f58fd67e7c067724da3aeeb377d2deffb"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "11-offline-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "7fe2327e9f147c0047e502d65f4c940a2f4e4f347992e8d7fdcebe9504b02b58"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "11-offline-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "ea82cfe089e82da592db8817900cee631bf4e11afa9e8de96eb2e17bc5c97ee0"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "12-selection-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "4fb966f44bca2e4a506bcdb2c0e91e5696edb36afa2680cbf4466ca549b94153"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "12-selection-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "8fb2ffe8fddb344fe8ad053fba52213735012e02c6bc54b752526914f2a97576"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "13-no-results-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "a1102a8e4c4f7223488c9891fcbf0677154783ea437c57e34f2d7bb554ba5795"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "13-no-results-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "c55d2a22e9e543ecc47147b457999037f9a865ae7ff4ee0ae71ccc9ef676ff30"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "14-scenes-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "5ebefcde9a39e26524bf7027f621e05c66d965472999890d8ec8ac5a1fd3470a"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "14-scenes-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "44da4de5bbcf8317dea9ed7ff32dad2664f672f11f14bd08f9c248ee50e04edd"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "15-thumbnails-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "3743f9cd17388361118d97b32041ae5de1ba0ed1771d8e89e27bf430d35cd3cf"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "15-thumbnails-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "ffae0a4a49fd649d99d7a8d9c5904ecbaede70a18e1ef20a4314e25807129f58"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "16-collections-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "d796db5aa835fe06b15abb0db5584392a1deb0dded34ad67a775a97f483debdf"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "16-collections-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "a266f766c9f7230bf5e658ae7e574ac34f13363ac4403f567eb63be1df575ca6"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "17-duplicates-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "af7e10ffa31eb60dc13693642c2540f6042233d38f3f31188517ad611c06d076"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "17-duplicates-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "1252af341a693b68fc65242db9f696a09ba7ac67abc9b75ab0f65982c55a9b6c"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "18-rules-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "0202bed7c967fb13bfc9341dfe4fc024e569022b2aadeb9088c8c101037d0cb2"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "18-rules-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "0c42df1ebb60cca91736427d38722678bb5e0042278cc94516273b805e19296d"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "19-hover-preview-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "2387446a2beef8854ce3511b419e9fc9128c7b5fa7e722c96f59d9b93eb913ff"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "19-hover-preview-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "6fcdf802966b4013354559320571d48a16ea5d32b33096cfa53c828f716dc413"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-actors-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "a2d0affeb355bb03857f3397f6e73fbf782b1db6004605d9aa8a82323a265adf"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-actors-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "efe44f19e00d128ab01cf28a83cb3ffb071abe01e88c5415a0a1cbbbcdf8cfa0"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-detail-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "f45619dd89a5e916a1730098264cae4d6d41d8f6852e272859c8e77b5ead008d"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-detail-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "0b60840b8f74fd5cf10714373307eecea8074e70413470792bac599b6582ea47"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-library-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "bbdd50854e305237d5340a77ffe60d6899cf92c49b9dff392ea9d4871b300265"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-library-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "40f73c157653e28dc8944dd8b00f92339495fb24522aae65469f46e769fe9812"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-search-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "875dd1d182ee394d31e780796c9d06de46261eae889e9265978826ca481766b7"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-search-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "bb03a0f239f58efe22d3304c47a846604c10af354e604f09cfa16514f5cee83c"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-selection-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "c2d3e51b52f3d2414a1d3f9044eb01ff098a9e65813696f7f4bbb6d992100743"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-selection-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "f4ede51bea5a1a414214b5655d484851f2e68034248d793505dcf4218d06b340"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-settings-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "e1e043ebd70511825c7b8c9fe9d76041916857e8dfc4724f76989c5922472005"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-settings-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "2f33580e04c70e50c33adb57cacca644f70109b0167c2b59451124eeb623fad2"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-settings-backup-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "4c38b39c10caf8b8ef63df0571558c63cd9da2e4f117108ebb5a80a4a476bf29"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-settings-backup-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "00ebd4407822935798b142b6933e4f26553f00d09dd152c51ef061bababd8ee9"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-settings-playback-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "110e691354fffc2b0f38e981eb773a1b2b1c73b1af87da35c1cb9aaa82e2c528"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-settings-playback-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "93e726f24de549f1e4fe6cca284086f91ccb58d80997c4ba09e4352aed2a1ace"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-settings-shortcuts-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "6b11b37142002a4d12b3b69ea18678c074c9d3190323d9aab4d0e1649da32cab"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-settings-shortcuts-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "a01dfe032261fba85f79a17c8344b6b19708e0f93acb0a666749d252dfed11d8"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-tags-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "b138193d6b633603fc761209a188f500f6676549d6b0d6319f9878a369a692c6"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "design-tags-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "22342f59ef89ba051c3e4089344c85d749b4dafe572b05ff6994f63328269581"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "library-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "2045505ae309032208f112333eab30f74b8a7420ec9a2c68ef712c76e6b2165d"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "library-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "8b43112c0d6db62bc5577e842d1a05fb2b5393ebe374af6b11081f325022721e"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "privacy-cooldown-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "71c902d4ebd7af6deeb19de31667034c5a86ea761ad74a1177102a8b0d03fd3d"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "privacy-locked-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "d901a70821d3d055a8e9efc5de4de6c5e156da200e99462371293ff27a186cd5"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "privacy-settings-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "3899cd38fb33cfc4a96efd6ddf5e41e331b4d260f12bd6be55b343ebb107400a"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "privacy-setup-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "a8acfc35c4d320ee69eef0289907828f622a36fba79c20f53655e39b5ee2c5fd"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "e2e",
+        "name":  "privacy-storage-error-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "ec665648fa548d1befb31fcd50df9537d86bbb7d9c4a40496dda8a9636f7fe52"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "01-library-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "3fcbf61b6fdb907ea0d683ad2795c017e5522ad0db567dce8fefca08780c3b3e"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "01-library-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "85bcd2f231d53067ded45178a4142e5322ffdf6372b858138f136912875c87ed"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "01-library-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "7ab7dce04fdb07486a546445150029a6c02cdbe25387e0f6d8a966ca3ea602b7"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "02-grid-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "00a50aff5c63d33923c573621cd31ccac4155590f0a9e382cb2ad8736c334220"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "02-grid-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "bb0e255a13d9eddaf5a7e929a550461a3f809b582053617c1eaedde6f2856f22"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "02-grid-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "2e50180c27d7d42cd93101c758b388dc13941388034f2ca910fccd65669bc585"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "03-detail-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "b61a9da6f2bc58e8d17d877c4e41760e53a79ee83d77ca139ce8a292fea87f92"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "03-detail-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "d0a6cc90b4409b3f81271fad5549b5e8612036eaf4f9c31f960a057bd647e45e"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "03-detail-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "874651a70b7a519fee8de633adc4c865353dbf7de844f29e7429dcf46663654f"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "04-actors-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "9958d43c3469e5ca476557011a785e6fdbb780a77b1e82743a09d523d9d967cd"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "04-actors-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "1d1751fef0aec275392409625b3024d1c7a9bf6990410d98de13fc099fe3ed35"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "04-actors-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "1f1740d6b083ab2dd78351ec65b2045ffd5c024b0517456696136b5470f0ec85"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "05-actor-editor-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "4c4e6c3dfe441a87dbc6dfd0d124e9901f348ec311146e5b8b17ad5209756538"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "05-actor-editor-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "092c20858bc3ebd6c75a2aa37a215451479b4ceb3ad1ac4dd10bac534063c96d"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "05-actor-editor-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "0f35369032fc6f77db2650f4986ebcb5052b26d39cdcc05f6f2ad74c41023beb"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "06-tags-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "5ada73010e124136b7c46bacbf9d7141c89d0fe8e4b92f642717a3c6fd324338"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "06-tags-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "d370fd3bfa8fde3dcaf21b66fbd5dedf33397aaeb0c5667a14df67aed8e4daf9"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "06-tags-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "b90fbf7c44e0c0616e8a8f89ae37abbef64e8d6c99b527a844caf3c45dea0eeb"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "07-filter-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "588708677c171e6eb9913f451b00665400e8409506e0ea9f69f2db93801d1d65"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "07-filter-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "fb065ef66efee06a1c22313a5985a1109a111d5b705a074ead565ddc4ce10e4c"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "07-filter-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "b9b163ed7aa1104ae980a199a886f2cca51b0f188976f33e6e4a9ee3464cf5a9"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "08-settings-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "a7d375fc6e9a6859ea734f8ca5df5ff23f45feeb10aea93a7611683aad725acb"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "08-settings-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "e1e043ebd70511825c7b8c9fe9d76041916857e8dfc4724f76989c5922472005"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "08-settings-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "2f33580e04c70e50c33adb57cacca644f70109b0167c2b59451124eeb623fad2"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "09-shortcuts-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "7695d14931b94a33374e4db0b3d796e960271e295b11e962ab367efc340d3b79"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "09-shortcuts-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "6b11b37142002a4d12b3b69ea18678c074c9d3190323d9aab4d0e1649da32cab"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "09-shortcuts-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "a01dfe032261fba85f79a17c8344b6b19708e0f93acb0a666749d252dfed11d8"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "10-playback-settings-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "aa113e047901982e7b8a78fc451cdf16e69f96da759699f95f64303bff85f03f"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "10-playback-settings-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "110e691354fffc2b0f38e981eb773a1b2b1c73b1af87da35c1cb9aaa82e2c528"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "10-playback-settings-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "93e726f24de549f1e4fe6cca284086f91ccb58d80997c4ba09e4352aed2a1ace"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "11-metadata-location-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "c82a07671e37700409c7611dd796562f15e0b2e9c32f971558a68ae566055e27"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "11-metadata-location-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "480745f22ffc82862c97d3b2e16cea42af2fc08bc9f8525a59a486c4162db289"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "11-metadata-location-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "41336d2bc90462870005ffd5833d78b5727a5deec1b86e5aca627489636c6cd4"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "12-metadata-export-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "c82a07671e37700409c7611dd796562f15e0b2e9c32f971558a68ae566055e27"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "12-metadata-export-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "480745f22ffc82862c97d3b2e16cea42af2fc08bc9f8525a59a486c4162db289"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "12-metadata-export-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "41336d2bc90462870005ffd5833d78b5727a5deec1b86e5aca627489636c6cd4"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "13-metadata-input-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "1f82283230c90ba3b1546b7a0d0115dfb00804eccd9fe229943b8ae3c074e732"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "13-metadata-input-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "74b778ae5a2f881475f57748319fd6a093cdd3caa2b1eaf9f01e8ae20da347ef"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "13-metadata-input-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "956d536ce409ebec972c68c4e5ad364c71ff5a6a405b739625e748e22ceb3b6d"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "14-actor-images-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "873213906e3b1e2824766138ec6afb0fe6e34b5e391ec3b753068e689c6c2cf9"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "14-actor-images-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "d7b64052d5f26a937c286bfcb34959fe569bfac7a73f28bf65aefc3688f0fce2"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "14-actor-images-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "ad44fbc112aa487f126c6f88fb9eadd42603070346ad347a22a1adfb9ba2ae75"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "15-image-editor-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "16643cb9b89a993252891bfe402207745ef6b7c2d38efdbfe6ced7c9b967b853"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "15-image-editor-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "c03f830f99129143ea3f806231b5f90ce0088480cc0ac64d77a811ccb170c108"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "matrix",
+        "name":  "15-image-editor-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "77c88d0bfc046fa09d07204d653975065282c6d53fd697ff18d8e605930462d2"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "settings",
+        "name":  "단축키.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "6b11b37142002a4d12b3b69ea18678c074c9d3190323d9aab4d0e1649da32cab"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "settings",
+        "name":  "라이브러리.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "e1e043ebd70511825c7b8c9fe9d76041916857e8dfc4724f76989c5922472005"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "settings",
+        "name":  "백업.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "4c38b39c10caf8b8ef63df0571558c63cd9da2e4f117108ebb5a80a4a476bf29"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "settings",
+        "name":  "사생활 보호.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "6f8671e1f535b63d575bb62389a4a250b0de01b8d9c74955818e00a1a1398b65"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "settings",
+        "name":  "앱 정보 · 업데이트.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "3f4d83d528613b9d1965e19f8557a920ba3b39e5213ef6bb24cf0235e77bc64e"
+    },
+    {
+        "platform":  "Windows",
+        "group":  "settings",
+        "name":  "재생.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "725507fa185a106ed32febcb3bef6b95772280d2d20a58e419e9a9a425f1bd24"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "01-grid-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "4c57ace231885764b75eecd0c7e4ebafef9cc1f2468476da8d3b3fbe2cf72bc9"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "01-grid-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "358366811ea3bb02ab612cf39d038dc22abba43e01a8dc2cc4abe5c6c6339dd0"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "01-library-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "370da212da17397a807ac00621e4438977a4f2eaca44c8f084ed92f21299afa4"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "01-library-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "aa168939cf91f73b11dfbb267e0850e3604d6a25e1bd8aa6df2a3c7bfba8a9fa"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "02-decoder-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "edd18cc9bbaebe31bc795cbf1ad775e3675526fa6e8b9360ffc49d118f07b7f8"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "02-decoder-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "4633775717e955cbdd3a459a70036041eec39e9e3aae170a3d31663eb16ebbb4"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "02-fullscreen-native.png",
+        "width":  2560,
+        "height":  1440,
+        "sha256":  "379dbdc2aeb9309b43925211f3146eb8814bdd655a8949ff9cf193e8c056060b"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "02-player-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "7de314f781f46cd8b0634ddbedb6adaf07d94a98241b6315028f1088f9a612c0"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "02-player-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "1ff9222adafc0154573ddb492cf10d165312e6fc803b40fea47b2fa05fd7c85b"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "03-detail-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "5f58d6e64be287d4e161ee62c3da5927e64c2b3f92e1f2d2b69d9447f9681696"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "03-detail-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "85cd6ed1f6ce21063b3dae1f025af78e509f75d065f8622b2adcb559cf8517d0"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "04-actors-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "ed6dd097bddffd681c60d68ba420d459d5a4bfe063519dc93314f384529db671"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "04-actors-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "3d3a9297c84e09317232255f94f0e8f661205257d55b11d7beb323abda42c8ef"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "05-tags-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "56df8df819693fefd0b64ec77774fdd31d3480f882a8dfff283f19d80e68039e"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "05-tags-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "3cb7a0750a9a419d257968cf0c4c5043c0487d1ed2def0fac2837f0bd4d044c1"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "06-folders-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "e51b0c69da9fd2f95a42246c98ecaa8293e9d2106c43ea11b557ce6d2c01ea75"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "06-folders-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "64be5462c5a9c01ad9f5893ae68d8e630b5865705f87827f933c24fbe38438d8"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "07-move-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "a65f10f708ed10fe07e1e8add4ba56febe5d4a2dbe33f73971c9b0ad348b08a3"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "07-move-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "dc9b411e614a261f721677c95d97d586d0fbd7b50b72a672bac92a5989360cac"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "07-move-complete-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "f00dae66d81b67cc06e7d82b357d16fb3fed3826cb331abe81874a4ccadc771a"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "07-move-complete-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "7798b42622a18619066387a2aec85940b18d10c7ce5d9d695639252d1d72e553"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "08-search-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "4e509be6f3da5191787ac85615baef18a264cfc27d6d936cc88fccd3fd41afcc"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "08-search-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "93a9e412b58d0129ef72f4b47098808f730a1703307dd574fc4485f5e427adf8"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "09-settings-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "af751420d59a3be3a3902615842ddaf3a928c685ac6a291dc2ced178fb97b662"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "09-settings-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "85a4122ca33c4938ef0b0f86ea609892aa76396abb6ccd6d95122cd127205add"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "10-empty-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "8cdff4d975d29ccda219c23b55db621f0ff68ffe6866500f218e7db4ad9e93c8"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "10-empty-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "bdc5c7d8912fd6f369aaf539b9bc14fec2b31fe564880c9219710e61c1ed4891"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "11-offline-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "6f5428fd0c5b51ecd4caae105dd6e9891287c57b8a5d5fffd582e92f0701a4b7"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "11-offline-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "c4cfdc5c29e44fa1198545a26b88acfed88d5d7645d0f9d3e1f80844fe5c9253"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "12-selection-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "9a1b3b2c1dc9298a9610e942c3dfdfcc535b814d902b1ed65b2275c0f257f956"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "12-selection-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "43952cc8bc5e59ecb57bf1e8d2f64d1109816625616132116c298e3578f12f6a"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "13-no-results-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "25c4c47b4e0456f7664ac5346fd207c0641f18c8ea80854ba8752afe6f391057"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "13-no-results-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "ed8ed687e27a7d8dccf731dd8ed20dc8a5d5c6800580bc1c4fe7957f6175d7d5"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "14-scenes-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "2a0fc53903e17e42faa746015e87791c09ac63b571ec73abd3150048083a4e0a"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "14-scenes-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "6c6485862ea3d5ec35be3469c20657be6536ae13cc2638ee94c06ed071ed73e3"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "15-thumbnails-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "67dd008838a2062831cfca429ae7e537e8fe2edcb3b634fe1a3723fa0152eb14"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "15-thumbnails-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "d230fd62cb5e6dc6a0c25bf1462f5615c161c235fde2e2639529e64fa1132956"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "16-collections-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "9beb2f904804613252e94cc9dd1b9acbfae13a3a4d68860a40d2c90ade19e12d"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "16-collections-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "8eae6cf51ab4bf63568a8c91deca4356f9a4655964dd609894fc83b1c706ee68"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "17-duplicates-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "edf9c49210ddd51d536c09e6017402b3dfd4b80c66a6816c1c7deb92c9d5581e"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "17-duplicates-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "0445db0ed81544c72b042a8d69ad05a78dc6352ab7f6ca021ad35db9e584a4bb"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "18-rules-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "e09b165e396b77af1bedf46b45ea788e31e6e25063a730e0ed3ba2a543a0ea53"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "18-rules-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "6d9c46b4158fc304adcf9dee18ca4db8f4acbd2f46b666e253b0d0b4af6b74fe"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "19-hover-preview-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "692c94d8a4a8f127603a8d828f29012120ae89c85814f343be2d7465ff3feea0"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "19-hover-preview-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "2db78f99f387ccc6f7a01bfa03c25e2d7d119e531af50c75d4ef30df91c520f5"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-actors-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "8be22e752498784a45f6463213385a1725f3526d669ec7cd7dd88764e673fcfa"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-actors-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "ad3c37a2a8bbb887f9d5a94ba5d62b9185c4ff85550f1e438057df6ff3f01f1d"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-detail-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "0042949c7173695ef1cf84ae8f154b06bdfc1416dc5523e91194428d428c3b37"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-detail-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "ba6302a8b87d481f130f2b7568d4d66c2a45e0c51c3c9e04ced7bea8eee7d161"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-library-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "34f2fe17ba3fa8c25431b300e0149f36cc056a5714f53942f39cffa05998f4fb"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-library-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "764755fbc9e40a4b97440740536d10607f16bb67ce2bb3305c4744bf68f49c94"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-search-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "1030649b89ff717a0bc7d87d42aaa3ce836bdc16cabb6d744d0e4958b6d8b16f"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-search-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "da8225b62cdf2fe23937580a1679cf0ccd9bba46a5cb964133711008ddb2d309"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-selection-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "1d279a29d689c69d10e6d81309260ffe866d1e47c2a87c33489962d6ef886c98"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-selection-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "e1e4f6fb29c58efbaad2dd3904f300010efa760cbbe7530bce3b1e533fdc9215"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-settings-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "999279f868eb25136267060a03a4a7ffae98f37d5347813739b9dcc3fe8219a6"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-settings-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "4663a89d304f8b48240cf80990e36ec1991a4f459a9bab906052c7c72b3311a7"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-settings-backup-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "0f36c14662f1193cf389f1d68362940320f994149aa969bd39550ecacd8a4ade"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-settings-backup-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "c931097c6b87b40e55b13e6fc4427f54f52ff3b493d9b4505542307e6c162641"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-settings-playback-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "1452e791ccd2abeba2fd4ca7642ececeda8dfa42fa08178a25051c60ae08f981"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-settings-playback-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "6e39637b5276390620423ae7e47dac86fa549e00f9199cbf8cad17bf09b1a233"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-settings-shortcuts-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "af751420d59a3be3a3902615842ddaf3a928c685ac6a291dc2ced178fb97b662"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-settings-shortcuts-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "85a4122ca33c4938ef0b0f86ea609892aa76396abb6ccd6d95122cd127205add"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-tags-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "574b72b5f2976e42922e97fbd4d7aae1cc2b9ad15b26a3b2c7b8ceee9a4a803a"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "design-tags-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "b7b734c6056cbfca18a71c1aee870cda3e40b2fec98b6ea8752067f865b114e9"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "library-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "22553e8cebd0f34e486bacca30ed77e4646e80b65c51f757a16337349e4ccf20"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "library-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "7e4f5220d9b31834c93a75ef7d5a8574b782d41cc9ee5320b0f973cdc2e3c80d"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "privacy-cooldown-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "2a3dc8012cdc2b4b1e3108cb646cc146f94acf11ae9b6b65d61d9579c61e7ef7"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "privacy-locked-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "5df628d7dd1b1395443402857119c14fb919522b66e1cacd6d68d721c3f75a40"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "privacy-settings-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "22a1d39975e2afe47116b0b7a4afb40fcc4a6982a91e22b7fb8820c1667992e1"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "privacy-setup-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "5ffb76df3742a558628cc206a0dc67f4a49dd12256fe55d392df1fcb66971539"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "e2e",
+        "name":  "privacy-storage-error-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "3ffe3c6b1c3c3485d1ff993b53d35f931e864289473b5acaffe31217d2e680b1"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "01-library-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "b9a0d0bf94fdc1043a3bb6261f67fcc29c23dba8721b97445abbbee6eb6f48d4"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "01-library-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "34f2fe17ba3fa8c25431b300e0149f36cc056a5714f53942f39cffa05998f4fb"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "01-library-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "764755fbc9e40a4b97440740536d10607f16bb67ce2bb3305c4744bf68f49c94"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "02-grid-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "98df0fd912b013ad7a63c84490ad1e2aff55af359cf28d660b634c98eee6b772"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "02-grid-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "f5ef066a4290383d668e0d3ff2c63b6847970bb56ff35a8dd3d105785099eb96"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "02-grid-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "f30ae06b0518f202e0c6986cdd4ec37a7e50243417e6916a24027e145dbf9f75"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "03-detail-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "4557b3ff21871e3a381543dc5f64deb610467d8042b81d1073872f008a791ea9"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "03-detail-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "14fde661f9fbb08e0c0b4ffdc636c953ddab40b9130dcd9566052614d3b086a9"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "03-detail-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "13e54d135c81e86f406d70b4f4ea08358378737f5c506478e3d81bb5e7baf1cc"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "04-actors-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "90a4fcb279853533dbdfc9a157dc8a6079e5cbc035b7dcfaa48518123adfd1c6"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "04-actors-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "8be22e752498784a45f6463213385a1725f3526d669ec7cd7dd88764e673fcfa"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "04-actors-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "ad3c37a2a8bbb887f9d5a94ba5d62b9185c4ff85550f1e438057df6ff3f01f1d"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "05-actor-editor-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "4c55e332b12b23f9f1dda5f7070fde9ddfa7bfafd85c4f0838cfcb25a7d651ca"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "05-actor-editor-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "1b1e53c14273b49db9f6c066a6a72bb293db90e24ecc563c10c4818a8b60980e"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "05-actor-editor-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "8e75970c182e0ccb430f1f6e790363389b13839fb64d1aefdf82a6d8c4872b41"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "06-tags-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "5fb4581f94decb25ee437e454aba30808f6321057ed6d1227451f7a8cde8e781"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "06-tags-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "574b72b5f2976e42922e97fbd4d7aae1cc2b9ad15b26a3b2c7b8ceee9a4a803a"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "06-tags-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "b7b734c6056cbfca18a71c1aee870cda3e40b2fec98b6ea8752067f865b114e9"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "07-filter-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "3eee9112703adc4c9e0bd4532674a2278721f31d0d5e470e11900070dc1e5a0f"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "07-filter-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "f6311d92888cfe0899c8aa44e815095ebd52b0311217e7f33bf0dd9e1122b9e2"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "07-filter-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "637598773489843b41fb18533908bb184239c7ab2cdb70089fdd80f1fc4984f8"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "08-settings-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "662b04fcfbbbfa2684286c53104fd41ee6d0da3453cba189f69edd5973c13e60"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "08-settings-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "999279f868eb25136267060a03a4a7ffae98f37d5347813739b9dcc3fe8219a6"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "08-settings-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "4663a89d304f8b48240cf80990e36ec1991a4f459a9bab906052c7c72b3311a7"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "09-shortcuts-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "389c638f1608eceb4d20b15f799030eade322ae6ead2b28d5479dca7edbc82ad"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "09-shortcuts-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "af751420d59a3be3a3902615842ddaf3a928c685ac6a291dc2ced178fb97b662"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "09-shortcuts-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "85a4122ca33c4938ef0b0f86ea609892aa76396abb6ccd6d95122cd127205add"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "10-playback-settings-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "6eddb37e8f40eb347e8cf317fb5ef0a3ebaca0c90a5249d8f442be2af00dd537"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "10-playback-settings-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "1452e791ccd2abeba2fd4ca7642ececeda8dfa42fa08178a25051c60ae08f981"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "10-playback-settings-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "6e39637b5276390620423ae7e47dac86fa549e00f9199cbf8cad17bf09b1a233"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "11-metadata-location-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "5136558079675a8e2e74b04b717f71c892e4603ab152e2f5c7b686c4905f7179"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "11-metadata-location-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "3c22b61176409f7954b6afad6453c3d2a9e065addf883c5897ea4bc6b811a508"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "11-metadata-location-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "6a2d88743524f60ef18268548720663f5e8f7f8cfdeb961024cee80ea8765aad"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "12-metadata-export-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "5136558079675a8e2e74b04b717f71c892e4603ab152e2f5c7b686c4905f7179"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "12-metadata-export-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "3c22b61176409f7954b6afad6453c3d2a9e065addf883c5897ea4bc6b811a508"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "12-metadata-export-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "6a2d88743524f60ef18268548720663f5e8f7f8cfdeb961024cee80ea8765aad"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "13-metadata-input-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "75d020259c09125f1cd001fe3c019d4e4f4142c9cc0d3856f25fe94fd0490a84"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "13-metadata-input-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "55300f2bf4f08084342e7632ced1548e2d28bf3ab4f012dbac5e2dcfcce45116"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "13-metadata-input-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "6dbe87b5892439482301f720f7aeab1912afb6a3c1830abdc23ede2d9ed21491"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "14-actor-images-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "96f93599d1f2385dd947f16a9661da8c7a97cfc44a468cb063d9fad58965f621"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "14-actor-images-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "b4718a5811e3ad59abd85eaf0941331bbe19126923bff8c34fd6608001380488"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "14-actor-images-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "25ea45a354933d26b86c7d4aba6f8a0c39921222ddba578478d06ee8fa42bca4"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "15-image-editor-1000.png",
+        "width":  1000,
+        "height":  700,
+        "sha256":  "79e287cb8ba25ca6beb2b9a1902f1f739d082fde59a4eb1ed8e5b510bfc7da44"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "15-image-editor-1280.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "3f3bb82eb6734def11acd930512247d05a620bbd6afe27ffeb2a394acd5e7ab0"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "matrix",
+        "name":  "15-image-editor-1440.png",
+        "width":  1440,
+        "height":  900,
+        "sha256":  "919520874e56d27461f8804e0b08ef2bc1507e3456b5560dd1a0f0864ec6752e"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "settings",
+        "name":  "단축키.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "af751420d59a3be3a3902615842ddaf3a928c685ac6a291dc2ced178fb97b662"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "settings",
+        "name":  "라이브러리.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "999279f868eb25136267060a03a4a7ffae98f37d5347813739b9dcc3fe8219a6"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "settings",
+        "name":  "백업.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "0f36c14662f1193cf389f1d68362940320f994149aa969bd39550ecacd8a4ade"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "settings",
+        "name":  "사생활 보호.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "9dbf5e35be234e0505aba9a6b6d62089a940d2dc050c35aa6772a4903072a703"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "settings",
+        "name":  "앱 정보 · 업데이트.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "34990ac2b4d0bda9865c2eb61146391eb6e0a618a4642a58542fcf4cf05bfad4"
+    },
+    {
+        "platform":  "Mac",
+        "group":  "settings",
+        "name":  "재생.png",
+        "width":  1280,
+        "height":  800,
+        "sha256":  "d2b58aa9f685201eb7de0e6dbf6e2f1482e85aca41b13dd5c2c60674973f3bd7"
+    }
+]
