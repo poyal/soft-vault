@@ -356,6 +356,14 @@ class SideDeck extends StatelessWidget {
                               ),
                               const SizedBox(width: 8),
                               DeckIconButton(
+                                'search',
+                                tooltip: '검색 · Ctrl/Cmd+K',
+                                onPressed: search,
+                                size: 19,
+                                extent: 34,
+                              ),
+                              const SizedBox(width: 8),
+                              DeckIconButton(
                                 'settings',
                                 tooltip: '설정',
                                 onPressed: settings,
