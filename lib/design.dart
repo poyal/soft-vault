@@ -82,18 +82,20 @@ class KeyCap extends StatelessWidget {
     height: 28,
     constraints: const BoxConstraints(minWidth: 20),
     padding: const EdgeInsets.symmetric(horizontal: 5),
-    alignment: Alignment.center,
     decoration: BoxDecoration(
       color: const Color(0xff1b2a36),
       border: Border.all(color: const Color(0xff314353)),
       borderRadius: BorderRadius.circular(4),
     ),
-    child: Text(
-      text,
-      style: const TextStyle(
-        fontSize: 14,
-        color: Color(0xffb3c1cd),
-        fontWeight: FontWeight.w400,
+    child: Center(
+      widthFactor: 1,
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontSize: 14,
+          color: Color(0xffb3c1cd),
+          fontWeight: FontWeight.w400,
+        ),
       ),
     ),
   );

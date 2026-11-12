@@ -13,6 +13,30 @@ import 'package:soft_vault/library_filter.dart';
 import 'package:soft_vault/library_filter_dialog.dart';
 
 void main() {
+  testWidgets('keyboard hints remain compact in wrapping playback controls', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: SizedBox(
+            width: 300,
+            child: Wrap(
+              spacing: 8,
+              children: [KeyCap('Esc'), KeyCap('Q'), KeyCap('E')],
+            ),
+          ),
+        ),
+      ),
+    );
+    final caps = find.byType(KeyCap);
+    for (var i = 0; i < 3; i++) {
+      expect(tester.getSize(caps.at(i)).width, lessThan(70));
+      expect(tester.getTopLeft(caps.at(i)).dy, tester.getTopLeft(caps.first).dy);
+    }
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('main surfaces fit minimum window at supported text scales', (
     tester,
   ) async {
