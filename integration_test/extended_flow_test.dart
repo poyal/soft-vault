@@ -104,6 +104,14 @@ void main() {
         await settle();
         await tester.tap(find.text('여행').last);
         await settle();
+        // Selection no longer stops playback or forces a progress write.
+        // Wait for the application's periodic persistence after seeking.
+        for (var i = 0; i < 60; i++) {
+          if ((await library.mediaById(id))['resume_ms'] as int >= 11000) {
+            break;
+          }
+          await tester.pump(const Duration(milliseconds: 100));
+        }
         expect(
           (await library.mediaById(id))['resume_ms'],
           greaterThanOrEqualTo(11000),
