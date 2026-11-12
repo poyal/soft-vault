@@ -1,3 +1,4 @@
+import 'support/file_navigation.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
@@ -86,14 +87,14 @@ void main() {
       });
       await phase('detail-dialog', () async {
         for (var i = 0; i < 5; i++) {
-          await tester.tap(find.byTooltip('상세정보 보기'));
+          await openFileDetails(tester);
           await tester.pumpAndSettle();
           await tester.tap(find.text('닫기'));
           await tester.pumpAndSettle();
         }
       });
       await phase('video-playback', () async {
-        await tester.tap(find.byType(HoverPreview).first);
+        await playFileCard(tester, find.byType(HoverPreview).first);
         await app.until(
           () => find.byType(PlaybackControls).evaluate().isNotEmpty,
         );

@@ -1,3 +1,4 @@
+import 'support/file_navigation.dart';
 import 'support/native_surface.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -67,7 +68,7 @@ void main() {
       final tester = app.tester;
       for (var wave = 0; wave < 10; wave++) {
         for (var i = 0; i < 4; i++) {
-          await tester.tap(find.byType(HoverPreview).at(i % 2));
+          await playFileCard(tester, find.byType(HoverPreview).at(i % 2));
           await tester.pump(const Duration(milliseconds: 20));
         }
         final expected = app.visible[1];

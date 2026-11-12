@@ -1,3 +1,4 @@
+import 'support/file_navigation.dart';
 import 'support/native_surface.dart';
 import 'support/settings_navigation.dart';
 import 'dart:convert';
@@ -241,7 +242,7 @@ void main() {
     'UI-15 detail opens read-only and editing remains explicit and persistent',
     (app) async {
       await app.mount();
-      await app.tester.tap(find.byTooltip('상세정보 보기'));
+      await openFileDetails(app.tester);
       await app.settle();
       expect(find.text('상세정보'), findsWidgets);
       expect(find.byType(TextField), findsNothing);

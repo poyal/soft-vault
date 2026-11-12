@@ -1,3 +1,4 @@
+import 'support/file_navigation.dart';
 import 'support/settings_navigation.dart';
 import 'support/native_surface.dart';
 import 'dart:convert';
@@ -145,7 +146,7 @@ void main() {
         );
         await tester.pumpAndSettle();
         await shot('design-library');
-        await tester.tap(find.byTooltip('상세정보 보기'));
+        await openFileDetails(tester);
         await shot('design-detail');
         await tester.tap(find.text('닫기'));
         await tester.pumpAndSettle();

@@ -1,3 +1,4 @@
+import 'support/file_navigation.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'dart:ui' as ui;
@@ -61,7 +62,7 @@ void main() {
         await app.tap('영상으로 돌아가기');
         expect(home.current, current);
       }
-      await tester.tap(find.byType(HoverPreview).first);
+      await playFileCard(tester, find.byType(HoverPreview).first);
       await app.until(
         () => find.byType(PlaybackControls).evaluate().isNotEmpty,
       );

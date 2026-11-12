@@ -1,3 +1,4 @@
+import 'support/file_navigation.dart';
 import 'support/native_surface.dart';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -75,7 +76,7 @@ void main() {
           ).writeAsBytes(bytes!.buffer.asUint8List());
           image.dispose();
         }
-        await tester.tap(find.byTooltip('상세정보 보기'));
+        await openFileDetails(tester);
         await tester.pumpAndSettle();
         await tester.tap(find.text('정보 편집'));
         await tester.pumpAndSettle();
@@ -89,6 +90,8 @@ void main() {
         await tester.tap(find.text('저장'));
         await tester.pumpAndSettle();
         expect((await library.items(query: '수정한 제목')).length, 1);
+        await openFileDetails(tester);
+        await tester.pumpAndSettle();
         await tester.tap(find.byTooltip('5점'));
         await tester.pumpAndSettle();
         expect((await library.items()).single['rating'], 5);

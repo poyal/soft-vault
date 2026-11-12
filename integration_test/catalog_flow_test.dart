@@ -1,3 +1,4 @@
+import 'support/file_navigation.dart';
 import 'support/native_surface.dart';
 import 'support/settings_navigation.dart';
 import 'dart:io';
@@ -90,7 +91,7 @@ void main() {
         await shot('01-grid-1280');
         await settingsAction(tester, '썸네일 · 목록 보기');
         await tester.pumpAndSettle();
-        await tester.tap(find.byTooltip('상세정보 보기'));
+        await openFileDetails(tester);
         await shot('03-detail-1280');
         await tester.tap(find.text('닫기'));
         await tester.pumpAndSettle();

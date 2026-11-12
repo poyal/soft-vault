@@ -1,3 +1,4 @@
+import 'support/file_navigation.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -189,7 +190,7 @@ void main() {
       expect(opens(), before);
       await shot('locked');
       await unlock(app, password);
-      await tester.tap(find.byType(HoverPreview).first);
+      await playFileCard(tester, find.byType(HoverPreview).first);
       await app.until(
         () => find.byType(PlaybackControls).evaluate().isNotEmpty,
       );

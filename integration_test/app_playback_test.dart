@@ -1,3 +1,4 @@
+import 'support/file_navigation.dart';
 import 'support/native_surface.dart';
 import 'support/settings_navigation.dart';
 import 'dart:io';
@@ -184,7 +185,7 @@ void main() {
       await shot('02-decoder');
       await tester.tap(find.text('닫기'));
       await settle();
-      await tester.tap(find.byTooltip('상세정보 보기'));
+      await openFileDetails(tester);
       await settle();
       await tester.tap(find.text('정보 편집'));
       await settle();

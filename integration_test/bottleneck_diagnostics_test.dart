@@ -1,3 +1,4 @@
+import 'support/file_navigation.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
@@ -64,9 +65,11 @@ void main() {
 
     Future<void> dialogs(String kind, bool blur) async {
       for (var i = 0; i < 8; i++) {
-        await tester.tap(
-          find.byTooltip(kind == 'search' ? '검색 · Ctrl/Cmd+K' : '상세정보 보기'),
-        );
+        if (kind == 'search') {
+          await tester.tap(find.byTooltip('검색 · Ctrl/Cmd+K'));
+        } else {
+          await openFileDetails(tester);
+        }
         await tester.pump();
         final filters = find.byType(BackdropFilter);
         expect(filters, findsOneWidget);
