@@ -777,7 +777,12 @@ extension _HomeFeatures on _VaultHomeState {
               ),
             ),
           ),
-        DeckIconButton('search', tooltip: '검색', onPressed: search, size: 16),
+        DeckIconButton(
+          'search',
+          tooltip: '검색 · Ctrl/Cmd+K',
+          onPressed: search,
+          size: 16,
+        ),
       ],
     ),
   );
