@@ -70,7 +70,9 @@ void main() {
           // Exercise queued opens directly through the file-list action. Rapid
           // layout changes can move a row between native double-click events;
           // double-click input itself is covered by redesign_flow_test.
-          final files = tester.widget<VaultFileList>(find.byType(VaultFileList));
+          final files = tester.widget<VaultFileList>(
+            find.byType(VaultFileList),
+          );
           files.play(files.items[i % 2]);
           await tester.pump(const Duration(milliseconds: 20));
         }

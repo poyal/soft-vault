@@ -299,6 +299,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   bool enrichmentCancelled = false, enrichmentPaused = false;
   int enrichmentDone = 0, enrichmentTotal = 0;
   Future<void>? playerDisposal;
+  Future<void> mediaOpenTail = Future.value();
   bool closing = false;
   String view = 'files', sort = 'recent';
   String? typeFilter;

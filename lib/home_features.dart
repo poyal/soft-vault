@@ -338,31 +338,40 @@ extension _HomeFeatures on _VaultHomeState {
     Map<String, Object?> item, {
     bool fromStart = false,
     Duration? position,
-  }) => guard(() async {
-    await persistProgress();
-    item = await widget.library.mediaById(item['id'] as int);
-    if (item['online'] == 0 || !await File(item['path'] as String).exists())
-      throw FileSystemException('오프라인 파일입니다.', item['path'] as String);
-    if (item['type'] != 'video') throw StateError('영상 파일만 재생할 수 있습니다.');
-    playbackMediaId = null;
-    playbackSession = null;
-    playbackCompleted = false;
-    final resume =
-        position ??
-        (fromStart
-            ? Duration.zero
-            : Duration(milliseconds: item['resume_ms'] as int));
-    await playback.open(item['path'] as String, start: resume);
-    playbackMediaId = item['id'] as int;
-    playbackSession = newPlaybackSession(playbackMediaId!, resume);
-    await (player.platform as NativePlayer).setProperty('mute', 'no');
-    update(() {
-      current = item;
-      playingView = true;
-      view = 'files';
-      muted = false;
-    });
-  });
+  }) {
+    // Queue preparation as well as the native open. Database reads and progress
+    // persistence can otherwise reorder rapid requests before Playback sees them.
+    final next = mediaOpenTail.then(
+      (_) => guard(() async {
+        await persistProgress();
+        item = await widget.library.mediaById(item['id'] as int);
+        if (item['online'] == 0 || !await File(item['path'] as String).exists())
+          throw FileSystemException('오프라인 파일입니다.', item['path'] as String);
+        if (item['type'] != 'video') throw StateError('영상 파일만 재생할 수 있습니다.');
+        playbackMediaId = null;
+        playbackSession = null;
+        playbackCompleted = false;
+        final resume =
+            position ??
+            (fromStart
+                ? Duration.zero
+                : Duration(milliseconds: item['resume_ms'] as int));
+        await playback.open(item['path'] as String, start: resume);
+        playbackMediaId = item['id'] as int;
+        playbackSession = newPlaybackSession(playbackMediaId!, resume);
+        await (player.platform as NativePlayer).setProperty('mute', 'no');
+        update(() {
+          current = item;
+          playingView = true;
+          view = 'files';
+          muted = false;
+        });
+      }),
+    );
+    mediaOpenTail = next;
+    return next;
+  }
+
   PlaybackSession newPlaybackSession(int mediaId, Duration start) {
     final startedAt = DateTime.now();
     return PlaybackSession(() async {
