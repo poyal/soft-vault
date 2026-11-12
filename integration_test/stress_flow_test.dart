@@ -95,7 +95,11 @@ void main() {
           stableTicks,
           10,
           reason:
-              'The last requested video and selection must remain settled at zero volume',
+              'The last requested video and selection must remain settled at zero volume; '
+              'wave=$wave expected=${expected['id']} '
+              'selected=${tester.widget<VaultFileList>(find.byType(VaultFileList)).current} '
+              'playlist=${find.byType(PlaybackControls).evaluate().isEmpty ? 'no controls' : app.player.state.playlist.medias.map((m) => m.uri).toList()} '
+              'volume=${find.byType(PlaybackControls).evaluate().isEmpty ? 'no controls' : app.player.state.volume}',
         );
         expect(app.player.state.volume, 0);
         expect(
