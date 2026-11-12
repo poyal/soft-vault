@@ -1,6 +1,6 @@
 # 0.3.1 Windows·Mac 검증
 
-실행 ID: release-031-20261112. 시각은 별도 표기가 없으면 UTC이다. 양쪽 자동 검사·설치·서명 감사를 완료했다. 공개 재다운로드 검증은 게시 단계에서 별도로 기록한다.
+실행 ID: release-031-20261112. 시각은 별도 표기가 없으면 UTC이다. 양쪽 자동 검사·설치·서명 감사를 완료했다. 공개 파일 8개를 인증 없이 다시 내려받아 크기·SHA-256 일치를 확인했다.
 
 ## 출처와 환경
 
@@ -50,7 +50,9 @@ Windows Flutter AXTree 접근성 경고는 로그에 보존한다. 기능·화�
 
 ## 게시와 파일
 
-초안 업로드·공개 재다운로드: NOT_RUN. 최종 판정: **NOT_RUN**.
+[정식 릴리즈](https://github.com/poyal/soft-vault/releases/tag/v0.3.1) · 태그 커밋 a0e892a20c9830c8462e96a443f81fe69de48c0b · [공개 다운로드 증거](publication-verification.json). 게시 후 기록 보완은 문서 전용 후속 커밋이며 태그와 바이너리는 변경하지 않았다.
+
+초안 업로드 후 8개 파일을 다시 내려받아 검증한 뒤 정식 공개했다. 공개 시각은 2026-11-12T14:47:41Z, 공개 재다운로드 검증 완료는 2026-11-12T14:47:52.868910Z이다. 최종 판정: **PASS**.
 
 최종 감사: [Windows](windows-final-audit.json), [Mac](mac-final-audit.json). 배포 파일 고정값: [release-assets.json](release-assets.json).
 

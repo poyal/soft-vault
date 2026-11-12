@@ -4,7 +4,7 @@ Windows x64 설치 EXE와 Apple Silicon Mac DMG를 배포한다. 내부 ZIP은 �
 
 ## 1. 후보와 출처
 
-`0.3.0+4`의 최신 상태는 [Windows·Mac 검증 기록](releases/v0.3.0/VERIFICATION.md)에 있다. 이전 [0.2.1 기록](releases/v0.2.1/VERIFICATION.md)도 보존한다. 이전 0.2.0 결과는 [두 PC 검증 기록](releases/v0.2.0/VERIFICATION.md)과 [로컬 검증 기록](verification/2026-11-09-windows-0.2.0.md)에 보존한다. 아래 기능별 초기 측정은 해당 작업 당시의 기록이며 새 후보의 전체 검사 결과와 구분한다.
+`0.3.1`의 최신 상태는 [Windows·Mac 검증 기록](releases/v0.3.1/VERIFICATION.md)에 있다. 이전 [0.3.0 기록](releases/v0.3.0/VERIFICATION.md), [0.2.1 기록](releases/v0.2.1/VERIFICATION.md)도 보존한다. 이전 0.2.0 결과는 [두 PC 검증 기록](releases/v0.2.0/VERIFICATION.md)과 [로컬 검증 기록](verification/2026-11-09-windows-0.2.0.md)에 보존한다. 아래 기능별 초기 측정은 해당 작업 당시의 기록이며 새 후보의 전체 검사 결과와 구분한다.
 
 버전은 [pubspec.yaml](../pubspec.yaml)을 기준으로 한다. 배포 후보에는 소스 커밋, 미커밋·미추적 변경, 의존성, 대상 OS, 도구 버전을 기록한다. 깨끗한 후보 커밋을 기본으로 하며 사용자 변경을 정리하려고 reset·삭제하지 않는다. dirty 상태의 개발 검증은 그 상태를 기록하고 재현 가능한 정식 후보로 승격하지 않는다.
 
@@ -218,6 +218,6 @@ DB/백업 v5는 재생 횟수·최근 시각·이어보기·완료 상태를 보
 
 검증: 전체 Flutter 테스트 115개 통과, 1개 기존 조건부 건너뛰기. 정적 분석 오류 없음. Windows/macOS Release 빌드 성공. 양쪽 OS의 profile 네이티브 검사에서 실제 영상 재생, 선택 변경 중 재생 유지, 상세 모달 평점 저장, 임시 파일 휴지통 이동과 없는 파일 실패 확인. 업데이트 도우미의 install/rollback/invalid-signature/corrupt-package/unsafe-archive 5개 시나리오 통과. 새 DB 이전과 태그 보존·복구 백업 생성 테스트 추가.
 
-공개 GitHub 릴리즈 게시는 별도이며, 이 검증은 사용자 설치본을 교체하거나 사용자 영상 파일을 삭제하지 않았다. 실제 0.2.0 설치본의 전체 자동 업데이트 경로 및 Windows 150% 시스템 배율 실기 검증은 이 결과에 포함하지 않는다.
+위 내용은 초기 개발 검증이다. 이후 수정·스크린샷 검수·최종 설치 검증과 공개 GitHub 릴리즈 게시 결과는 [0.3.1 최종 기록](releases/v0.3.1/VERIFICATION.md)에 있다. 사용자 설치본을 교체하거나 사용자 영상 파일을 삭제하지 않았다. 실제 0.2.0 설치본의 전체 자동 업데이트 경로 및 Windows 150% 시스템 배율 실기 검증은 이 결과에 포함하지 않는다.
 
 추가 설치본 검증: Windows 격리 설치 패키지와 Mac 패키지/DMG에서 잠금 설정·DB 저장/복원·이동·썸네일·11개 코덱 샘플 재생을 통과했다. 휴지통 실패 기록은 OS 이동 성공이 확인된 항목만 다음 실행에서 정리한다. 실패한 이동은 원래 목록 항목을 유지한다.

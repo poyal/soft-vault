@@ -1,6 +1,6 @@
 # Soft Vault 문서 안내
 
-Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사용자 결정은 [계획서](../plan.md), 설치와 기본 사용법은 [루트 README](../README.md)를 기준으로 한다. 마지막 갱신일은 2026-11-11이다.
+Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사용자 결정은 [계획서](../plan.md), 설치와 기본 사용법은 [루트 README](../README.md)를 기준으로 한다. 마지막 갱신일은 2026-11-12이다.
 
 ## 작업별 입구
 
@@ -18,6 +18,8 @@ Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사
 | 새 후보 기록 만들기 | [검증 기록 템플릿](templates/verification.md), [사용자 릴리즈 노트 템플릿](templates/release-notes.md) |
 
 ## 현재 확인된 범위
+
+- `0.3.1`은 Windows·Mac 자동 검사·EXE/DMG 설치 검증과 화면 246장 검수 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.3.1)했다. 단축키 표시 크기와 빠른 재생 요청 순서 문제를 수정했고 공개 파일 8개의 재다운로드 해시가 일치한다. [검증 기록](releases/v0.3.1/VERIFICATION.md), [화면 검수](releases/v0.3.1/SCREENSHOT-REVIEW.md), [배포 안내](releases/v0.3.1/README.md)를 참고한다.
 
 - `0.3.0+4`는 화면 개편·배우 이미지 가져오기를 포함하며 Windows·Mac 자동 검사와 EXE·DMG 설치 검증 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.3.0)했다. 공개 파일 8개의 재다운로드 크기·해시가 일치한다. 게시 근거와 제한은 [0.3.0 검증 기록](releases/v0.3.0/VERIFICATION.md), 변경 사항은 [배포 안내](releases/v0.3.0/README.md)를 참고한다.
 
