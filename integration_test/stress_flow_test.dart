@@ -1,4 +1,3 @@
-import 'support/file_navigation.dart';
 import 'support/native_surface.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -68,7 +67,11 @@ void main() {
       final tester = app.tester;
       for (var wave = 0; wave < 10; wave++) {
         for (var i = 0; i < 4; i++) {
-          await playFileCard(tester, find.byType(HoverPreview).at(i % 2));
+          // Exercise queued opens directly through the file-list action. Rapid
+          // layout changes can move a row between native double-click events;
+          // double-click input itself is covered by redesign_flow_test.
+          final files = tester.widget<VaultFileList>(find.byType(VaultFileList));
+          files.play(files.items[i % 2]);
           await tester.pump(const Duration(milliseconds: 20));
         }
         final expected = app.visible[1];
