@@ -158,8 +158,8 @@ void main() {
         ]) {
           await resizeNativeSurface(app.tester, size);
           await app.settle(2);
-          final actor = find.byKey(ValueKey('file-actors-$id'));
-          final tag = find.byKey(ValueKey('file-tags-$id'));
+          final actor = find.text('배우 A · 아주 긴 배우 이름 B · 배우 C');
+          final tag = find.text('#자연 · #긴 태그 이름 · #여행 · #기록');
           expect(
             app.tester.widget<Text>(actor).data,
             '배우 A · 아주 긴 배우 이름 B · 배우 C',
@@ -172,18 +172,20 @@ void main() {
             find.byTooltip('배우: 배우 A · 아주 긴 배우 이름 B · 배우 C'),
             findsOneWidget,
           );
-          expect(
-            app.tester
-                .widget<Text>(find.byKey(ValueKey('file-actors-${b['id']}')))
-                .data,
-            '배우 미등록',
+          final untaggedCard = find.byWidgetPredicate(
+            (widget) =>
+                widget is Draggable<List<int>> &&
+                widget.data?.single == b['id'],
           );
           expect(
-            app.tester
-                .widget<Text>(find.byKey(ValueKey('file-tags-${b['id']}')))
-                .data,
-            '지정된 태그 없음',
+            find.descendant(of: untaggedCard, matching: find.text('배우 미등록')),
+            findsOneWidget,
           );
+          expect(
+            find.descendant(of: untaggedCard, matching: find.text('')),
+            findsOneWidget,
+          );
+          expect(find.text('지정된 태그 없음'), findsNothing);
           await app.tester.ensureVisible(actor);
           await app.settle();
           await app.tester.tap(actor);
