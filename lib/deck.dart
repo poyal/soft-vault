@@ -9,7 +9,7 @@ class SideDeck extends StatelessWidget {
   final Widget stage;
   final double? sidebarWidth;
   final ValueChanged<double>? resizeSidebar;
-  final Widget? controls, content, navigation, toolbar, fileList;
+  final Widget? controls, content, navigation, toolbar, sortControl, fileList;
   final List<Map<String, Object?>> items;
   final Map<String, Object?>? current;
   final List<String> folders;
@@ -34,6 +34,7 @@ class SideDeck extends StatelessWidget {
     this.content,
     this.navigation,
     this.toolbar,
+    this.sortControl,
     required this.settings,
     this.fileList,
     required this.items,
@@ -191,38 +192,38 @@ class SideDeck extends StatelessWidget {
       ],
     ),
   );
-  Widget player() => ColoredBox(
-    color: const Color(0xff0e1419),
-    child: Stack(
-      children: [
-        Positioned.fill(
-          child: Padding(
-            padding: expanded
-                ? EdgeInsets.zero
-                : const EdgeInsets.only(bottom: 220),
-            child: stage,
-          ),
+  Widget player() {
+    final controlPanel = Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(24, 12, 24, 16),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.transparent, Color(0xf5162635)],
+          stops: [0, .35],
         ),
-        Positioned(
-          left: 0,
-          right: 0,
-          bottom: 0,
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(26, 20, 26, 28),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Color(0xf5162635)],
-                stops: [0, .35],
-              ),
+      ),
+      child: controls,
+    );
+    return ColoredBox(
+      color: const Color(0xff0e1419),
+      child: expanded
+          ? Stack(
+              children: [
+                Positioned.fill(child: stage),
+                Positioned(left: 0, right: 0, bottom: 0, child: controlPanel),
+              ],
+            )
+          : Column(
+              children: [
+                Expanded(child: stage),
+                controlPanel,
+              ],
             ),
-            child: controls,
-          ),
-        ),
-      ],
-    ),
-  );
+    );
+  }
+
   @override
   Widget build(BuildContext context) => settingsOnly
       ? content!
@@ -405,67 +406,71 @@ class SideDeck extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Padding(
+                      Container(
+                        width: double.infinity,
                         padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-                        child: Row(
+                        child: Wrap(
+                          alignment: WrapAlignment.spaceBetween,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 12,
+                          runSpacing: 4,
                           children: [
-                            Text(
-                              playing ? '재생 목록' : '전체 파일',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xffc4d3df),
-                              ),
-                            ),
-                            const SizedBox(width: 9),
-                            Text(
-                              '${items.length}',
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Color(0xffb3c1cd),
-                              ),
-                            ),
-                            const Spacer(),
-                            Tooltip(
-                              message: '필터',
-                              child: OutlinedButton.icon(
-                                onPressed: filters,
-                                icon: const DesignIcon('filter', size: 18),
-                                label: Text(
-                                  filterCount > 0 ? '필터 $filterCount' : '필터',
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  playing ? '재생 목록' : '전체 파일',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color(0xffc4d3df),
                                   ),
-                                  backgroundColor: filterCount > 0
-                                      ? DeckDesign.surface
-                                      : null,
-                                  foregroundColor: filterCount > 0
-                                      ? DeckDesign.accent
-                                      : DeckDesign.text,
                                 ),
-                              ),
+                                const SizedBox(width: 9),
+                                Text(
+                                  '${items.length}',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: Color(0xffb3c1cd),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (sortControl != null) sortControl!,
+                                const SizedBox(width: 4),
+                                Tooltip(
+                                  message: '필터',
+                                  child: TextButton.icon(
+                                    onPressed: filters,
+                                    icon: const DesignIcon('filter', size: 18),
+                                    label: Text(
+                                      filterCount > 0
+                                          ? '필터 $filterCount'
+                                          : '필터',
+                                    ),
+                                    style: TextButton.styleFrom(
+                                      minimumSize: const Size(0, 40),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                      ),
+                                      backgroundColor: filterCount > 0
+                                          ? DeckDesign.surface
+                                          : null,
+                                      foregroundColor: filterCount > 0
+                                          ? DeckDesign.accent
+                                          : DeckDesign.text,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                      if (playing)
-                        const Padding(
-                          padding: EdgeInsets.fromLTRB(22, 2, 22, 16),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              '파일을 열 때마다 볼륨 0%로 시작',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Color(0xffb3c1cd),
-                              ),
-                            ),
-                          ),
-                        )
-                      else if (toolbar != null)
-                        toolbar!,
+                      if (toolbar != null) toolbar!,
                       if (query.isNotEmpty)
                         InkWell(
                           onTap: clearSearch,

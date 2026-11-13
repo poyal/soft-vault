@@ -7,21 +7,17 @@ import 'player_controls.dart';
 
 class VaultFileList extends StatelessWidget {
   final List<Map<String, Object?>> items;
-  final Set<int> selected;
   final int? current;
   final bool grid;
   final void Function(Map<String, Object?>, String)? action;
   final int? playingId;
-  final ValueChanged<int> toggle;
   final ValueChanged<Map<String, Object?>> preview, play;
   final Future<String> Function(Map<String, Object?>)? motionPreview;
   const VaultFileList({
     super.key,
     required this.items,
-    required this.selected,
     required this.current,
     required this.grid,
-    required this.toggle,
     required this.preview,
     required this.play,
     this.motionPreview,
@@ -104,39 +100,6 @@ class VaultFileList extends StatelessWidget {
             .where((tag) => tag.isNotEmpty)
             .map((tag) => '#$tag')
             .join(' · ');
-        Widget metadata(
-          String field,
-          String icon,
-          String title,
-          String value,
-          String empty,
-        ) => Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Tooltip(
-            message: '$title: ${value.isEmpty ? empty : value}',
-            child: Row(
-              children: [
-                DesignIcon(icon, size: 10, color: const Color(0xff829bad)),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Text(
-                    value.isEmpty ? empty : value,
-                    key: ValueKey('file-$field-$id'),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 14,
-                      height: 1.3,
-                      color: value.isEmpty
-                          ? const Color(0xffb3c1cd)
-                          : const Color(0xff9eb9cc),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
         final thumb = InkWell(
           onTap: () => preview(item),
           onDoubleTap: () => play(item),
@@ -158,11 +121,8 @@ class VaultFileList extends StatelessWidget {
           ),
         );
         final menuEntries = <String, String>{
-          'play': '재생',
           'detail': '상세정보',
-          'edit': '정보 편집',
           'reveal': '파일 위치 열기',
-          'rename': '이름 변경',
           'move': '파일 이동',
           'trash': '휴지통으로 이동',
         };
@@ -170,75 +130,89 @@ class VaultFileList extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Tooltip(
-              message: item['title'] as String,
-              child: Text(
-                displayTitle(item),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: DeckDesign.text,
+            Padding(
+              padding: EdgeInsets.only(right: !grid && action != null ? 30 : 0),
+              child: Tooltip(
+                message: item['title'] as String,
+                child: Text(
+                  displayTitle(item),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: DeckDesign.text,
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 6),
-            Text(
-              '${item['online'] == 0 ? '오프라인' : clockText(Duration(milliseconds: ((item['duration'] as num) * 1000).round()))} · ${p.basename(item['folder'] as String)}',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 14,
-                color: isCurrent ? const Color(0xffb3c1cd) : DeckDesign.muted,
-              ),
-            ),
-            if (playingId == id)
-              const Text('재생 중', style: TextStyle(color: DeckDesign.accent)),
-            const SizedBox(height: 3),
-            DeckStars(rating: item['rating'] as int?, size: 10, gap: 1),
-            metadata('actors', 'person', '배우', actors, '배우 미등록'),
-            metadata('tags', 'tag', '태그', tags, '지정된 태그 없음'),
-          ],
-        );
-        return _HoverTile(
-          builder: (hovered) {
-            final check = Semantics(
-              checked: selected.contains(id),
-              label: '${item['title']} 선택',
-              child: Tooltip(
-                message: '${item['title']} 선택',
-                child: InkWell(
-                  onTap: () => toggle(id),
-                  child: SizedBox(
-                    width: 40,
-                    height: 40,
-                    child: Center(
-                      child: Container(
-                        width: 14,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          color: selected.contains(id)
-                              ? DeckDesign.accent
-                              : const Color(0xff18232e),
-                          border: Border.all(color: const Color(0xff516b7e)),
-                          borderRadius: BorderRadius.circular(3),
+            Row(
+              children: [
+                Expanded(
+                  child: Tooltip(
+                    message: actors.isEmpty ? '배우 미등록' : '배우: $actors',
+                    child: Row(
+                      children: [
+                        const DesignIcon('person', size: 12),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            actors.isEmpty ? '배우 미등록' : actors,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: DeckDesign.muted,
+                            ),
+                          ),
                         ),
-                        child: selected.contains(id)
-                            ? const DesignIcon(
-                                'check',
-                                size: 10,
-                                color: Color(0xff183245),
-                              )
-                            : null,
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    '${item['online'] == 0 ? '오프라인' : clockText(Duration(milliseconds: ((item['duration'] as num) * 1000).round()))} · ${p.basename(item['folder'] as String)}',
+                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: DeckDesign.muted,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 7),
+            Row(
+              children: [
+                Expanded(
+                  child: Tooltip(
+                    message: tags,
+                    child: Text(
+                      tags,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Color(0xff9eb9cc),
                       ),
                     ),
                   ),
                 ),
-              ),
-            );
+                const SizedBox(width: 10),
+                DeckStars(rating: item['rating'] as int?, size: 10, gap: 1),
+              ],
+            ),
+          ],
+        );
+        return _HoverTile(
+          builder: (hovered) {
             return Draggable<List<int>>(
-              data: selected.contains(id) ? selected.toList() : [id],
+              data: [id],
               feedback: Material(
                 color: const Color(0xff283a49),
                 child: Padding(
@@ -249,9 +223,7 @@ class VaultFileList extends StatelessWidget {
               child: Container(
                 margin: const EdgeInsets.symmetric(vertical: 5),
                 decoration: BoxDecoration(
-                  color: selected.contains(id)
-                      ? const Color(0xff30485b)
-                      : isCurrent
+                  color: isCurrent
                       ? const Color(0xff283a49)
                       : hovered
                       ? const Color(0xff25313c)
@@ -301,13 +273,15 @@ class VaultFileList extends StatelessWidget {
                                       ),
                                   ],
                                 );
-                                if (choice != null) action!(item, choice);
+                                if (choice != null) {
+                                  action!(item, choice);
+                                }
                               },
                         borderRadius: BorderRadius.circular(7),
                         child: Padding(
                           padding: grid
                               ? const EdgeInsets.all(8)
-                              : EdgeInsets.fromLTRB(small ? 7 : 10, 12, 48, 12),
+                              : EdgeInsets.fromLTRB(small ? 8 : 10, 10, 10, 10),
                           child: grid
                               ? Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,8 +297,8 @@ class VaultFileList extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     SizedBox(
-                                      width: small ? 70 : 78,
-                                      height: small ? 47 : 51,
+                                      width: small ? 96 : 120,
+                                      height: small ? 72 : 80,
                                       child: thumb,
                                     ),
                                     SizedBox(width: small ? 8 : 10),
@@ -334,18 +308,17 @@ class VaultFileList extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Positioned(
-                      top: action == null ? 6 : 40,
-                      right: 6,
-                      child: check,
-                    ),
                     if (action != null)
                       Positioned(
-                        top: 2,
-                        right: 6,
+                        top: 4,
+                        right: 0,
                         child: PopupMenuButton<String>(
                           tooltip: '파일 메뉴',
                           icon: const Icon(Icons.more_vert),
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            side: BorderSide.none,
+                          ),
                           onSelected: (value) => action!(item, value),
                           itemBuilder: (_) => [
                             for (final e in menuEntries.entries)

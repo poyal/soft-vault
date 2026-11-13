@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:soft_vault/design.dart';
 import 'package:soft_vault/file_list.dart';
 import 'package:soft_vault/welcome_dialog.dart';
@@ -11,8 +12,58 @@ import 'package:soft_vault/detail_dialog.dart';
 import 'package:soft_vault/criteria_dialog.dart';
 import 'package:soft_vault/library_filter.dart';
 import 'package:soft_vault/library_filter_dialog.dart';
+import 'package:soft_vault/player_controls.dart';
+
+class _PreviewPlayer extends Fake implements Player {
+  @override
+  PlayerState get state => const PlayerState(
+    position: Duration(seconds: 10),
+    duration: Duration(seconds: 52),
+    volume: 0,
+  );
+  @override
+  PlayerStream get stream => _PreviewStream();
+}
+
+class _PreviewStream extends Fake implements PlayerStream {
+  @override
+  Stream<Duration> get position => const Stream.empty();
+  @override
+  Stream<double> get volume => const Stream.empty();
+}
 
 void main() {
+  testWidgets('playback stars accept clicks across their full hit area', (
+    tester,
+  ) async {
+    int? savedRating;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (context, setState) => PlaybackControls(
+              player: _PreviewPlayer(),
+              muted: true,
+              command: (_) {},
+              volume: (_) {},
+              subtitle: () {},
+              decoder: () {},
+              rating: savedRating,
+              rate: (value) => setState(() => savedRating = value),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final target = find.byTooltip('4점');
+    expect(tester.getSize(target), const Size(24, 36));
+    await tester.tapAt(tester.getTopLeft(target) + const Offset(3, 3));
+    await tester.pump();
+    expect(savedRating, 4);
+    expect(tester.widget<DeckStars>(find.byType(DeckStars)).rating, 4);
+  });
+
   testWidgets('keyboard hints remain compact in wrapping playback controls', (
     tester,
   ) async {
@@ -32,7 +83,10 @@ void main() {
     final caps = find.byType(KeyCap);
     for (var i = 0; i < 3; i++) {
       expect(tester.getSize(caps.at(i)).width, lessThan(70));
-      expect(tester.getTopLeft(caps.at(i)).dy, tester.getTopLeft(caps.first).dy);
+      expect(
+        tester.getTopLeft(caps.at(i)).dy,
+        tester.getTopLeft(caps.first).dy,
+      );
     }
     expect(tester.takeException(), isNull);
   });
@@ -68,6 +122,23 @@ void main() {
       'rating': 4,
     };
     final surfaces = <String, Widget>{
+      for (final width in [440.0, 700.0])
+        'controls-$width': Center(
+          child: SizedBox(
+            width: width,
+            child: PlaybackControls(
+              player: _PreviewPlayer(),
+              muted: true,
+              command: (_) {},
+              volume: (_) {},
+              subtitle: () {},
+              decoder: () {},
+              detail: () {},
+              rating: 4,
+              rate: (_) {},
+            ),
+          ),
+        ),
       'welcome': const WelcomeDialog(),
       'detail': DetailEditor(
         item: item,
@@ -96,12 +167,12 @@ void main() {
                 item,
                 {...item, 'id': 2},
               ],
-              selected: const {2},
               current: 1,
               grid: grid,
-              toggle: (_) {},
               preview: (_) {},
               play: (_) {},
+              action: (_, _) {},
+              playingId: 1,
             ),
           ),
         ),

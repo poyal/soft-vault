@@ -85,7 +85,6 @@ extension _ExtendedFeatures on _VaultHomeState {
     activeCriteria = MediaCriteria.decode(row['criteria'] as String);
     libraryFilter = LibraryFilter();
     view = 'files';
-    selected.clear();
     await refresh();
   }
 
@@ -211,14 +210,6 @@ extension _ExtendedFeatures on _VaultHomeState {
     switch (action) {
       case 'grid':
         update(() => grid = !grid);
-      case 'selectAll':
-        update(() {
-          if (selected.length == items.length) {
-            selected.clear();
-          } else {
-            selected.addAll(items.map((item) => item['id'] as int));
-          }
-        });
       case 'rescan':
         guard(rescanLibrary);
       case 'decoder':

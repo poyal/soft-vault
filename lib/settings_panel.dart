@@ -226,7 +226,6 @@ class _SettingsPanelState extends State<SettingsPanel> {
     title:
         const {
           'grid': '보기 방식',
-          'selectAll': '파일 선택',
           'collection': '컬렉션',
           'organize': '정리 도구',
           'history': '작업 기록',
@@ -265,7 +264,6 @@ class _SettingsPanelState extends State<SettingsPanel> {
     ),
     section('목록과 정리', '보기 방식을 바꾸고, 현재 조건을 저장하거나 파일을 정리합니다.', [
       action('썸네일 · 목록 보기', 'grid'),
-      action('전체 선택', 'selectAll'),
       action('현재 조건을 컬렉션으로 저장', 'collection'),
       action('스마트 컬렉션 · 중복 · 이동 규칙', 'organize'),
       action('파일 작업 기록', 'history'),

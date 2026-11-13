@@ -180,9 +180,7 @@ extension _HomeFeatures on _VaultHomeState {
     );
   }
 
-  List<int> get targets => selected.isNotEmpty
-      ? selected.toList()
-      : [if (current != null) current!['id'] as int];
+  List<int> get targets => [if (current != null) current!['id'] as int];
   Future<void> initialize() => guard(() async {
     await windowManager.setPreventClose(true);
     await keys.load();
@@ -358,6 +356,7 @@ extension _HomeFeatures on _VaultHomeState {
                 : Duration(milliseconds: item['resume_ms'] as int));
         await playback.open(item['path'] as String, start: resume);
         playbackMediaId = item['id'] as int;
+        playbackRating = item['rating'] as int?;
         playbackSession = newPlaybackSession(playbackMediaId!, resume);
         await (player.platform as NativePlayer).setProperty('mute', 'no');
         update(() {
@@ -381,7 +380,21 @@ extension _HomeFeatures on _VaultHomeState {
   }
 
   Future<void> rateTargets(int? value) => guard(() async {
+    if (playingView && playbackMediaId != null) {
+      await ratePlayback(value);
+      return;
+    }
     await widget.library.batchEdit(targets, rating: value, setRating: true);
+    await refresh();
+  });
+
+  Future<void> ratePlayback(int? value) => guard(() async {
+    final id = playbackMediaId;
+    if (id == null) return;
+    await widget.library.edit(id, {'rating': value});
+    if (mounted && playbackMediaId == id) {
+      update(() => playbackRating = value);
+    }
     await refresh();
   });
   Future<void> seekBy(int seconds) async {
@@ -423,11 +436,7 @@ extension _HomeFeatures on _VaultHomeState {
         await edit();
         return;
       case 'tags':
-        if (selected.isNotEmpty) {
-          await batchTags();
-        } else {
-          await edit();
-        }
+        await edit();
         return;
       case 'help':
         if (expanded) {
@@ -568,61 +577,6 @@ extension _HomeFeatures on _VaultHomeState {
     );
   }
 
-  Future<void> batchTags() async {
-    final controller = TextEditingController();
-    var remove = false;
-    final save = await showDeckDialog<bool>(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, update) => AlertDialog(
-          title: Text('태그 일괄 편집 · ${targets.length}개 파일'),
-          content: SizedBox(
-            width: 450,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextField(
-                  controller: controller,
-                  autofocus: true,
-                  decoration: const InputDecoration(labelText: '태그 · 쉼표로 구분'),
-                ),
-                SwitchListTile(
-                  value: remove,
-                  onChanged: (value) => update(() => remove = value),
-                  title: const Text('입력한 태그 제거'),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            OutlinedButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('취소'),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('적용'),
-            ),
-          ],
-        ),
-      ),
-    );
-    if (save == true)
-      await guard(() async {
-        update(() => busy = true);
-        try {
-          await widget.library.batchEdit(
-            targets,
-            tags: controller.text,
-            removeTags: remove,
-          );
-          await refresh();
-        } finally {
-          update(() => busy = false);
-        }
-      });
-  }
-
   Future<void> filters() => guard(() async {
     final entities = await Future.wait([
       widget.library.entities('actors'),
@@ -661,14 +615,12 @@ extension _HomeFeatures on _VaultHomeState {
       libraryFilter = result;
       minimumRating = null;
       unrated = false;
-      selected.clear();
       await refresh();
     }
   });
 
   void changeLibraryFilter(LibraryFilter value) {
     update(() => libraryFilter = value);
-    selected.clear();
     guard(refresh);
   }
 
@@ -718,7 +670,6 @@ extension _HomeFeatures on _VaultHomeState {
     await widget.library.restoreFrom(File(file.path));
     update(() {
       current = null;
-      selected.clear();
       playingView = false;
     });
     await refresh();
@@ -795,156 +746,164 @@ extension _HomeFeatures on _VaultHomeState {
       ],
     ),
   );
-  Widget get toolbar => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-    child: Column(
-      children: [
-        if (activeCriteria != null)
-          InputChip(
-            label: Text(
-              collectionName ?? '스마트 컬렉션',
-              style: const TextStyle(fontSize: 14),
-            ),
-            onDeleted: clearCollection,
-          ),
-        Row(
-          children: [
-            const Text(
-              '정렬',
-              style: TextStyle(fontSize: 14, color: DeckDesign.muted),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                constraints: const BoxConstraints(minHeight: 44),
-                decoration: BoxDecoration(
-                  color: DeckDesign.surface,
-                  border: Border.all(color: DeckDesign.line),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: DropdownButton<String>(
-                  value: sort,
-                  isExpanded: true,
-                  underline: const SizedBox.shrink(),
-                  icon: const DesignIcon('down', size: 16),
-                  items:
-                      {
-                            'recent': '최근 추가순',
-                            'name': '이름순',
-                            'rating': '평점순',
-                            'duration': '길이순',
-                          }.entries
-                          .map(
-                            (entry) => DropdownMenuItem(
-                              value: entry.key,
-                              child: Text(
-                                entry.value,
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ),
-                          )
-                          .toList(),
-                  onChanged: (value) {
-                    if (value == null) return;
-                    sort = value;
-                    refresh();
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-        if (!libraryFilter.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Wrap(
-              spacing: 6,
-              runSpacing: 6,
+  Widget get sortControl => PopupMenuButton<String>(
+    tooltip: '정렬',
+    initialValue: sort,
+    onSelected: (value) {
+      sort = value;
+      refresh();
+    },
+    itemBuilder: (_) => [
+      for (final entry in const {
+        'recent': '최근 추가순',
+        'name': '이름순',
+        'rating': '평점순',
+        'duration': '길이순',
+      }.entries)
+        PopupMenuItem(
+          value: entry.key,
+          child: Semantics(
+            selected: sort == entry.key,
+            child: Row(
               children: [
-                if (libraryFilter.playback != PlaybackFilter.all)
-                  InputChip(
-                    label: Text(libraryFilter.playback.label),
-                    onDeleted: () => changeLibraryFilter(
-                      libraryFilter.withPlayback(PlaybackFilter.all),
-                    ),
-                  ),
-                if (libraryFilter.rating != null || libraryFilter.unrated)
-                  InputChip(
-                    label: Text(
-                      libraryFilter.ratingLabel,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                    onDeleted: () =>
-                        changeLibraryFilter(libraryFilter.withoutRating()),
-                  ),
-                for (final kind in ['actors', 'tags']) ...[
-                  if ((kind == 'actors'
-                          ? libraryFilter.actorIds
-                          : libraryFilter.tagIds)
-                      .isNotEmpty)
-                    ActionChip(
-                      label: Text(
-                        '${kind == 'actors' ? '배우' : '태그'} · ${(kind == 'actors' ? libraryFilter.actorsAll : libraryFilter.tagsAll) ? '모두' : '하나라도'}',
-                        style: const TextStyle(fontSize: 14),
-                      ),
-                      onPressed: filters,
-                    ),
-                  for (final id
-                      in (kind == 'actors'
-                              ? libraryFilter.actorIds
-                              : libraryFilter.tagIds)
-                          .take(2))
-                    InputChip(
-                      label: SizedBox(
-                        width: 125,
-                        child: Text(
-                          (kind == 'actors'
-                                  ? filterActorNames[id]
-                                  : filterTagNames[id]) ??
-                              '삭제된 항목',
-                          style: const TextStyle(fontSize: 14),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      onPressed: filters,
-                      onDeleted: () => changeLibraryFilter(
-                        kind == 'actors'
-                            ? libraryFilter.withIds(
-                                actors: libraryFilter.actorIds.where(
-                                  (v) => v != id,
-                                ),
-                              )
-                            : libraryFilter.withIds(
-                                tags: libraryFilter.tagIds.where(
-                                  (v) => v != id,
-                                ),
-                              ),
-                      ),
-                    ),
-                  if ((kind == 'actors'
-                              ? libraryFilter.actorIds
-                              : libraryFilter.tagIds)
-                          .length >
-                      2)
-                    ActionChip(
-                      label: Text(
-                        '외 ${(kind == 'actors' ? libraryFilter.actorIds : libraryFilter.tagIds).length - 2}개',
-                      ),
-                      onPressed: filters,
-                    ),
-                ],
-                OutlinedButton(
-                  onPressed: () => changeLibraryFilter(LibraryFilter()),
-                  child: const Text('필터 해제'),
+                SizedBox(
+                  width: 20,
+                  child: sort == entry.key
+                      ? const DesignIcon('check', size: 16)
+                      : null,
                 ),
+                const SizedBox(width: 8),
+                Text(entry.value),
               ],
             ),
           ),
-      ],
+        ),
+    ],
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            const {
+              'recent': '최근 추가순',
+              'name': '이름순',
+              'rating': '평점순',
+              'duration': '길이순',
+            }[sort]!,
+            style: const TextStyle(fontSize: 13, color: DeckDesign.muted),
+          ),
+          const SizedBox(width: 6),
+          const DesignIcon('down', size: 14),
+        ],
+      ),
     ),
   );
+  Widget get toolbar => activeCriteria == null && libraryFilter.isEmpty
+      ? const SizedBox.shrink()
+      : Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          child: Column(
+            children: [
+              if (activeCriteria != null)
+                InputChip(
+                  label: Text(
+                    collectionName ?? '스마트 컬렉션',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                  onDeleted: clearCollection,
+                ),
+              if (!libraryFilter.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      if (libraryFilter.playback != PlaybackFilter.all)
+                        InputChip(
+                          label: Text(libraryFilter.playback.label),
+                          onDeleted: () => changeLibraryFilter(
+                            libraryFilter.withPlayback(PlaybackFilter.all),
+                          ),
+                        ),
+                      if (libraryFilter.rating != null || libraryFilter.unrated)
+                        InputChip(
+                          label: Text(
+                            libraryFilter.ratingLabel,
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                          onDeleted: () => changeLibraryFilter(
+                            libraryFilter.withoutRating(),
+                          ),
+                        ),
+                      for (final kind in ['actors', 'tags']) ...[
+                        if ((kind == 'actors'
+                                ? libraryFilter.actorIds
+                                : libraryFilter.tagIds)
+                            .isNotEmpty)
+                          ActionChip(
+                            label: Text(
+                              '${kind == 'actors' ? '배우' : '태그'} · ${(kind == 'actors' ? libraryFilter.actorsAll : libraryFilter.tagsAll) ? '모두' : '하나라도'}',
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                            onPressed: filters,
+                          ),
+                        for (final id
+                            in (kind == 'actors'
+                                    ? libraryFilter.actorIds
+                                    : libraryFilter.tagIds)
+                                .take(2))
+                          InputChip(
+                            label: SizedBox(
+                              width: 125,
+                              child: Text(
+                                (kind == 'actors'
+                                        ? filterActorNames[id]
+                                        : filterTagNames[id]) ??
+                                    '삭제된 항목',
+                                style: const TextStyle(fontSize: 14),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            onPressed: filters,
+                            onDeleted: () => changeLibraryFilter(
+                              kind == 'actors'
+                                  ? libraryFilter.withIds(
+                                      actors: libraryFilter.actorIds.where(
+                                        (v) => v != id,
+                                      ),
+                                    )
+                                  : libraryFilter.withIds(
+                                      tags: libraryFilter.tagIds.where(
+                                        (v) => v != id,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                        if ((kind == 'actors'
+                                    ? libraryFilter.actorIds
+                                    : libraryFilter.tagIds)
+                                .length >
+                            2)
+                          ActionChip(
+                            label: Text(
+                              '외 ${(kind == 'actors' ? libraryFilter.actorIds : libraryFilter.tagIds).length - 2}개',
+                            ),
+                            onPressed: filters,
+                          ),
+                      ],
+                      OutlinedButton(
+                        onPressed: () => changeLibraryFilter(LibraryFilter()),
+                        child: const Text('필터 해제'),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        );
   Widget? get contentPanel {
     final panel = switch (view) {
       'organize' => OrganizePanel(
@@ -969,7 +928,6 @@ extension _HomeFeatures on _VaultHomeState {
           minimumRating = null;
           unrated = false;
           libraryFilter = LibraryFilter();
-          selected.clear();
           view = 'files';
           refresh();
         },
@@ -1056,45 +1014,4 @@ extension _HomeFeatures on _VaultHomeState {
       ],
     );
   }
-
-  Widget get selectionBar => Material(
-    color: const Color(0xf52b4051),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10),
-      side: const BorderSide(color: Color(0xff52758d)),
-    ),
-    elevation: 12,
-    child: Padding(
-      padding: const EdgeInsets.all(9),
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        children: [
-          Text('${selected.length}개 선택', style: const TextStyle(fontSize: 14)),
-          const SizedBox(width: 9),
-          for (var rating = 1; rating <= 5; rating++)
-            IconButton(
-              onPressed: () => rateTargets(rating),
-              tooltip: '일괄 $rating점',
-              icon: const Text(
-                '★',
-                style: TextStyle(fontSize: 15, color: DeckDesign.gold),
-              ),
-            ),
-          OutlinedButton(
-            onPressed: () => rateTargets(null),
-            child: const Text('평점 초기화'),
-          ),
-          OutlinedButton(onPressed: batchTags, child: const Text('태그 편집')),
-          OutlinedButton(onPressed: moveFiles, child: const Text('폴더 이동')),
-          IconButton(
-            onPressed: () => update(selected.clear),
-            tooltip: '선택 해제',
-            icon: const Icon(Icons.close),
-          ),
-        ],
-      ),
-    ),
-  );
 }

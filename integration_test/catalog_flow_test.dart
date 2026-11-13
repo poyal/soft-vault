@@ -18,7 +18,7 @@ import 'package:window_manager/window_manager.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   testWidgets(
-    'catalog screens, batch editing, physical move and shortcut settings',
+    'catalog screens, single file editing, physical move and shortcut settings',
     (tester) async {
       MediaKit.ensureInitialized();
       await windowManager.ensureInitialized();
@@ -113,15 +113,17 @@ void main() {
         await shot('06-folders-1280');
         await tester.tap(find.text('닫기'));
         await tester.pumpAndSettle();
-        await settingsAction(tester, '전체 선택');
-        await shot('12-selection-1280');
-        await tester.tap(find.text('태그 편집'));
+        await tester.tap(find.text('영상으로 돌아가기'));
         await tester.pumpAndSettle();
-        await tester.enterText(find.byType(TextField).first, '일괄 태그');
-        await tester.tap(find.text('적용'));
+        final dynamic home = tester.state(find.byType(VaultHome));
+        final movedId = home.current['id'] as int;
+        home.edit(editing: true);
         await tester.pumpAndSettle();
-        expect((await library.items(query: '일괄 태그')).length, 4);
-        await tester.tap(find.text('폴더 이동'));
+        await tester.enterText(find.byType(TextField).at(2), '개별 태그');
+        await tester.tap(find.text('저장'));
+        await tester.pumpAndSettle();
+        expect((await library.items(query: '개별 태그')).length, 1);
+        home.fileAction(home.current, 'move');
         await shot('07-move-1280');
         await tester.tap(
           find.byKey(ValueKey('move-target:${destination.path}')),
@@ -131,22 +133,20 @@ void main() {
         await tester.pumpAndSettle();
         for (var tries = 0; tries < 80; tries++) {
           if ((await library.items()).every(
-            (row) => row['folder'] == destination.path,
+            (row) => row['id'] != movedId || row['folder'] == destination.path,
           ))
             break;
           await tester.pump(const Duration(milliseconds: 100));
         }
         expect(
           (await library.items()).every(
-            (row) => row['folder'] == destination.path,
+            (row) => row['id'] != movedId || row['folder'] == destination.path,
           ),
           isTrue,
         );
-        expect(await source.list().isEmpty, isTrue);
+        expect(await source.list().length, 3);
         await shot('07-move-complete-1280');
         await tester.tap(find.text('닫기'));
-        await tester.pumpAndSettle();
-        await tester.tap(find.byTooltip('선택 해제'));
         await tester.pumpAndSettle();
         await tester.tap(find.byTooltip('검색 · Ctrl/Cmd+K'));
         await shot('08-search-1280');

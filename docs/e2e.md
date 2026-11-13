@@ -18,7 +18,7 @@
 | --- | --- | --- | --- |
 | SV-01 | 빈 카탈로그에서 폴더 연결·취소·스캔 | 취소는 변경 없음, 영상만 표시, 원본 보존 | `library_test`, `scenario_flow_test` |
 | SV-02 | 한글·특수문자 검색, 폴더·컬렉션 필터 뒤 배우/태그 전체 선택 | `%`·`_`는 문자 검색, 전체 선택은 기존 필터 해제 | `scenario_regression_test`, `scenario_flow_test` |
-| SV-03 | 여러 영상의 배우·태그·평점 수정, 상세정보 보기→정보 편집 | 읽기와 편집 구분, 동시 변경 보존, 실패한 일괄 편집 롤백 | `library_flow_test`, `catalog_flow_test`, `scenario_flow_test` |
+| SV-03 | 단일 영상의 상세정보→정보 편집·취소·파일명 변경, 재생바 평점 클릭 | 메뉴 대상과 선택/재생 대상 구분, 취소는 변경 없음, ID·메타데이터 보존, 저장 실패 시 기존 평점 유지 | `library_flow_test`, `catalog_flow_test`, `ui_revision_flow_test` |
 | SV-04 | 재생·화면 클릭·탐색·Q/E 전환·Esc 최소화·복원 | 새 영상 0%, 클릭은 현재 음량 유지, Esc 뒤 0%, 화면 복원 | `playback_test`, `playback_flow_test`, `app_playback_test` |
 | SV-05 | 음성/자막 트랙·외부 자막·배속·소프트웨어 디코더·손상 영상 | 설정 반영, 손상 후 다음 정상 영상 사용 가능 | `codec_matrix_test`, `app_playback_test`, `scenario_flow_test` |
 | SV-06 | 이동·충돌·검증 복사·취소·실패·프로세스 중단 후 복구 | ID·메타데이터 유지, 원본/목적지 무결성, 부분 완료 명시 | `file_jobs_test`, `stress_scenarios_test`, `catalog_flow_test` |
@@ -28,6 +28,7 @@
 | SV-10 | 백업·손상 JSON·없는 참조·구버전 복원 | 정상 왕복, 실패 시 기존 카탈로그 유지, 잠금 정보 독립 | `library_test`, `scenario_regression_test`, `privacy_lock_test` |
 | SV-11 | 첫 비밀번호 설정·틀린 확인·재시작·오입력·변경·해제·지금 잠그기 | 인증 전 목록/플레이어 없음, 대기 영속, 현재 암호 확인, 재생 정지·0% | `privacy_lock_test`, `privacy_flow_test` |
 | SV-12 | 통합 설정 탐색·단축키 변경·작은 창·전체화면·복원 | 입력·설정 유지, 버튼 접근 가능, 앱 바깥 검은 띠 없음 | `key_bindings_test`, `scenario_flow_test`, `design_parity_test` |
+| SV-15 | 정렬 메뉴, 재생 중 필터 표시·해제, 다른 파일 선택 후 평점 단축키·저장 중 영상 전환·재시작 | 정렬 반영, 재생 중 필터 해제 가능, 마우스/단축키 평점 대상 일치, 다른 영상 평점 불변, DB 재열기 후 평점 유지 | `file_list_status_test`, `ui_revision_flow_test` |
 | SV-14 | AI 영상정보·배우 이미지 검토와 선택 적용 | 개인 필드 제외, 미확인 이미지 선택 방지, 실패 시 영상정보만 적용, 충돌 시 전체 롤백·임시 파일 정리 | `metadata_exchange_test`, `metadata_actor_image_test`, `metadata_exchange_flow_test` |
 | SV-13 | 1만 목록·빠른 영상 전환·반복 최소화·동시 파일 작업 | 상한 충족, 데이터 무결성, 종료 후 잔류 작업 확인 | `stress_flow_test`, `stress_scenarios_test`, 부하 검사 |
 

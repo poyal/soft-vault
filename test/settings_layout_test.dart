@@ -99,6 +99,7 @@ void main() {
               () => Future<void>.delayed(const Duration(milliseconds: 100)),
             );
             await tester.pumpAndSettle();
+            expect(find.text('전체 선택'), findsNothing);
             expect(tester.takeException(), isNull, reason: '$size $section');
             if (size.width == 1280 && scale == 1)
               await tester.runAsync(() async {

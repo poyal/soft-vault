@@ -178,15 +178,6 @@ void main() {
         await shot('design-search');
         await tester.tapAt(const Offset(10, 10));
         await tester.pumpAndSettle();
-        await settingsAction(tester, '전체 선택');
-        await shot('design-selection');
-        await openSettings(tester);
-        expect(find.byTooltip('선택 해제'), findsNothing);
-        await tester.tap(find.text('영상으로 돌아가기'));
-        await tester.pumpAndSettle();
-        expect(find.byTooltip('선택 해제'), findsOneWidget);
-        await tester.tap(find.byTooltip('선택 해제'));
-        await tester.pumpAndSettle();
         for (final size in [const Size(1000, 700), const Size(1600, 900)]) {
           await resizeNativeSurface(tester, size);
           await tester.pumpAndSettle();

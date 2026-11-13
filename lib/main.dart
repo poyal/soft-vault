@@ -284,12 +284,12 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     Directory(p.join(p.dirname(widget.library.db.path), 'thumbnails')),
     MediaTools.bundledBin(),
   );
-  final selected = <int>{};
   final watchers = <StreamSubscription<FileSystemEvent>>[];
   final playerEvents = <StreamSubscription<dynamic>>[];
   Timer? poll, debounce;
   Timer? progressTimer;
   int? playbackMediaId, activeCollectionId;
+  int? playbackRating;
   PlaybackSession? playbackSession;
   bool playbackCompleted = false;
   MediaCriteria? activeCriteria;
@@ -476,6 +476,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   Future<void> refresh() async {
     final generation = ++refreshGeneration;
     final selectedId = current?['id'];
+    final playingId = playbackMediaId;
     await guard(() async {
       final next = activeCriteria != null
           ? await widget.library.matching(
@@ -500,11 +501,23 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
               where: 'id=?',
               whereArgs: [selectedId],
             );
+      final playingRows = playingId == selectedId
+          ? selectedRows
+          : playingId == null
+          ? <Map<String, Object?>>[]
+          : await widget.library.db.query(
+              'media',
+              where: 'id=?',
+              whereArgs: [playingId],
+            );
       if (!mounted || generation != refreshGeneration) return;
       if (mounted)
         setState(() {
           items = next;
           folders = roots;
+          if (playbackMediaId == playingId) {
+            playbackRating = playingRows.firstOrNull?['rating'] as int?;
+          }
           if (current == null && next.isNotEmpty) current = next.first;
           if (selectedId != null && current?['id'] == selectedId) {
             current = selectedRows.isEmpty ? null : selectedRows.single;
@@ -611,7 +624,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
 
   Future<void> fileAction(Map<String, Object?> item, String action) async {
     final id = item['id'] as int;
-    final ids = selected.contains(id) ? selected.toList() : [id];
+    final ids = [id];
     switch (action) {
       case 'play':
         await openMedia(item);
@@ -672,7 +685,6 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
               });
               await widget.library.forgetTrashed(target);
               await widget.library.setting('pending_trash', {});
-              selected.remove(target);
             } catch (e) {
               failures.add('${p.basename(row['path'] as String)}: $e');
               if (moved) break;
@@ -800,15 +812,12 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                       content: contentPanel,
                       navigation: navigation,
                       toolbar: toolbar,
+                      sortControl: sortControl,
                       settings: () => command('help'),
                       fileList: VaultFileList(
                         items: items,
-                        selected: selected,
                         current: current?['id'] as int?,
                         grid: grid,
-                        toggle: (id) => update(() {
-                          if (!selected.add(id)) selected.remove(id);
-                        }),
                         preview: select,
                         playingId: playbackMediaId,
                         action: (item, action) =>
@@ -907,41 +916,10 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                               subtitle: externalSubtitle,
                               decoder: decoderSettings,
                               detail: () => edit(mediaId: playbackMediaId),
-                              rating:
-                                  items
-                                          .where(
-                                            (e) => e['id'] == playbackMediaId,
-                                          )
-                                          .firstOrNull?['rating']
-                                      as int?,
-                              rate: (value) => guard(() async {
-                                if (playbackMediaId != null) {
-                                  await widget.library.edit(playbackMediaId!, {
-                                    'rating': value,
-                                  });
-                                  await refresh();
-                                }
-                              }),
+                              rating: playbackRating,
+                              rate: ratePlayback,
                             ),
                     ),
-                    if (selected.isNotEmpty && view == 'files')
-                      Positioned(
-                        left: 0,
-                        right: expanded
-                            ? 0
-                            : (sidebarWidth ??
-                                      MediaQuery.sizeOf(context).width * .4)
-                                  .clamp(
-                                    400.0,
-                                    (MediaQuery.sizeOf(context).width - 486)
-                                        .clamp(400.0, 640.0),
-                                  ),
-                        bottom: 24,
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: SizedBox(width: 570, child: selectionBar),
-                        ),
-                      ),
                   ],
                 ),
               ),

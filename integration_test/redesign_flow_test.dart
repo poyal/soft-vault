@@ -7,6 +7,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:soft_vault/main.dart';
 import 'package:soft_vault/file_list.dart';
 import 'package:soft_vault/detail_dialog.dart';
+import 'package:soft_vault/player_controls.dart';
 import 'package:soft_vault/desktop_files.dart';
 import 'support/scenario_app.dart';
 
@@ -51,6 +52,30 @@ void main() {
       await home.select(rows.last);
       expect(home.playbackMediaId, first['id']);
       expect(home.playingView, true);
+      home.query = 'no-matching-file-for-rating-check';
+      await home.refresh();
+      await app.settle();
+      expect(home.items, isEmpty);
+      await tester.tap(
+        find.descendant(
+          of: find.byType(PlaybackControls),
+          matching: find.byTooltip('5점'),
+        ),
+      );
+      await app.settle();
+      expect(
+        (await app.library.items()).firstWhere(
+          (row) => row['id'] == first['id'],
+        )['rating'],
+        5,
+      );
+      expect(
+        tester.widget<PlaybackControls>(find.byType(PlaybackControls)).rating,
+        5,
+      );
+      home.query = '';
+      await home.refresh();
+      await app.settle();
       home.edit(mediaId: first['id'] as int);
       await app.settle(12);
       await tester.tap(

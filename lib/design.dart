@@ -45,6 +45,7 @@ class DeckIconButton extends StatelessWidget {
   final String name, tooltip;
   final VoidCallback? onPressed;
   final double size, extent;
+  final bool outlined;
   const DeckIconButton(
     this.name, {
     super.key,
@@ -52,6 +53,7 @@ class DeckIconButton extends StatelessWidget {
     required this.onPressed,
     this.size = 20,
     this.extent = 30,
+    this.outlined = true,
   });
   @override
   Widget build(BuildContext context) => SizedBox(
@@ -65,8 +67,10 @@ class DeckIconButton extends StatelessWidget {
       icon: DesignIcon(name, size: size),
       style: IconButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-        backgroundColor: DeckDesign.surface,
-        side: const BorderSide(color: DeckDesign.line),
+        backgroundColor: outlined ? DeckDesign.surface : Colors.transparent,
+        side: outlined
+            ? const BorderSide(color: DeckDesign.line)
+            : BorderSide.none,
         minimumSize: const Size(40, 40),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
@@ -105,12 +109,14 @@ class DeckStars extends StatelessWidget {
   final int? rating;
   final ValueChanged<int?>? change;
   final double size, gap;
+  final Size? hitSize;
   const DeckStars({
     super.key,
     this.rating,
     this.change,
     this.size = 19,
     this.gap = 6,
+    this.hitSize,
   });
   @override
   Widget build(BuildContext context) => Row(
@@ -123,7 +129,19 @@ class DeckStars extends StatelessWidget {
               ? star(i)
               : Tooltip(
                   message: '$i점',
-                  child: InkWell(onTap: () => change!(i), child: star(i)),
+                  child: SizedBox(
+                    width: hitSize?.width,
+                    height: hitSize?.height,
+                    child: InkWell(
+                      mouseCursor: SystemMouseCursors.click,
+                      onTap: () => change!(i),
+                      child: Center(
+                        widthFactor: 1,
+                        heightFactor: 1,
+                        child: star(i),
+                      ),
+                    ),
+                  ),
                 ),
         ),
     ],
