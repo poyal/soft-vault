@@ -1,0 +1,42 @@
+﻿[
+    {
+        "name":  "SoftVault-0.3.2-macOS-arm64.dmg",
+        "size":  95000878,
+        "sha256":  "8ffc8741a4940aad81fedc9dd2a4fe739d3cf51029b4b04738eb9471d2057f1d"
+    },
+    {
+        "name":  "SoftVault-0.3.2-macOS-arm64.dmg.sha256",
+        "size":  98,
+        "sha256":  "afab6d009e5ecbb48e58d2035bc27f97db7270b995a3c8907ccb454ab48ff396"
+    },
+    {
+        "name":  "SoftVault-0.3.2-Windows-x64-Setup.exe",
+        "size":  89102089,
+        "sha256":  "4669dd31f8684723320fb1d8e4ba8fded95a295077636995a789dfdc35020ede"
+    },
+    {
+        "name":  "SoftVault-0.3.2-Windows-x64-Setup.exe.sha256",
+        "size":  105,
+        "sha256":  "563ad7d7249608ede39e68a855c99d947021a95b39af9bfb115a83316f6e4b92"
+    },
+    {
+        "name":  "SoftVault-macOS-arm64.svupdate",
+        "size":  86676911,
+        "sha256":  "556957ebdfdc41cca16a4605d3e0c7526edfc67bfcb7bc70350bf6a887770ba4"
+    },
+    {
+        "name":  "SoftVault-Windows.svupdate",
+        "size":  117174907,
+        "sha256":  "a1f4fa72fc1a6be3323519a641124dea401d6f8504e2ffd5cd751c2268b86f83"
+    },
+    {
+        "name":  "update.json",
+        "size":  446,
+        "sha256":  "375636351ad55a2b9d653b467c3b7f726eddf1d7dd3731a7d7ac1d3d3628c705"
+    },
+    {
+        "name":  "update.json.sig",
+        "size":  88,
+        "sha256":  "5c2260f5d4c1cfdba3fe72a467f54d08e93a6bc5d3bc1520d8deb20c2f9d7fe0"
+    }
+]

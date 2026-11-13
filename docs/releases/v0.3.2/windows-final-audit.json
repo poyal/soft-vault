@@ -1,0 +1,42 @@
+﻿{
+    "passed":  true,
+    "originalRunnerStatus":  "FAIL",
+    "wrapperFailure":  "PowerShell treated Dart build-hooks stderr as a terminating error after all installation checks. Original FAIL status and log are preserved.",
+    "independentSourceCommand":  {
+                                     "exitCode":  0,
+                                     "expectedSHA256":  "6f8abd8337fed501e0f921f7c0f71e1b7a553462fe531309ded5ddec86505ddf",
+                                     "actualSHA256":  "6f8abd8337fed501e0f921f7c0f71e1b7a553462fe531309ded5ddec86505ddf",
+                                     "matches":  true,
+                                     "originalRunnerStatus":  "FAIL",
+                                     "checkedAtUTC":  "2026-11-13T11:47:47.3739882Z"
+                                 },
+    "sourceSHA256":  "6f8abd8337fed501e0f921f7c0f71e1b7a553462fe531309ded5ddec86505ddf",
+    "checks":  [
+                   "unit",
+                   "library-e2e",
+                   "catalog-e2e",
+                   "playback-e2e",
+                   "app-playback-e2e",
+                   "extended-e2e",
+                   "design-e2e",
+                   "codec-e2e",
+                   "ui-scenarios",
+                   "privacy-e2e",
+                   "library_filter_flow_test",
+                   "playback_history_flow_test",
+                   "settings_native_review_test",
+                   "resize_profile_test",
+                   "metadata_exchange_flow_test",
+                   "stress",
+                   "performance",
+                   "native-stress",
+                   "native-profile",
+                   "native-ui-profile",
+                   "redesign-032",
+                   "ui-revision-032"
+               ],
+    "shutdownCases":  18,
+    "zipSHA256":  "A1F4FA72FC1A6BE3323519A641124DEA401D6F8504E2FFD5CD751C2268B86F83",
+    "installerSHA256":  "4669DD31F8684723320FB1D8E4BA8FDED95A295077636995A789DFDC35020EDE",
+    "verifiedAtUTC":  "2026-11-13T11:48:13.9655031Z"
+}
