@@ -14,7 +14,7 @@
 
 Windows x64 설치 EXE와 Apple Silicon Mac DMG를 제공합니다. 기존 앱의 **설정 → 앱 정보 · 업데이트**에서도 업데이트할 수 있습니다. `.svupdate` 두 개와 `update.json`, `update.json.sig`는 앱 내 업데이트용입니다.
 
-Windows·Mac 후보 검증과 설치 파일 검사를 마쳤으며 게시 승인 대기 중입니다. 배포할 8개 파일의 크기·SHA-256은 [파일 목록](release-assets.json)에 고정했습니다. 아직 공개 릴리즈는 게시하지 않았습니다.
+[0.3.2 정식 릴리즈](https://github.com/poyal/soft-vault/releases/tag/v0.3.2)에서 내려받을 수 있습니다. Windows·Mac 설치 검증을 마쳤으며 공개 파일 8개를 다시 내려받아 크기·SHA-256 일치를 확인했습니다. 파일 고정값은 [파일 목록](release-assets.json)에 있습니다.
 
 Windows는 코드 서명이 없으며 Mac은 로컬 서명입니다. Apple Developer ID 서명·공증은 없습니다. [설치 안내](../../../README.md#설치와-첫-실행)를 참고해 주세요.
 

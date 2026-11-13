@@ -19,7 +19,7 @@ Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사
 
 ## 현재 확인된 범위
 
-- `0.3.2`는 목록·재생 컨트롤을 정리한 후보다. 양쪽 네이티브 검사와 EXE·DMG 설치 검증, 업데이트 서명 검증을 마쳤으며 기본 브랜치 소스 게시 승인 대기 중이다. 아직 공개 릴리즈가 아니다. [검증 기록](releases/v0.3.2/VERIFICATION.md), [변경 안내](releases/v0.3.2/README.md), [화면 검수](releases/v0.3.2/SCREENSHOT-REVIEW.md)를 참고한다.
+- `0.3.2`는 목록·재생 컨트롤을 정리하고 평점 입력·필터 표시를 수정했다. 양쪽 네이티브 검사와 EXE·DMG 설치 검증, 업데이트 서명 검증 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.3.2)했다. 공개 파일 8개의 재다운로드 크기·해시가 일치한다. [검증 기록](releases/v0.3.2/VERIFICATION.md), [변경 안내](releases/v0.3.2/README.md), [화면 검수](releases/v0.3.2/SCREENSHOT-REVIEW.md)를 참고한다.
 
 - `0.3.1`은 Windows·Mac 자동 검사·EXE/DMG 설치 검증과 화면 246장 검수 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.3.1)했다. 단축키 표시 크기와 빠른 재생 요청 순서 문제를 수정했고 공개 파일 8개의 재다운로드 해시가 일치한다. [검증 기록](releases/v0.3.1/VERIFICATION.md), [화면 검수](releases/v0.3.1/SCREENSHOT-REVIEW.md), [배포 안내](releases/v0.3.1/README.md)를 참고한다.
 
