@@ -7,5 +7,6 @@
     "publicAssets":  8,
     "localWindowsInstallerVerified":  true,
     "sqliteRestored":  true,
-    "publication":  "PENDING"
+    "publication":  "PASS: stable release; all eight unauthenticated downloads match release-assets.json",
+    "publicVerifiedAtUTC":  "2026-11-14T10:53:16.8475518Z"
 }

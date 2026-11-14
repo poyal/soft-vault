@@ -1,5 +1,7 @@
 # Soft Vault 0.3.3
 
+Windows·Mac 빌드와 설치·업데이트 서명 검증 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.3.3)했습니다. 공개 파일 8개의 재다운로드 크기·SHA-256이 일치합니다.
+
 배우 이미지의 HTTPS 주소를 불러올 때 `Invalid request method`로 실패하던 문제를 수정했습니다.
 
 ## 변경 사항

@@ -1,6 +1,6 @@
 # Soft Vault 문서 안내
 
-Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사용자 결정은 [계획서](../plan.md), 설치와 기본 사용법은 [루트 README](../README.md)를 기준으로 한다. 마지막 갱신일은 2026-11-13이다.
+Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사용자 결정은 [계획서](../plan.md), 설치와 기본 사용법은 [루트 README](../README.md)를 기준으로 한다. 마지막 갱신일은 2026-11-14이다.
 
 ## 작업별 입구
 
@@ -18,6 +18,8 @@ Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사
 | 새 후보 기록 만들기 | [검증 기록 템플릿](templates/verification.md), [사용자 릴리즈 노트 템플릿](templates/release-notes.md) |
 
 ## 현재 확인된 범위
+
+- `0.3.3`은 HTTPS 배우 이미지 가져오기 오류를 수정했다. 중단된 동일 후보 검증을 재개해 양쪽 실제 HTTPS 회귀·설치·업데이트 서명 검증 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.3.3)했다. 공개 파일 8개의 크기·해시가 일치한다. [검증 기록](releases/v0.3.3/VERIFICATION.md), [변경 안내](releases/v0.3.3/README.md)를 참고한다.
 
 - `0.3.2`는 목록·재생 컨트롤을 정리하고 평점 입력·필터 표시를 수정했다. 양쪽 네이티브 검사와 EXE·DMG 설치 검증, 업데이트 서명 검증 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.3.2)했다. 공개 파일 8개의 재다운로드 크기·해시가 일치한다. [검증 기록](releases/v0.3.2/VERIFICATION.md), [변경 안내](releases/v0.3.2/README.md), [화면 검수](releases/v0.3.2/SCREENSHOT-REVIEW.md)를 참고한다.
 

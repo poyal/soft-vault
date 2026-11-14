@@ -4,6 +4,8 @@ Windows x64 설치 EXE와 Apple Silicon Mac DMG를 배포한다. 내부 ZIP은 �
 
 ## 1. 후보와 출처
 
+`0.3.3`은 중단된 동일 후보 검증을 재개해 Windows·Mac 설치·서명 검사 후 정식 공개했다. [최종 기록](releases/v0.3.3/VERIFICATION.md)에 재개 중 도구 경로 문제, 별도 Windows EXE 검사와 공개 파일 8개 재다운로드 검증을 구분한다.
+
 `0.3.2`는 양쪽 설치 검증·업데이트 서명 검증 후 정식 공개했다. [최종 기록](releases/v0.3.2/VERIFICATION.md)에서 원래 실행기 실패와 독립적인 최종 감사, 사용자 승인 후 게시 및 공개 파일 재다운로드 검증을 구분한다.
 
 `0.3.1`의 최신 상태는 [Windows·Mac 검증 기록](releases/v0.3.1/VERIFICATION.md)에 있다. 이전 [0.3.0 기록](releases/v0.3.0/VERIFICATION.md), [0.2.1 기록](releases/v0.2.1/VERIFICATION.md)도 보존한다. 이전 0.2.0 결과는 [두 PC 검증 기록](releases/v0.2.0/VERIFICATION.md)과 [로컬 검증 기록](verification/2026-11-09-windows-0.2.0.md)에 보존한다. 아래 기능별 초기 측정은 해당 작업 당시의 기록이며 새 후보의 전체 검사 결과와 구분한다.

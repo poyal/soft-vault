@@ -27,7 +27,7 @@
 | 최종 Release·격리 ZIP 설치 진단 | PASS | PASS |
 | EXE/DMG 설치 진단 | 별도 게시 PC에서 PASS | PASS |
 | 기존 키로 manifest 서명·패키지 해시 검증 | PASS | PASS |
-| 공개 재다운로드 | PENDING | PENDING |
+| 공개 재다운로드 | 8개 파일 크기·해시 PASS | 8개 파일 크기·해시 PASS |
 
 일반 회귀의 선택 실행 HTTPS 검사는 별도 실행해 생략 없이 통과했다. 각 플랫폼의 검사 묶음 21개와 로그 해시는 [Windows 감사](windows-final-audit.json), [Mac 감사](macos-final-audit.json)에 있다. 이 숫자는 테스트 개수나 반복 횟수와 다르다. 대량 검사는 합성 파일 1만 개·카탈로그 5만 건이며 실제 영상 1만 개 동시 디코딩을 뜻하지 않는다.
 
@@ -47,6 +47,6 @@ Windows 재개 시 이전 실행이 만든 도구·플러그인 연결을 SSH �
 
 배포할 8개 파일의 이름·크기·SHA-256은 [파일 고정값](release-assets.json)에 있다. EXE·DMG와 각각의 체크섬, 두 `.svupdate`, `update.json`, `update.json.sig`만 게시한다. 내부 ZIP은 게시하지 않는다.
 
-최종 판정: **빌드·설치·서명 검증 PASS, 게시·공개 재다운로드 PENDING**. 사용자 요청에 따라 검증한 파일로 `v0.3.3` 정식 릴리즈를 게시할 준비를 완료했다.
+최종 판정: **PASS**. 사용자 요청에 따라 `main`과 `v0.3.3` 태그를 푸시하고 [정식 릴리즈](https://github.com/poyal/soft-vault/releases/tag/v0.3.3)를 공개했다. 태그 커밋은 `0ea86f27709b9a6d3be18baa78d30a87a73f5271`이다. 초안 다운로드에서 8개 파일의 크기·SHA-256을 검증한 뒤 2026-11-14T10:53:01Z에 공개했다. 인증 없는 공개 재다운로드도 8개 모두 일치했다. [공개 검증 증거](publication-verification.json)를 보존한다. 게시 후 문서 갱신은 후속 커밋이며 태그와 바이너리는 변경하지 않는다.
 
 실제 사용자 라이브러리 전체의 이전 버전 업그레이드, 물리 HDR·스피커 출력, 장시간 재생, 깨끗한 OS의 첫 실행 경고는 별도 검증 대상이다. Windows 코드 서명과 Apple Developer ID 서명·공증은 없다. 이번 수정은 네트워크 연결 처리이며 새 화면 수동 검수는 수행하지 않았다.
