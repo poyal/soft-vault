@@ -1,7 +1,7 @@
 name: soft_vault
 description: Local desktop media library.
 publish_to: none
-version: 0.3.2
+version: 0.3.3
 environment:
   sdk: '>=3.10.0 <4.0.0'
 dependencies:

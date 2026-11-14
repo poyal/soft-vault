@@ -12,7 +12,9 @@ class MetadataActorImage {
 
 /// Downloads only public HTTPS images; redirects receive the same validation.
 Future<Uint8List> downloadActorImage(String url) async {
-  final client = HttpClient()..connectionTimeout = const Duration(seconds: 10);
+  final client = HttpClient()
+    ..connectionTimeout = const Duration(seconds: 10)
+    ..findProxy = (_) => 'DIRECT';
   try {
     return await (() async {
       var uri = Uri.parse(url);
@@ -40,9 +42,10 @@ Future<Uint8List> downloadActorImage(String url) async {
               return b[0] & 0xe0 != 0x20;
             }))
           throw const FormatException('공개 인터넷 이미지 주소만 사용할 수 있습니다.');
-        // Pin this request to the validated address while preserving TLS host validation.
+        // A custom factory must establish TLS itself. Lookup results retain the
+        // original hostname for SNI and certificate validation while pinning IPs.
         client.connectionFactory = (uri, proxyHost, proxyPort) =>
-            Socket.startConnect(addresses.first, uri.port);
+            SecureSocket.startConnect(addresses.first, uri.port);
         final request = await client.getUrl(uri);
         request.followRedirects = false;
         final response = await request.close();
