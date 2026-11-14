@@ -1,0 +1,107 @@
+﻿{
+    "executable":  "C:\\Users\\ttt45\\Workspace\\personal\\soft-vault\\build\\installer-smoke\\500f6108a79f4adfa33aeae470928841\\SoftVault\\bin\\soft_vault.exe",
+    "passed":  true,
+    "privacyLock":  {
+                        "setup":  true,
+                        "restartPersistence":  true,
+                        "rejectWrongPassword":  true,
+                        "unlock":  true,
+                        "authenticatedDisable":  true
+                    },
+    "metadataExchangeAndPlaybackHistory":  true,
+    "extendedFeatures":  {
+                             "resume":  true,
+                             "bookmarks":  true,
+                             "collections":  true,
+                             "customThumbnail":  true,
+                             "animatedPreview":  true,
+                             "nfo":  true,
+                             "ruleMove":  true
+                         },
+    "codecs":  [
+                   {
+                       "file":  "av1-flac.mkv",
+                       "width":  320,
+                       "height":  180,
+                       "volume":  0.0
+                   },
+                   {
+                       "file":  "embedded-subtitle.mkv",
+                       "width":  320,
+                       "height":  180,
+                       "volume":  0.0
+                   },
+                   {
+                       "file":  "h264-aac.mp4",
+                       "width":  320,
+                       "height":  180,
+                       "volume":  0.0
+                   },
+                   {
+                       "file":  "h264-ac3.ts",
+                       "width":  320,
+                       "height":  180,
+                       "volume":  0.0
+                   },
+                   {
+                       "file":  "h264-dts.mkv",
+                       "width":  320,
+                       "height":  180,
+                       "volume":  0.0
+                   },
+                   {
+                       "file":  "h264-pcm.mov",
+                       "width":  320,
+                       "height":  180,
+                       "volume":  0.0
+                   },
+                   {
+                       "file":  "hevc10-eac3.mkv",
+                       "width":  320,
+                       "height":  180,
+                       "volume":  0.0
+                   },
+                   {
+                       "file":  "hevc4k-hdr.mkv",
+                       "width":  3840,
+                       "height":  2160,
+                       "volume":  0.0
+                   },
+                   {
+                       "file":  "mpeg4-mp3.avi",
+                       "width":  320,
+                       "height":  180,
+                       "volume":  0.0
+                   },
+                   {
+                       "file":  "vc1.wmv",
+                       "width":  1440,
+                       "height":  576,
+                       "volume":  0.0
+                   },
+                   {
+                       "file":  "vp9-opus.webm",
+                       "width":  320,
+                       "height":  180,
+                       "volume":  0.0
+                   }
+               ],
+    "database":  true,
+    "verifiedCopyMove":  true,
+    "ffprobe":  true,
+    "thumbnail":  true,
+    "nativePlayback":  true,
+    "volume":  0.0,
+    "nativeMinimizeRestore":  true,
+    "installerSHA256":  "D26A6995203FC8438FB0B63942883B6F8A6EFADC68EBC4E5E10236F034EDA4C0",
+    "installation":  {
+                         "verifiedAppFiles":  42,
+                         "fresh":  true,
+                         "startMenu":  true,
+                         "registeredUninstall":  true,
+                         "reinstall":  true,
+                         "retainedUserData":  true,
+                         "uninstall":  true,
+                         "uninstallerOutsideBin":  true
+                     }
+}

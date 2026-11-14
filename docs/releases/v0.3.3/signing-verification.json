@@ -1,0 +1,11 @@
+﻿{
+    "version":  "0.3.3",
+    "verifiedAtUTC":  "2026-11-14T10:51:16.1950254Z",
+    "publicKeyUnchanged":  true,
+    "manifestSignatureVerified":  true,
+    "bothPackagesMatchInstallationEvidence":  true,
+    "publicAssets":  8,
+    "localWindowsInstallerVerified":  true,
+    "sqliteRestored":  true,
+    "publication":  "PENDING"
+}

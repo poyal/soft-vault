@@ -1,23 +1,32 @@
-# Soft Vault 0.3.3 후보 — 미게시
+# Soft Vault 0.3.3
 
-유효한 HTTPS 배우 이미지 주소를 불러올 때 `Invalid request method`로 실패하던 문제를 수정한다. 사용자 요청으로 2026-11-14 빌드·검증과 릴리즈 준비를 중지하고 소스만 푸시한다. 태그와 릴리즈는 아직 생성하지 않았다.
+배우 이미지의 HTTPS 주소를 불러올 때 `Invalid request method`로 실패하던 문제를 수정했습니다.
 
-## 변경
+## 변경 사항
 
-- 사용자 지정 HTTP 연결에서 `SecureSocket.startConnect`로 TLS를 연결한다. 검증한 IP 주소를 고정하면서 원래 호스트의 SNI·인증서 검증을 유지한다.
-- 직접 연결을 지정하고 기존 공개 주소·리다이렉트·크기 제한을 유지한다.
-- 실제 HTTPS 이미지 다운로드·디코딩 회귀 검사를 추가했다. `ACTOR_IMAGE_TEST_URL`을 지정해야 실행하며 일반 테스트에서는 생략한다.
-- 버전을 0.3.3으로 올렸다. 기존 자동 업데이트 공개키는 변경하지 않았다.
+- HTTPS 이미지 연결에 TLS 소켓을 사용하도록 수정했습니다. 검증한 공개 IP 주소를 고정하면서 원래 호스트 이름의 SNI와 인증서 검증을 유지합니다.
+- 공개 주소·리다이렉트·파일 크기 제한을 유지하고 실제 HTTPS 이미지 다운로드와 디코딩 회귀 검사를 추가했습니다.
+- 기존 자동 업데이트 공개키를 유지합니다.
 
-## 검증 인계
+## 설치와 업데이트
 
-앱 후보 커밋은 `083f7b2f1b6b3c2be886de2f80394cd1963fba5d`이며 Windows와 Mac의 시작 소스 지문은 `b6c7bf8897fa0a2f5a3d174b2872c40d901bc4fea63ccff40d91be2b27aeeb30`이다. 이 문서는 후속 문서 변경이다.
+- [Windows x64 설치 EXE](https://github.com/poyal/soft-vault/releases/download/v0.3.3/SoftVault-0.3.3-Windows-x64-Setup.exe)
+- [Apple Silicon Mac DMG](https://github.com/poyal/soft-vault/releases/download/v0.3.3/SoftVault-0.3.3-macOS-arm64.dmg)
+- 기존 앱에서는 **설정 → 앱 정보·업데이트 → 지금 확인 → 다운로드 → 업데이트 후 재시작**으로 적용합니다. `.svupdate`는 앱 전용 파일입니다.
 
-- Windows: 정적 분석, 일반 회귀, 라이브러리·카탈로그·재생·확장·디자인·코덱·UI·사생활 보호, 필터·이력·설정·창 크기·메타데이터 교환, 스트레스·대량 성능, profile 검사와 업데이트 도우미 5개 검사가 통과했다. 18회 종료 검사는 실행 중 중지했다.
-- Mac: 정적 분석, 일반 회귀, 라이브러리·카탈로그·재생·확장·디자인·코덱·UI·사생활 보호, 스트레스·대량 성능, profile 스트레스·일반 UI·필터·이력 검사가 통과했다. profile 설정 검사는 실행 중 중지했다.
-- 최종 0.3.3 Release 빌드·설치 파일 검증·별도 실제 HTTPS 회귀 검사·종료 후 소스 지문 대조·공개 재다운로드는 완료하지 않았다. 전체 릴리즈 검증 완료를 의미하지 않는다.
+Windows 코드 서명과 Apple Developer ID 서명·공증은 제공하지 않습니다. Mac 앱은 로컬 서명이며 자동 업데이트의 Ed25519 서명은 OS 코드 서명과 별개입니다.
 
-원시 로그와 중단된 산출물은 Windows의 `.tools/release-0.3.3/build/`와 Mac의 `/Users/poyal/Workspace/personal/soft-vault-release-033-20261114/build/`에 남아 있다. Mac 시험 LaunchAgent와 Windows 시험 프로세스는 중지했다.
+검사 범위와 중단 후 재개 기록, 설치·서명·배포 파일 검증 근거는 [0.3.3 검증 기록](https://github.com/poyal/soft-vault/blob/main/docs/releases/v0.3.3/VERIFICATION.md)에 기록합니다. 실제 사용자 라이브러리 전체 업그레이드, 장시간 재생과 물리 HDR·스피커 출력은 자동 검사 범위와 구분합니다.
 
-기존 자동 업데이트 개인키를 찾지 못했다. 후속 릴리즈 담당자는 기존 공개키와 일치하는 키를 확보한 뒤 [릴리즈 가이드](../../release.md)에 따라 최종 빌드·설치 검증과 서명·게시를 수행해야 한다. 개인키나 사용자 메타데이터는 이 커밋에 포함하지 않는다.
+## 배포 파일
 
+| 파일 | 크기(byte) | SHA-256 |
+| --- | ---: | --- |
+| SoftVault-0.3.3-Windows-x64-Setup.exe | 89092824 | `d26a6995203fc8438fb0b63942883b6f8a6efadc68ebc4e5e10236f034eda4c0` |
+| SoftVault-0.3.3-Windows-x64-Setup.exe.sha256 | 105 | `892d87b4a14bd444b647eb5acbf5580783b76d832e240eeb12229307e79b52c3` |
+| SoftVault-0.3.3-macOS-arm64.dmg | 95002488 | `4fab6cccf4a1462e8f886fb4a85a693b6d0323f4e5df6a8224a64e0316ee1218` |
+| SoftVault-0.3.3-macOS-arm64.dmg.sha256 | 98 | `f837f8a1bf50761c44bd8ed4109c90d4ec2c27fb0a197f0a077552a46a7f88b9` |
+| SoftVault-Windows.svupdate | 117175073 | `44841f3898269c8f92829ead3f67d3c64c88ee2888af75b3b4b945aa53b49537` |
+| SoftVault-macOS-arm64.svupdate | 86679488 | `83b1fcb204e4f7bf65276150a13e54961b8dd427d58a6d958b4bddbdff704c1a` |
+| update.json | 446 | `7e1f62aca56e85d86f3bd165a720ca9575f8c21d10f7d953abf8fe220c3b8222` |
+| update.json.sig | 88 | `fee9a1f114ef9b747b2e06e06ef7fdc1ee58a278e293546c275dc1abe9382ee6` |

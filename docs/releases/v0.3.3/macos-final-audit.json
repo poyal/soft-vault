@@ -1,0 +1,155 @@
+{
+  "status": "PASS_WITH_DOCUMENTED_LIMITS",
+  "platform": "macos",
+  "version": "0.3.3",
+  "sourceCommit": "083f7b2f1b6b3c2be886de2f80394cd1963fba5d",
+  "sourceSHA256": "b6c7bf8897fa0a2f5a3d174b2872c40d901bc4fea63ccff40d91be2b27aeeb30",
+  "sourceUnchanged": true,
+  "verifiedAtUTC": "2026-11-14T10:47:29.666016+00:00",
+  "pubspecLockSHA256": "db8d9a4c009d183fe1b82606a93cd13baa74500ba02ae6ded35c5a00e7b04a92",
+  "fixtureSHA256": "b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254",
+  "analyze": "PASS",
+  "suites": [
+    {
+      "suite": "unit",
+      "passed": 107,
+      "skipped": 2,
+      "logSHA256": "572000ae48967fe9cd27285c6631583ad0dc91812fc047da0a8775986b7607c9"
+    },
+    {
+      "suite": "library-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "87ec960a4bc3925d32e1a359340e02dfee5878b0958b9a8b357f8ded4833c463"
+    },
+    {
+      "suite": "catalog-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "9a08868f44d0f32eab17e3beb3f1905b6befdb3fe36ce013d737857986e5e621"
+    },
+    {
+      "suite": "playback-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "e4f8106221262b9ecad5d21d4e1f97bbacff754620255c61a9c8e38e183fbf6d"
+    },
+    {
+      "suite": "app-playback-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "cba4002394cff23f18349cd44441c3544f3cfa6a526640638470dc6dc317ae78"
+    },
+    {
+      "suite": "extended-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "d596bcf7c00343207e35ef892a473e6a3f209c6c308479f3aff58020caec233d"
+    },
+    {
+      "suite": "design-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "eb6a0034c534e100e64afc42906c5abd12e778d28f098929ca79196ecebd16fa"
+    },
+    {
+      "suite": "codec-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "54ee488928939a01c42ba16cb04318993304243634d1b499828dde48c4a73f58"
+    },
+    {
+      "suite": "privacy-e2e",
+      "passed": 3,
+      "skipped": 0,
+      "logSHA256": "7f87fb92d4ed76a06798fc2d1eb7d603b82893f3403f31e59573822953beffb8"
+    },
+    {
+      "suite": "stress",
+      "passed": 9,
+      "skipped": 0,
+      "logSHA256": "6954684e127ce3b6ced6bd8151080ab106df9303048fadf8f908bd34753967e4"
+    },
+    {
+      "suite": "performance",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "3dcd01d44f25f1cf10372334217c66c2c33664fb573d34c694af785391ba8363"
+    },
+    {
+      "suite": "https-image-network",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "7801ac41cbe3a5056be0108722a106a9dcd6565d96644b87fb52214c593b674a"
+    },
+    {
+      "suite": "ui-scenarios-e2e",
+      "passed": 19,
+      "skipped": 0,
+      "logSHA256": "ff86254afb78d4fd8bd1ce496b87020239d28f05adafca61f6a1f112945868a5"
+    },
+    {
+      "suite": "native-stress-e2e",
+      "passed": 3,
+      "skipped": 0,
+      "logSHA256": "39a9e50f72a591ee1b861786e13cc459042240198c0cefb144e28bcb970ec8a2"
+    },
+    {
+      "suite": "stress_flow-profile",
+      "passed": 4,
+      "skipped": 0,
+      "logSHA256": "12bedf7041da978ce93a288c86824e0eceb016b8841ff4ae05bfb7f904ab05fa"
+    },
+    {
+      "suite": "ui_latency-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "6c06a6445aa7d2ac0c343084d8143643696a72ce1bcde466f9f3d278c8950fa4"
+    },
+    {
+      "suite": "library_filter_flow-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "3f7044b7df4dc16812e07dbbc7dea2527a33f724f01a691f98a47b0f027e41cc"
+    },
+    {
+      "suite": "playback_history_flow-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "0e23f62743c58338c6bdfdaf542d07d06a4edfbdaa8f3e6c29d7701f200a60e7"
+    },
+    {
+      "suite": "settings_native_review-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "6a53490d51007739d1fa11459ae5dd160bc322e546a809f396951eed76e1e716"
+    },
+    {
+      "suite": "resize_profile-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "c8622b3f588a2d0487945eb74607672b290ff56f759e0853deb2693dc68c086a"
+    },
+    {
+      "suite": "metadata_exchange_flow-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "40e4e50450e680f3047799fa4336d3dead9bb05d05339f72447bf99a4ec25f62"
+    }
+  ],
+  "shutdownChecks": 18,
+  "updaterHelperChecks": 5,
+  "isolatedPackageDiagnostics": "PASS",
+  "internalZipSHA256": "83b1fcb204e4f7bf65276150a13e54961b8dd427d58a6d958b4bddbdff704c1a",
+  "installer": {
+    "mountCopyAndDiagnostics": "PASS",
+    "applicationHashesMatch": true,
+    "signature": "ad-hoc; not notarized"
+  },
+  "asset": {
+    "name": "SoftVault-0.3.3-macOS-arm64.dmg",
+    "size": 95002488,
+    "sha256": "4fab6cccf4a1462e8f886fb4a85a693b6d0323f4e5df6a8224a64e0316ee1218"
+  },
+  "automaticUpdatePublication": "Pending central signing and publication verification; public key unchanged"
+}

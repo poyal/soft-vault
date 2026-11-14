@@ -1,0 +1,156 @@
+{
+  "status": "PASS_WITH_DOCUMENTED_LIMITS",
+  "platform": "windows",
+  "version": "0.3.3",
+  "sourceCommit": "083f7b2f1b6b3c2be886de2f80394cd1963fba5d",
+  "sourceSHA256": "b6c7bf8897fa0a2f5a3d174b2872c40d901bc4fea63ccff40d91be2b27aeeb30",
+  "sourceUnchanged": true,
+  "verifiedAtUTC": "2026-11-14T10:48:53.472003+00:00",
+  "pubspecLockSHA256": "db8d9a4c009d183fe1b82606a93cd13baa74500ba02ae6ded35c5a00e7b04a92",
+  "fixtureSHA256": "b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254",
+  "analyze": "PASS",
+  "suites": [
+    {
+      "suite": "unit",
+      "passed": 107,
+      "skipped": 2,
+      "logSHA256": "70cacefd2bcd73f64536b9bf5e85db02ec3fd0913f9d187f4df9859b2e265fa5"
+    },
+    {
+      "suite": "library-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "85ac088e0a7733cfe8b33d2f4a772d29d342fba6c3d19f8ab1f7fa60f84a8c93"
+    },
+    {
+      "suite": "catalog-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "e843d82b9e7ace33cb5eda417edfd54c2f1c3ddd541b62f92c79abb3601515e4"
+    },
+    {
+      "suite": "playback-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "325f4fc81039f6659977c3fad8dd99ce2555d714d6b2dac9b8b6298c1356309e"
+    },
+    {
+      "suite": "app-playback-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "df0bcec3a2efc41be3315fa4e929fe2c4b3b255fb9bda412d8e15732fcca23e7"
+    },
+    {
+      "suite": "extended-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "c3af92044edf97f17d5f35522568e6ba72f13ea33927704ed16d4a92a56e901e"
+    },
+    {
+      "suite": "design-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "a7d75ce6d7c801541740a61f1f7df1f525c97a321a0894444a3f42d3c3d3df83"
+    },
+    {
+      "suite": "codec-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "0bfe01d19a0f6c776a8895a0c7a3ecb0c0cf25f7e91588ec076751f06482c115"
+    },
+    {
+      "suite": "privacy-e2e",
+      "passed": 3,
+      "skipped": 0,
+      "logSHA256": "f8fcb030ecfecd011317cb5e54b3dc1a5f4088f434443d54f9a64576d32e7aa3"
+    },
+    {
+      "suite": "stress",
+      "passed": 9,
+      "skipped": 0,
+      "logSHA256": "a5977d7ca9571efa091e49350bb61905debd7dc417ddd18c84fe8a4eb1b7a206"
+    },
+    {
+      "suite": "performance",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "7ed9f729b22f823fecfc0bb2dba2a9806ce15be28b88e0ec9c82a30c041da843"
+    },
+    {
+      "suite": "https-image-network",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "bbc98ffb1cc4d6309cc5f1612d624ebf2cd6e1eb7d7602df5161ef77c2998a05"
+    },
+    {
+      "suite": "ui-scenarios",
+      "passed": 19,
+      "skipped": 0,
+      "logSHA256": "9afd159a2ae9cf4ffca94a7c7b1e0812a9f1be9534891f4b806a108404f974d7"
+    },
+    {
+      "suite": "native-stress",
+      "passed": 3,
+      "skipped": 0,
+      "logSHA256": "c6e94a5cc32a0916455ee5a9e728747495ae0e0950aaf428b79805e38eeb18ef"
+    },
+    {
+      "suite": "native-profile",
+      "passed": 4,
+      "skipped": 0,
+      "logSHA256": "f3f657cea20b951b7b6d18be47bdfae2fe3123886ebdb162d4df44db990acac8"
+    },
+    {
+      "suite": "native-ui-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "dd0724feca69e68b6bc3148a587d8c172c2b71dbaa0414705a0b87a8a6aef6b0"
+    },
+    {
+      "suite": "library_filter_flow_test",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "6c8bc5accc84d170bb86e16ae981ebc7e4ed088a0a0bc5a44861812f9d12e7d1"
+    },
+    {
+      "suite": "playback_history_flow_test",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "b2d0b9be5cced69f7aba3334039b0bd5584f667233876ffa9a93ef517562aa39"
+    },
+    {
+      "suite": "settings_native_review_test",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "ef40558405b49c4519f3787823d0c90dca468246cd554dcae7d393eb3260728f"
+    },
+    {
+      "suite": "resize_profile_test",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "164d8c7fb84ed75361a2cf490f332f3c086018ecb2c7b2e5040e5cb862ab2ecf"
+    },
+    {
+      "suite": "metadata_exchange_flow_test",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "6b95502b924732520cdc7c81279c54219a3f9ccf999f3c538840a70e4a58c668"
+    }
+  ],
+  "shutdownChecks": 18,
+  "updaterHelperChecks": 5,
+  "isolatedPackageDiagnostics": "PASS",
+  "internalZipSHA256": "44841f3898269c8f92829ead3f67d3c64c88ee2888af75b3b4b945aa53b49537",
+  "installer": {
+    "payloadHashes": "PASS",
+    "files": 45,
+    "registeredInstallUninstall": "NOT_RUN",
+    "reason": "Existing user Start Menu shortcut; isolated ZIP installation and release payload diagnostics passed."
+  },
+  "asset": {
+    "name": "SoftVault-0.3.3-Windows-x64-Setup.exe",
+    "size": 89092824,
+    "sha256": "d26a6995203fc8438fb0b63942883b6f8a6efadc68ebc4e5e10236f034eda4c0"
+  },
+  "automaticUpdatePublication": "Pending central signing and publication verification; public key unchanged"
+}
