@@ -2,6 +2,7 @@ part of 'main.dart';
 
 extension _ExtendedFeatures on _VaultHomeState {
   Future<void> persistProgress({bool completed = false}) async {
+    if (seeks.busy) return;
     final id = playbackMediaId;
     final position = player.state.position, duration = player.state.duration;
     if (id == null || duration <= Duration.zero) return;
@@ -27,7 +28,7 @@ extension _ExtendedFeatures on _VaultHomeState {
             : Duration(milliseconds: item['resume_ms'] as int),
         jump: (position) => guard(() async {
           if (playbackMediaId == item['id'] && playingView) {
-            await player.seek(position);
+            await seeks.seekTo(position);
             await persistProgress();
           } else {
             await openMedia(item, position: position);
@@ -99,6 +100,7 @@ extension _ExtendedFeatures on _VaultHomeState {
     await scanFuture;
     await stopEnrichment();
     await persistProgress();
+    await seeks.cancel();
     playbackMediaId = null;
     await playback.silence();
     await player.stop();

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:media_kit/media_kit.dart';
 import 'design.dart';
+import 'seek_controller.dart';
 
 String clockText(Duration value) =>
     '${value.inMinutes.toString().padLeft(2, '0')}:${(value.inSeconds % 60).toString().padLeft(2, '0')}';
 
 class PlaybackControls extends StatelessWidget {
   final Player player;
+  final SeekController seeks;
   final bool muted;
   final ValueChanged<String> command;
   final ValueChanged<double> volume;
@@ -18,6 +20,7 @@ class PlaybackControls extends StatelessWidget {
   const PlaybackControls({
     super.key,
     required this.player,
+    required this.seeks,
     required this.muted,
     required this.command,
     required this.volume,
@@ -30,42 +33,16 @@ class PlaybackControls extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) => LayoutBuilder(
-    builder: (context, bounds) => StreamBuilder<Duration>(
-      stream: player.stream.position,
-      initialData: player.state.position,
+    builder: (context, bounds) => StreamBuilder<bool>(
+      stream: player.stream.playing,
+      initialData: player.state.playing,
       builder: (context, snapshot) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            children: [
-              Text(
-                clockText(snapshot.data!),
-                style: const TextStyle(fontSize: 14, color: Color(0xffa0b59e)),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Slider(
-                  value: snapshot.data!.inMilliseconds.toDouble().clamp(
-                    0,
-                    player.state.duration.inMilliseconds.toDouble().clamp(
-                      1,
-                      double.infinity,
-                    ),
-                  ),
-                  max: player.state.duration.inMilliseconds.toDouble().clamp(
-                    1,
-                    double.infinity,
-                  ),
-                  onChanged: (value) =>
-                      player.seek(Duration(milliseconds: value.round())),
-                ),
-              ),
-              const SizedBox(width: 15),
-              Text(
-                clockText(player.state.duration),
-                style: const TextStyle(fontSize: 14, color: Color(0xffa0b59e)),
-              ),
-            ],
+          PlaybackSeekBar(
+            seeks: seeks,
+            positions: player.stream.position,
+            durations: player.stream.duration,
           ),
           const SizedBox(height: 8),
           Wrap(
@@ -122,12 +99,16 @@ class PlaybackControls extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 spacing: 4,
                 children: [
-                  DeckIconButton(
-                    muted || player.state.volume == 0 ? 'muted' : 'volume',
-                    tooltip: '음소거',
-                    onPressed: () => command('mute'),
-                    extent: 40,
-                    outlined: false,
+                  StreamBuilder<double>(
+                    stream: player.stream.volume,
+                    initialData: player.state.volume,
+                    builder: (_, level) => DeckIconButton(
+                      muted || level.data == 0 ? 'muted' : 'volume',
+                      tooltip: '음소거',
+                      onPressed: () => command('mute'),
+                      extent: 40,
+                      outlined: false,
+                    ),
                   ),
                   SizedBox(
                     width: bounds.maxWidth < 600 ? 64 : 88,
@@ -193,11 +174,15 @@ class PlaybackControls extends StatelessWidget {
                       ),
                       width: 60,
                       alignment: Alignment.center,
-                      child: Text(
-                        '${player.state.rate.toStringAsFixed(1)}×',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xff95b6cf),
+                      child: StreamBuilder<double>(
+                        stream: player.stream.rate,
+                        initialData: player.state.rate,
+                        builder: (_, rate) => Text(
+                          '${rate.data!.toStringAsFixed(1)}×',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xff95b6cf),
+                          ),
                         ),
                       ),
                     ),
@@ -221,6 +206,67 @@ class PlaybackControls extends StatelessWidget {
             ],
           ),
         ],
+      ),
+    ),
+  );
+}
+
+/// Only the timeline rebuilds for position events; the decoder never owns the
+/// thumb during a drag or while the requested final frame is still pending.
+class PlaybackSeekBar extends StatelessWidget {
+  final SeekController seeks;
+  final Stream<Duration> positions, durations;
+  const PlaybackSeekBar({
+    super.key,
+    required this.seeks,
+    required this.positions,
+    required this.durations,
+  });
+
+  @override
+  Widget build(BuildContext context) => StreamBuilder<Duration>(
+    stream: durations,
+    initialData: seeks.port.duration,
+    builder: (_, duration) => StreamBuilder<Duration>(
+      stream: positions,
+      initialData: seeks.port.position,
+      builder: (_, position) => ListenableBuilder(
+        listenable: seeks,
+        builder: (_, _) {
+          final total = duration.data ?? Duration.zero;
+          final shown = seeks.busy ? seeks.displayPosition : position.data!;
+          final max = total.inMilliseconds
+              .toDouble()
+              .clamp(1, double.infinity)
+              .toDouble();
+          const style = TextStyle(fontSize: 14, color: Color(0xffa0b59e));
+          final enabled = total > Duration.zero && seeks.enabled;
+          return Row(
+            children: [
+              Text(
+                clockText(shown),
+                key: const ValueKey('seek-position'),
+                style: style,
+              ),
+              const SizedBox(width: 15),
+              Expanded(
+                child: Slider(
+                  key: const ValueKey('playback-seek-slider'),
+                  value: shown.inMilliseconds.toDouble().clamp(0, max),
+                  max: max,
+                  onChangeStart: enabled ? (_) => seeks.beginDrag() : null,
+                  onChanged: enabled
+                      ? (value) =>
+                            seeks.preview(Duration(milliseconds: value.round()))
+                      : null,
+                  onChangeEnd: enabled ? (_) => seeks.finish() : null,
+                ),
+              ),
+              const SizedBox(width: 15),
+              Text(clockText(total), style: style),
+            ],
+          );
+        },
       ),
     ),
   );

@@ -16,6 +16,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'library.dart';
 import 'playback.dart';
+import 'seek_controller.dart';
 import 'deck.dart';
 import 'catalog_panels.dart';
 import 'settings_panel.dart';
@@ -275,7 +276,12 @@ class VaultHome extends StatefulWidget {
 class _VaultHomeState extends State<VaultHome> with WindowListener {
   final player = Player();
   late final VideoController video;
-  late final playback = Playback(NativePlayback(player));
+  late final nativePlayback = NativePlayback(player);
+  late final playback = Playback(nativePlayback);
+  late final seeks = SeekController(
+    nativePlayback,
+    onError: (failure) => update(() => error = failure.toString()),
+  );
   late final keys = KeyBindings(widget.library);
   late final jobs = FileJobs(widget.library);
   late final rules = RuleRunner(widget.library, jobs);
@@ -283,11 +289,14 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     widget.library,
     Directory(p.join(p.dirname(widget.library.db.path), 'thumbnails')),
     MediaTools.bundledBin(),
+    backgroundAllowed: () => !playbackBusy && !closing,
   );
   final watchers = <StreamSubscription<FileSystemEvent>>[];
   final playerEvents = <StreamSubscription<dynamic>>[];
   Timer? poll, debounce;
-  Timer? progressTimer;
+  Timer? progressTimer, backgroundResume;
+  bool openingMedia = false, backgroundScanPending = false;
+  final seekKeys = <LogicalKeyboardKey>{};
   int? playbackMediaId, activeCollectionId;
   int? playbackRating;
   PlaybackSession? playbackSession;
@@ -311,7 +320,6 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
       muted = false,
       playingView = false,
       capturing = false;
-  Duration previousSeek = Duration.zero;
   bool softwareDecoding = false;
   double subtitleDelay = 0, audioDelay = 0;
   List<Map<String, Object?>> items = [];
@@ -432,12 +440,16 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
     }
   }
 
-  Future<void> disposePlayer() => playerDisposal ??= player.dispose();
+  Future<void> disposePlayer() => playerDisposal ??= (() async {
+    await seeks.cancel();
+    await player.dispose();
+  })();
 
   @override
   void initState() {
     super.initState();
     video = VideoController(player);
+    seeks.addListener(seekActivityChanged);
     windowManager.addListener(this);
     nativeFullscreen.addListener(fullscreenChanged);
     syncNativeFullscreen();
@@ -448,6 +460,9 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   @override
   void dispose() {
     enrichmentCancelled = true;
+    backgroundResume?.cancel();
+    seeks.removeListener(seekActivityChanged);
+    seeks.dispose();
     windowManager.removeListener(this);
     nativeFullscreen.removeListener(fullscreenChanged);
     progressTimer?.cancel();
@@ -527,6 +542,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
           playbackMediaId != null &&
           (await widget.library.mediaById(playbackMediaId!))['online'] == 0) {
         await persistProgress();
+        await seeks.cancel();
         playbackMediaId = null;
         await playback.silence();
         await player.stop();
@@ -909,6 +925,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
                           ? null
                           : PlaybackControls(
                               player: player,
+                              seeks: seeks,
                               muted: muted,
                               command: command,
                               volume: (value) =>

@@ -8,8 +8,12 @@ import 'package:soft_vault/media_tools.dart';
 
 class ControlledTools extends MediaTools {
   final Future<void> Function() beforeExtract;
-  ControlledTools(Library library, Directory cache, this.beforeExtract)
-    : super(library, cache, 'unused');
+  ControlledTools(
+    Library library,
+    Directory cache,
+    this.beforeExtract, {
+    bool Function()? backgroundAllowed,
+  }) : super(library, cache, 'unused', backgroundAllowed: backgroundAllowed);
 
   @override
   Future<ProcessResult> run(
@@ -42,6 +46,51 @@ void main() {
   tearDown(() async {
     await library.close();
     await root.delete(recursive: true);
+  });
+
+  test(
+    'playback defers new hover previews while keeping cached ones usable',
+    () async {
+      await File(p.join(source.path, 'a.mp4')).writeAsBytes([1]);
+      await library.connect(source.path, verifyContents: false);
+      final item = (await library.items()).single;
+      var allowed = false, extractions = 0;
+      final tools = ControlledTools(
+        library,
+        Directory(p.join(root.path, 'cache')),
+        () async {
+          extractions++;
+        },
+        backgroundAllowed: () => allowed,
+      );
+      await expectLater(tools.preview(item), throwsStateError);
+      expect(extractions, 0);
+      allowed = true;
+      final cached = await tools.preview(item);
+      expect(extractions, 1);
+      allowed = false;
+      expect(await tools.preview(item), cached);
+      expect(extractions, 1);
+    },
+  );
+
+  test('interrupted scan never marks unvisited videos offline', () async {
+    for (var i = 0; i < 20; i++) {
+      await File(p.join(source.path, '$i.mp4')).writeAsBytes([i]);
+    }
+    await library.connect(source.path, verifyContents: false);
+    await File(p.join(source.path, '0.mp4')).delete();
+    var checks = 0;
+    await library.scan(
+      source.path,
+      verifyContents: false,
+      cancelled: () => ++checks >= 4,
+    );
+    expect((await library.items()).every((row) => row['online'] == 1), isTrue);
+    await library.scan(source.path, verifyContents: false);
+    final rows = await library.items();
+    expect(rows.where((row) => row['online'] == 0).length, 1);
+    expect(rows.where((row) => row['online'] == 1).length, 19);
   });
 
   test(

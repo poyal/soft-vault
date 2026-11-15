@@ -1,7 +1,12 @@
 part of 'library.dart';
 
 extension _CatalogScan on Library {
-  Future<void> _scan(String root, {required bool verifyContents}) async {
+  Future<void> _scan(
+    String root, {
+    required bool verifyContents,
+    bool Function()? cancelled,
+  }) async {
+    if (cancelled?.call() == true) return;
     if (!await Directory(root).exists()) {
       await db.update(
         'media',
@@ -41,6 +46,10 @@ extension _CatalogScan on Library {
     await for (final entity in Directory(
       root,
     ).list(recursive: true, followLinks: false)) {
+      if (cancelled?.call() == true) {
+        await flush();
+        return;
+      }
       if (entity is! File) continue;
       final extension = p.extension(entity.path).toLowerCase();
       const videos = {'.mp4', '.mkv', '.avi', '.mov', '.webm', '.wmv', '.ts'};
@@ -161,6 +170,11 @@ extension _CatalogScan on Library {
         seen.remove(pathKey);
       }
       if (writes.length >= 200) await flush();
+    }
+    // Partial enumeration cannot establish which files are missing.
+    if (cancelled?.call() == true) {
+      await flush();
+      return;
     }
     for (final row in rows) {
       if (row['folder'] == root &&

@@ -8,7 +8,8 @@ class MediaTools {
   final Library library;
   final Directory cache;
   final String bin;
-  MediaTools(this.library, this.cache, this.bin);
+  final bool Function()? backgroundAllowed;
+  MediaTools(this.library, this.cache, this.bin, {this.backgroundAllowed});
   Future<void> _previewQueue = Future.value();
   final _failedEnrichment = <String>{};
   Future<String> frame(Map<String, Object?> item, double seconds) async {
@@ -84,6 +85,9 @@ class MediaTools {
         'preview-${item['id']}-${item['modified']}.webp',
       );
       if (await File(target).exists()) return target;
+      if (backgroundAllowed?.call() == false) {
+        throw StateError('재생 중에는 새 미리보기 생성을 보류합니다.');
+      }
       final result = await run('ffmpeg', [
         '-nostdin',
         '-v',
@@ -104,7 +108,7 @@ class MediaTools {
         '-quality',
         '55',
         target,
-      ]);
+      ], cancelled: () => backgroundAllowed?.call() == false);
       if (result.exitCode != 0) {
         if (await File(target).exists()) await File(target).delete();
         throw StateError('영상 미리보기를 만들 수 없습니다.');

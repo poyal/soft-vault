@@ -13,6 +13,8 @@ import 'package:soft_vault/criteria_dialog.dart';
 import 'package:soft_vault/library_filter.dart';
 import 'package:soft_vault/library_filter_dialog.dart';
 import 'package:soft_vault/player_controls.dart';
+import 'package:soft_vault/seek_controller.dart';
+import 'support/seek_port.dart';
 
 class _PreviewPlayer extends Fake implements Player {
   @override
@@ -26,6 +28,12 @@ class _PreviewPlayer extends Fake implements Player {
 }
 
 class _PreviewStream extends Fake implements PlayerStream {
+  @override
+  Stream<Duration> get duration => const Stream.empty();
+  @override
+  Stream<bool> get playing => const Stream.empty();
+  @override
+  Stream<double> get rate => const Stream.empty();
   @override
   Stream<Duration> get position => const Stream.empty();
   @override
@@ -43,6 +51,7 @@ void main() {
           body: StatefulBuilder(
             builder: (context, setState) => PlaybackControls(
               player: _PreviewPlayer(),
+              seeks: SeekController(TestSeekPort(), onError: (_) {}),
               muted: true,
               command: (_) {},
               volume: (_) {},
@@ -128,6 +137,7 @@ void main() {
             width: width,
             child: PlaybackControls(
               player: _PreviewPlayer(),
+              seeks: SeekController(TestSeekPort(), onError: (_) {}),
               muted: true,
               command: (_) {},
               volume: (_) {},

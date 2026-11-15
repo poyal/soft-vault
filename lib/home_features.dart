@@ -200,7 +200,16 @@ extension _HomeFeatures on _VaultHomeState {
     await refresh();
     await watchFolders();
     if (closing || !mounted) return;
-    playerEvents.add(player.stream.playing.listen((_) => update(() {})));
+    playerEvents.add(
+      player.stream.playing.listen((playing) {
+        if (playing) {
+          enrichmentCancelled = true;
+        } else {
+          resumeBackgroundWork();
+        }
+        update(() {});
+      }),
+    );
     playerEvents.add(player.stream.tracks.listen((_) => update(() {})));
     playerEvents.add(
       player.stream.position.listen((position) {
@@ -278,14 +287,37 @@ extension _HomeFeatures on _VaultHomeState {
 
   Future<void> rescanLibrary({bool notify = false}) async {
     if (closing || scanFuture != null || jobs.running || !mounted) return;
+    if (!notify && playbackBusy) {
+      backgroundScanPending = true;
+      return;
+    }
+    backgroundScanPending = false;
     final work = guard(() async {
       for (final root in await widget.library.folders()) {
-        await widget.library.scan(root, verifyContents: false);
+        if (!notify && playbackBusy) {
+          backgroundScanPending = true;
+          break;
+        }
+        var interrupted = false;
+        await widget.library.scan(
+          root,
+          verifyContents: false,
+          cancelled: () {
+            if (closing || (!notify && playbackBusy)) interrupted = true;
+            return interrupted;
+          },
+        );
+        if (interrupted) {
+          backgroundScanPending = true;
+          break;
+        }
       }
       await refresh();
-      await rules.runAutomatic(
-        skipIds: {if (playbackMediaId != null) playbackMediaId!},
-      );
+      if (!playbackBusy) {
+        await rules.runAutomatic(
+          skipIds: {if (playbackMediaId != null) playbackMediaId!},
+        );
+      }
       await refresh();
       if (notify && mounted)
         ScaffoldMessenger.of(
@@ -304,12 +336,17 @@ extension _HomeFeatures on _VaultHomeState {
   }
 
   Future<void> enrichLibrary() async {
-    if (closing || !mounted || enrichmentPaused || enrichmentFuture != null)
+    if (closing ||
+        !mounted ||
+        playbackBusy ||
+        enrichmentPaused ||
+        enrichmentFuture != null)
       return;
     enrichmentCancelled = false;
     final work = guard(() async {
       await mediaTools.enrich(
-        cancelled: () => enrichmentCancelled || closing || !mounted,
+        cancelled: () =>
+            enrichmentCancelled || playbackBusy || closing || !mounted,
         progress: (done, total) => update(() {
           enrichmentDone = done;
           enrichmentTotal = total;
@@ -332,6 +369,29 @@ extension _HomeFeatures on _VaultHomeState {
     await enrichmentFuture;
   }
 
+  bool get playbackBusy =>
+      openingMedia ||
+      seeks.busy ||
+      (player.state.playing && !player.state.completed);
+
+  void seekActivityChanged() {
+    if (seeks.busy) {
+      enrichmentCancelled = true;
+    } else {
+      resumeBackgroundWork();
+    }
+  }
+
+  void resumeBackgroundWork() {
+    backgroundResume?.cancel();
+    if (closing || !mounted) return;
+    backgroundResume = Timer(const Duration(milliseconds: 300), () async {
+      if (closing || !mounted || playbackBusy) return;
+      if (backgroundScanPending) await rescanLibrary();
+      await enrichLibrary();
+    });
+  }
+
   Future<void> openMedia(
     Map<String, Object?> item, {
     bool fromStart = false,
@@ -342,29 +402,40 @@ extension _HomeFeatures on _VaultHomeState {
     final next = mediaOpenTail.then(
       (_) => guard(() async {
         await persistProgress();
-        item = await widget.library.mediaById(item['id'] as int);
-        if (item['online'] == 0 || !await File(item['path'] as String).exists())
-          throw FileSystemException('오프라인 파일입니다.', item['path'] as String);
-        if (item['type'] != 'video') throw StateError('영상 파일만 재생할 수 있습니다.');
-        playbackMediaId = null;
-        playbackSession = null;
-        playbackCompleted = false;
-        final resume =
-            position ??
-            (fromStart
-                ? Duration.zero
-                : Duration(milliseconds: item['resume_ms'] as int));
-        await playback.open(item['path'] as String, start: resume);
-        playbackMediaId = item['id'] as int;
-        playbackRating = item['rating'] as int?;
-        playbackSession = newPlaybackSession(playbackMediaId!, resume);
-        await (player.platform as NativePlayer).setProperty('mute', 'no');
-        update(() {
-          current = item;
-          playingView = true;
-          view = 'files';
-          muted = false;
-        });
+        await seeks.suspend();
+        seekKeys.clear();
+        openingMedia = true;
+        try {
+          await stopEnrichment();
+          item = await widget.library.mediaById(item['id'] as int);
+          if (item['online'] == 0 ||
+              !await File(item['path'] as String).exists())
+            throw FileSystemException('오프라인 파일입니다.', item['path'] as String);
+          if (item['type'] != 'video') throw StateError('영상 파일만 재생할 수 있습니다.');
+          playbackMediaId = null;
+          playbackSession = null;
+          playbackCompleted = false;
+          final resume =
+              position ??
+              (fromStart
+                  ? Duration.zero
+                  : Duration(milliseconds: item['resume_ms'] as int));
+          await playback.open(item['path'] as String, start: resume);
+          playbackMediaId = item['id'] as int;
+          playbackRating = item['rating'] as int?;
+          playbackSession = newPlaybackSession(playbackMediaId!, resume);
+          await (player.platform as NativePlayer).setProperty('mute', 'no');
+          update(() {
+            current = item;
+            playingView = true;
+            view = 'files';
+            muted = false;
+          });
+        } finally {
+          openingMedia = false;
+          seeks.resume();
+          resumeBackgroundWork();
+        }
       }),
     );
     mediaOpenTail = next;
@@ -398,12 +469,8 @@ extension _HomeFeatures on _VaultHomeState {
     await refresh();
   });
   Future<void> seekBy(int seconds) async {
-    previousSeek = player.state.position;
-    final ms = (previousSeek.inMilliseconds + seconds * 1000).clamp(
-      0,
-      player.state.duration.inMilliseconds,
-    );
-    await player.seek(Duration(milliseconds: ms));
+    seeks.relative(Duration(seconds: seconds), precise: seconds.abs() == 1);
+    await seeks.finish();
   }
 
   Future<void> changeVolume(double value) async {
@@ -498,16 +565,22 @@ extension _HomeFeatures on _VaultHomeState {
       case 'normalSpeed':
         await player.setRate(1);
       case 'undoSeek':
-        final position = previousSeek;
-        previousSeek = player.state.position;
-        await player.seek(position);
+        await seeks.undo();
     }
   });
   bool handleKey(KeyEvent event) {
     if (closing) return false;
+    if (event is KeyUpEvent && seekKeys.remove(event.logicalKey)) {
+      if (seekKeys.isEmpty) unawaited(seeks.finish());
+      return true;
+    }
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) return false;
     if (event.logicalKey == LogicalKeyboardKey.escape) {
-      if (event is KeyDownEvent) guard(playback.panic);
+      if (event is KeyDownEvent) {
+        unawaited(seeks.cancel());
+        seekKeys.clear();
+        guard(playback.panic);
+      }
       return true;
     }
     if (capturing || ModalRoute.of(context)?.isCurrent == false) return false;
@@ -528,6 +601,21 @@ extension _HomeFeatures on _VaultHomeState {
     if (view == 'settings' && action != 'search' && action != 'help')
       return false;
     if (action == null) return false;
+    const seekSteps = {
+      'back': -5,
+      'forward': 5,
+      'preciseBack': -1,
+      'preciseForward': 1,
+    };
+    if (playingView && view == 'files' && seekSteps.containsKey(action)) {
+      seekKeys.add(event.logicalKey);
+      seeks.relative(
+        Duration(seconds: seekSteps[action]!),
+        repeat: event is KeyRepeatEvent,
+        precise: action.startsWith('precise'),
+      );
+      return true;
+    }
     if (event is KeyRepeatEvent &&
         ![
           'back',
@@ -558,6 +646,7 @@ extension _HomeFeatures on _VaultHomeState {
         await scanFuture;
         await stopEnrichment();
         await persistProgress();
+        await seeks.cancel();
         playbackMediaId = null;
         await playback.silence();
         await player.stop();

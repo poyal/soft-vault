@@ -108,9 +108,16 @@ class Library {
     }
   }
 
-  Future<void> scan(String root, {bool verifyContents = true}) => fileOperation(
-    () async =>
-        _scan(await canonicalPath(root), verifyContents: verifyContents),
+  Future<void> scan(
+    String root, {
+    bool verifyContents = true,
+    bool Function()? cancelled,
+  }) => fileOperation(
+    () async => _scan(
+      await canonicalPath(root),
+      verifyContents: verifyContents,
+      cancelled: cancelled,
+    ),
   );
 
   static Future<String> fingerprint(File file) async =>

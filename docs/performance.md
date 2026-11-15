@@ -12,6 +12,28 @@
 
 ## 현재 실행 가능한 검사
 
+영상 탐색·디코딩 검사는 실제 데스크톱 앱을 profile로 실행한다. 합성 자료는 사용자의 라이브러리와 분리하며 생성 시 FFmpeg/ffprobe 정보와 SHA-256을 기록한다.
+
+자료 생성기는 Windows의 `.tools/ffmpeg/extracted/ffmpeg-9.0.2-essentials_build/bin`과 NVIDIA NVENC를 사용한다. 생성한 동일 파일을 다른 장비로 복사하고 해시를 비교한다. 다른 인코더로 다시 만든 파일은 별도 자료 집합으로 취급한다.
+
+```powershell
+& .\scripts\create-playback-fixtures.ps1
+& .\scripts\verify-playback-quality-windows.ps1 -FixtureDirectory .tools/playback-fixtures -Label windows-candidate
+# 같은 자료에서 128/64 MiB 캐시 비교. 기본값은 64/32 MiB.
+& .\scripts\verify-playback-quality-windows.ps1 -FixtureDirectory .tools/playback-fixtures -Label windows-cache128 -CacheMiB 128 -Seconds 10
+# 310초 자료를 실제로 반복하여 30분 재생. EOF에서 멈춘 상태를 soak로 세지 않는다.
+& .\scripts\verify-playback-quality-windows.ps1 -FixtureDirectory .tools/playback-fixtures -Label windows-soak -Filter hevc-4k60 -Seconds 1800 -Loop
+node tool/summarize-playback.cjs build/playback-quality/windows-candidate.json
+```
+
+Mac에서는 `bash scripts/verify-playback-quality-macos.sh playback-fixtures macos-candidate`를 사용한다. 뒤의 선택 인자는 초, 파일명 필터, 전방 캐시 MiB, 반복 여부 순서다. 기준 소스에서는 `PLAYBACK_CANDIDATE=false`를 지정한다. 같은 컴퓨터에서 다른 영상 벤치마크·빌드를 동시에 실행하지 않는다.
+
+`integration_test/playback_quality_test.dart`는 파일마다 분산된 위치 30회, 드래그 120입력, +5초 반복 입력 10회, 지속 재생을 검사한다. UI의 목표 위치 표시 시간, 네이티브 디코더 완료 시간, 실제 재생 드롭 카운터, A/V clock 차이, 캐시 고갈, RSS를 따로 저장한다. 번들 mpv 0.36에서 `video-pts`는 없으므로 `seeking=no`의 decoder restart 완료와 `playback-time`을 함께 확인한다. 이것은 물리 화면에 해당 프레임이 표시된 순간을 측정한 값이 아니다. 제공되지 않는 카운터는 0이 아닌 null로 남긴다. 반복 재생에서 초기화된 드롭 카운터는 경계를 건너 빼지 않는다.
+
+`integration_test/seek_flow_test.dart`는 실제 키·마우스 입력, 일시정지 탐색, 되돌리기, 파일 교체, 끝 지점, 배속, 자동 재검색 연기를 검사한다. 일반 재생에서는 측정용 폴링을 실행하지 않는다. 상세 비교와 기준의 적용 범위는 [영상 재생 품질 검증](verification/2026-11-15-playback-quality.md)을 참조한다.
+
+참조 플레이어는 `tool/benchmark-mpv-windows.ps1`, `tool/benchmark-vlc.py`, `tool/benchmark-iina.sh`에 플레이어와 자료 경로를 명시해 실행한다. `tool/playback-reference.lua`는 mpv/IINA 내부의 디코더 완료를 측정한다. GUI 앱을 시작한 셸 명령이 반환됐다고 다음 벤치마크를 시작하지 않는다. 래퍼는 자신이 시작한 프로세스의 실제 종료/측정 완료를 기다린다. VLC의 탐색 수락 시간은 첫 프레임 지연으로 사용하지 않는다.
+
 ```powershell
 $fixture = (Resolve-Path -LiteralPath '.tools/fixtures/trailer.mp4').Path
 & .\scripts\verify-stress-windows.ps1 -VideoFixture $fixture -FileCount 10000
