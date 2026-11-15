@@ -17,6 +17,7 @@ import 'privacy_lock.dart';
 import 'playback_history.dart';
 import 'library_filter.dart';
 import 'metadata_exchange.dart';
+import 'install_soak.dart';
 
 /// Installer verification uses temporary data and never opens the user's catalog.
 Future<void> verifyInstalledApp(
@@ -201,6 +202,12 @@ Future<void> verifyInstalledApp(
       throw StateError('Installed resume failed');
     if (player.state.volume != 0 || player.state.position <= Duration.zero)
       throw StateError('Native playback did not start silently');
+    if (Platform.environment.containsKey('SOFT_VAULT_INSTALL_SOAK_SECONDS')) {
+      report['playbackSoak'] = await verifyInstalledPlaybackSoak(
+        player,
+        reportPath,
+      );
+    }
     await playback.panic();
     await Future<void>.delayed(const Duration(milliseconds: 200));
     if (!await windowManager.isMinimized())
