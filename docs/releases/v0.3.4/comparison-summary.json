@@ -1,0 +1,82 @@
+﻿{
+    "baselineSourceCommit":  "7108c288c744163c706931c87871dd94fab12723",
+    "candidateSourceCommit":  "cf271e6089d7088c07d4b4e630d8bdc2adc7e39f",
+    "baselineDiagnosticFiles":  [
+                                    "lib/install_check.dart",
+                                    "lib/install_soak.dart",
+                                    "lib/playback_diagnostics.dart"
+                                ],
+    "baselineDiagnosticNote":  "Same optional install diagnostic; final seek uses the old Player API after the timed playback window",
+    "baselineSoakCodeSHA256":  "4a1798d9b01e672af82bd2ca64c662e8b8c3ac49db1813ddcfa8588b773acf0d",
+    "candidateSoakCodeSHA256":  "3c61344497cae649f9b33883711d426c3dac0c88a226f5fa0a9659df213048e7",
+    "conditions":  "One sequential 60-second run per version and platform, same HEVC 4K60 10bit fixture. Mac diagnostic app activated; Windows launched with same hidden-window process option. This is not the full library UI or physical display certification.",
+    "finding":  "Substantial renderer drops reproduced in both old and new installed diagnostic surfaces. No claim of smooth 60 fps or statistically proven performance equivalence.",
+    "results":  [
+                    {
+                        "platform":  "windows",
+                        "measurements":  [
+                                             {
+                                                 "label":  "baseline",
+                                                 "passed":  true,
+                                                 "elapsedSeconds":  62.12,
+                                                 "sampleCount":  6,
+                                                 "firstPositionMs":  6649,
+                                                 "lastPositionMs":  49666,
+                                                 "firstRenderDrops":  323,
+                                                 "lastRenderDrops":  2419,
+                                                 "decoderDrops":  0,
+                                                 "startRssBytes":  1010958336,
+                                                 "endRssBytes":  1017794560,
+                                                 "reportSHA256":  "e3b8bef1d3e576cab488db2a83a6df1b6741b1745bd1b2578104d58ab4056a4c"
+                                             },
+                                             {
+                                                 "label":  "candidate",
+                                                 "passed":  true,
+                                                 "elapsedSeconds":  62.281,
+                                                 "sampleCount":  6,
+                                                 "firstPositionMs":  7266,
+                                                 "lastPositionMs":  47483,
+                                                 "firstRenderDrops":  358,
+                                                 "lastRenderDrops":  2294,
+                                                 "decoderDrops":  0,
+                                                 "startRssBytes":  1047728128,
+                                                 "endRssBytes":  1050415104,
+                                                 "reportSHA256":  "78be44e0628118ae0ce488e63298bcff4a1aafca002b1ead905efe6d7e90d66a"
+                                             }
+                                         ]
+                    },
+                    {
+                        "platform":  "macos",
+                        "measurements":  [
+                                             {
+                                                 "label":  "baseline",
+                                                 "passed":  true,
+                                                 "elapsedSeconds":  60.066,
+                                                 "sampleCount":  6,
+                                                 "firstPositionMs":  9867,
+                                                 "lastPositionMs":  59916,
+                                                 "firstRenderDrops":  286,
+                                                 "lastRenderDrops":  1679,
+                                                 "decoderDrops":  0,
+                                                 "startRssBytes":  286932992,
+                                                 "endRssBytes":  297435136,
+                                                 "reportSHA256":  "3192bf6ed704e92665125dae6fccd51b8b6edd037510974f9215a7c247b6044e"
+                                             },
+                                             {
+                                                 "label":  "candidate",
+                                                 "passed":  true,
+                                                 "elapsedSeconds":  60.085,
+                                                 "sampleCount":  6,
+                                                 "firstPositionMs":  9817,
+                                                 "lastPositionMs":  59849,
+                                                 "firstRenderDrops":  251,
+                                                 "lastRenderDrops":  1678,
+                                                 "decoderDrops":  0,
+                                                 "startRssBytes":  329859072,
+                                                 "endRssBytes":  374358016,
+                                                 "reportSHA256":  "950ac4534a2f4749b4422b48b0dd6f0fe0c4a9e4ae4cbfe35cb641daa5cd97e5"
+                                             }
+                                         ]
+                    }
+                ]
+}

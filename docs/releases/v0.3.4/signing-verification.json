@@ -1,0 +1,49 @@
+{
+  "verifiedAtUTC": "2026-11-16T00:21:16.460963Z",
+  "version": "0.3.4",
+  "publicKeyUnchanged": true,
+  "signature": "Ed25519 verified using application verification code",
+  "bothPayloadsMatchInstalledZIPs": true,
+  "assets": [
+    {
+      "name": "SoftVault-0.3.4-Windows-x64-Setup.exe",
+      "size": 89115578,
+      "sha256": "70cce97660f94b9500314aebfe1bbb7e05ec7bd407c954b3319cb3ef33002dce"
+    },
+    {
+      "name": "SoftVault-0.3.4-Windows-x64-Setup.exe.sha256",
+      "size": 105,
+      "sha256": "9246946a251ea7e4c0a0ed835b2d8b6a51a6df59f98585659ab5df6a58a9a5b0"
+    },
+    {
+      "name": "SoftVault-0.3.4-macOS-arm64.dmg",
+      "size": 95000424,
+      "sha256": "2d36c61cc65d18b5e1aee0f1d5b2041e91cfa04c05774676953c257e9d1a0400"
+    },
+    {
+      "name": "SoftVault-0.3.4-macOS-arm64.dmg.sha256",
+      "size": 98,
+      "sha256": "9b52e09794165a525a62a770d9c62476c29ddfa46dc2c4a36dfa6b860ddd2ecd"
+    },
+    {
+      "name": "SoftVault-Windows.svupdate",
+      "size": 117189529,
+      "sha256": "c3c1277b006b999819c4439d896fb0e545dc52f09fa5912b21b00b0e5bc91f3d"
+    },
+    {
+      "name": "SoftVault-macOS-arm64.svupdate",
+      "size": 86719733,
+      "sha256": "a711985c0f1d9cc24f8addfba86e2c27385590a7938f8ece5c663a421723b7b9"
+    },
+    {
+      "name": "update.json",
+      "size": 446,
+      "sha256": "197ae5bee2703db8200178f18d05f48b23ca653f64a8cd29235e3316d35868f0"
+    },
+    {
+      "name": "update.json.sig",
+      "size": 88,
+      "sha256": "5797893564114964f4669ff2c70f6cb223152b46b409235dcfdfaba1630343c2"
+    }
+  ]
+}

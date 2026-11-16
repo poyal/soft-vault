@@ -1,0 +1,177 @@
+{
+  "status": "PASS_WITH_DOCUMENTED_LIMITS",
+  "platform": "macos",
+  "version": "0.3.4",
+  "sourceCommit": "cf271e6089d7088c07d4b4e630d8bdc2adc7e39f",
+  "sourceSHA256": "78fdd5ce37816e86d8f710667c4dcd3526bf587880a3ea4daf1c03fc132cbae8",
+  "macFunctionalChecksBeforeDiagnosticAddition": true,
+  "functionalSourceSHA256": "8082b9bed881dda4e9cb2711901219a64d002dfbba37c897e40a3c9733d175f9",
+  "diagnosticOnlyDifferences": [
+    "lib/install_check.dart",
+    "lib/install_soak.dart"
+  ],
+  "verifiedAtUTC": "2026-11-16T00:15:25.637820Z",
+  "pubspecLockSHA256": "db8d9a4c009d183fe1b82606a93cd13baa74500ba02ae6ded35c5a00e7b04a92",
+  "fixtureSHA256": "b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254",
+  "soakFixtureSHA256": "e8d766afcc4994dab001553dba8045bdb74f07f1f75e0606bf8f3160226fef25",
+  "analyze": "PASS",
+  "suites": [
+    {
+      "suite": "final-unit",
+      "passed": 119,
+      "skipped": 2,
+      "logSHA256": "3b6d96ad783fa5cc7bb67eff7b0d7bcbef05d4997afaa2c88aa9684c80ec44d5"
+    },
+    {
+      "suite": "library-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "f8bc552593d3e1bcd034a8c68865a13491a7f276d4ebe6977c0e672223f37b94"
+    },
+    {
+      "suite": "catalog-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "a4fc35b0484669baa4132a36264b67e9d1d6f7125ae66caf301ea0f8d424a5cf"
+    },
+    {
+      "suite": "playback-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "4b20b604c3aaac597258b289a9d60ca286188d3ee9884772b6eeffcda3f8040d"
+    },
+    {
+      "suite": "app-playback-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "ad85a6db1b205fcfa575bd3f73021a403e697aaaa780b29a95e66cf5806a1246"
+    },
+    {
+      "suite": "extended-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "3d19b8800f9dffb868064616aac009b5e50696e1337c682379f541468f0043ad"
+    },
+    {
+      "suite": "design-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "6667fe4c0765adb6bba771208abce8966d63b28d207f009562db79d17edaa90f"
+    },
+    {
+      "suite": "codec-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "43b9bc5fe1d7f7ab54c7c742236001f36d3d1a713dd7ce65c62bd53185e7f4c0"
+    },
+    {
+      "suite": "privacy-e2e",
+      "passed": 3,
+      "skipped": 0,
+      "logSHA256": "5557dfc618bd68f4348e86242c090f421af87c75ba91a7484cf4719f741116cd"
+    },
+    {
+      "suite": "stress",
+      "passed": 9,
+      "skipped": 0,
+      "logSHA256": "9809a9ff8a5ebe6783ce143ba430b5bcc56511eb776f85040f4d17f5dd96f6a8"
+    },
+    {
+      "suite": "performance",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "797e33b3ae457f41e11c4fd0584fbc76b6b69a29277e95c69e985cdc75cd114c"
+    },
+    {
+      "suite": "seek-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "cb05925f07382e98e14836f56c804c69b76abc42ea5abbde0058f4567732a3c4"
+    },
+    {
+      "suite": "https-images-final",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "698441a9646e4a2afa89dd097671f1809e2d0bd7ed8dcff4f1546b9cae0e1c43"
+    },
+    {
+      "suite": "ui-scenarios-e2e",
+      "passed": 19,
+      "skipped": 0,
+      "logSHA256": "f6677a68a908e274f7c9f22d422f38eb5d72e4f1ae197b40b3c3e2f5a24a97b5"
+    },
+    {
+      "suite": "native-stress-e2e",
+      "passed": 3,
+      "skipped": 0,
+      "logSHA256": "8c40833bd1dc1d784d2b721d7ca44cc24fd03718019b2d1317c7c671a64efc76"
+    },
+    {
+      "suite": "stress_flow-profile",
+      "passed": 4,
+      "skipped": 0,
+      "logSHA256": "f04b7607133524264e74e50bd1183f23f104a6ae698c036ee77e213cd6d3ad52"
+    },
+    {
+      "suite": "ui_latency-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "d2f6e4dfd1f82936b4c12405686eb42e337c556633f81c6d58c06b77888ba3f8"
+    },
+    {
+      "suite": "library_filter_flow-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "25a0ed0680c4b496bf040c596dda3498422f8403898cf3eefa59ce8201d3e115"
+    },
+    {
+      "suite": "playback_history_flow-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "0bcedb21baec257c3f54db28e2c96f1de9e2b02ef218ba6a117276a0968670ed"
+    },
+    {
+      "suite": "settings_native_review-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "c3d583eb6b7ee1353c82126498700263b71ca0798f073de3809f01c2c9f23f69"
+    },
+    {
+      "suite": "resize_profile-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "42e6d0dfe38a05a19b862d98c9163020ba9cbf838a682b8de66cf1879dfa4df9"
+    },
+    {
+      "suite": "metadata_exchange_flow-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "d0b2607f80610de391d5e7c225dc79bceb0f6fbf8f04606aea549ebfe23451a5"
+    }
+  ],
+  "shutdownChecks": 18,
+  "updaterHelperChecks": 5,
+  "isolatedPackageDiagnostics": "PASS",
+  "installerDiagnostics": "PASS",
+  "internalZipSHA256": "a711985c0f1d9cc24f8addfba86e2c27385590a7938f8ece5c663a421723b7b9",
+  "installedSoak": {
+    "passed": true,
+    "seconds": 1802.325,
+    "loops": 5,
+    "samples": 180,
+    "startRssBytes": 328548352,
+    "endRssBytes": 368377856,
+    "peakRssBytes": 378159104,
+    "rssAt15Minutes": 370884608,
+    "rssAt25Minutes": 368246784,
+    "finalExactSeekPassed": true,
+    "reportSHA256": "d9a03b819b64c1b51dd1af6dc1507cfdb1d56d688d21847d46e8e6d26cb1bff1",
+    "qualityScope": "Progress, EOF looping, memory and final seek; renderer drops are reported separately and are not certified as zero"
+  },
+  "asset": {
+    "name": "SoftVault-0.3.4-macOS-arm64.dmg",
+    "size": 95000424,
+    "sha256": "2d36c61cc65d18b5e1aee0f1d5b2041e91cfa04c05774676953c257e9d1a0400"
+  },
+  "automaticUpdatePublication": "Pending central signing and public download verification"
+}

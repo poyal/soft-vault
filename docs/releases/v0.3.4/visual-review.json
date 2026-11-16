@@ -1,0 +1,23 @@
+﻿[
+    {
+        "name":  "02-player-1280.png",
+        "size":  201649,
+        "sha256":  "06e968605c1ca81d3854320cda94637c0db4182697619c44d972df6c8db8ee91",
+        "generatedAt":  "2026-11-15T23:06:38.6948309Z",
+        "review":  "No clipped or overlapping timeline, controls, or library layout observed"
+    },
+    {
+        "name":  "02-player-1440.png",
+        "size":  229387,
+        "sha256":  "cb83d29fcd03c48ef71590ca24629c3d1b49f8f4faae2ff3eb45a620e03e9cfe",
+        "generatedAt":  "2026-11-15T23:06:37.1740628Z",
+        "review":  "No clipped or overlapping timeline, controls, or library layout observed"
+    },
+    {
+        "name":  "design-library-1280.png",
+        "size":  162841,
+        "sha256":  "e602e689260a00dd428b822d313317464f9f7b00de812aef94ce293ce79a41ae",
+        "generatedAt":  "2026-11-15T23:09:18.5166957Z",
+        "review":  "No clipped or overlapping timeline, controls, or library layout observed"
+    }
+]

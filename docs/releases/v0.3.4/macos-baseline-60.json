@@ -1,0 +1,347 @@
+{
+  "executable": "/Users/poyal/Workspace/personal/soft-vault-release-034-baseline-20261116/build/package/macos-stage.i4fUTf/SoftVault-macOS-arm64/Soft Vault.app/Contents/MacOS/Soft Vault",
+  "passed": true,
+  "privacyLock": {
+    "setup": true,
+    "restartPersistence": true,
+    "rejectWrongPassword": true,
+    "unlock": true,
+    "authenticatedDisable": true
+  },
+  "metadataExchangeAndPlaybackHistory": true,
+  "extendedFeatures": {
+    "resume": true,
+    "bookmarks": true,
+    "collections": true,
+    "customThumbnail": true,
+    "animatedPreview": true,
+    "nfo": true,
+    "ruleMove": true
+  },
+  "playbackSoak": {
+    "passed": true,
+    "requestedSeconds": 60,
+    "fixture": "/Users/poyal/Workspace/personal/soft-vault-playback-20261115/playback-fixtures/hevc-4k60-10bit.mkv",
+    "executable": "/Users/poyal/Workspace/personal/soft-vault-release-034-baseline-20261116/build/package/macos-stage.i4fUTf/SoftVault-macOS-arm64/Soft Vault.app/Contents/MacOS/Soft Vault",
+    "samples": [
+      {
+        "elapsedSeconds": 10.002,
+        "rssBytes": 286932992,
+        "positionMs": 9867,
+        "durationMs": 310021,
+        "native": {
+          "mpv-version": "mpv 0.36.0",
+          "cache-on-disk": "yes",
+          "demuxer-max-bytes": 33554432,
+          "demuxer-max-back-bytes": 33554432,
+          "hr-seek-framedrop": "no",
+          "video-sync": "audio",
+          "hwdec-current": "videotoolbox",
+          "video-codec": "hevc ((null))",
+          "container-fps": 60.000004,
+          "video-params/w": 3840,
+          "video-params/h": 2160,
+          "video-pts": null,
+          "playback-time": 9.867,
+          "seeking": "no",
+          "paused-for-cache": "no",
+          "frame-drop-count": 286,
+          "decoder-frame-drop-count": 0,
+          "mistimed-frame-count": null,
+          "vo-delayed-frame-count": 0,
+          "avsync": 0.000009,
+          "demuxer-cache-duration": 8.109333,
+          "demuxer-cache-state": {
+            "cache-end": 18.2,
+            "reader-pts": 10.090667,
+            "cache-duration": 8.109333,
+            "eof": false,
+            "underrun": false,
+            "idle": true,
+            "total-bytes": 66034928,
+            "fw-bytes": 33554800,
+            "raw-input-rate": 4122927,
+            "debug-low-level-seeks": 1,
+            "debug-byte-level-seeks": 2,
+            "debug-ts-last": 18.167,
+            "bof-cached": false,
+            "eof-cached": false,
+            "seekable-ranges": [
+              {
+                "start": 2.0,
+                "end": 17.983
+              }
+            ]
+          }
+        }
+      },
+      {
+        "elapsedSeconds": 20.012,
+        "rssBytes": 297189376,
+        "positionMs": 19883,
+        "durationMs": 310021,
+        "native": {
+          "mpv-version": "mpv 0.36.0",
+          "cache-on-disk": "yes",
+          "demuxer-max-bytes": 33554432,
+          "demuxer-max-back-bytes": 33554432,
+          "hr-seek-framedrop": "no",
+          "video-sync": "audio",
+          "hwdec-current": "videotoolbox",
+          "video-codec": "hevc ((null))",
+          "container-fps": 60.000004,
+          "video-params/w": 3840,
+          "video-params/h": 2160,
+          "video-pts": null,
+          "playback-time": 19.883,
+          "seeking": "no",
+          "paused-for-cache": "no",
+          "frame-drop-count": 597,
+          "decoder-frame-drop-count": 0,
+          "mistimed-frame-count": null,
+          "vo-delayed-frame-count": 0,
+          "avsync": 0.000004,
+          "demuxer-cache-duration": 8.104333,
+          "demuxer-cache-state": {
+            "cache-end": 28.2,
+            "reader-pts": 20.095667,
+            "cache-duration": 8.104333,
+            "eof": false,
+            "underrun": false,
+            "idle": true,
+            "total-bytes": 66102240,
+            "fw-bytes": 33632352,
+            "raw-input-rate": 3946645,
+            "debug-low-level-seeks": 1,
+            "debug-byte-level-seeks": 2,
+            "debug-ts-last": 28.167,
+            "bof-cached": false,
+            "eof-cached": false,
+            "seekable-ranges": [
+              {
+                "start": 12.0,
+                "end": 27.983
+              }
+            ]
+          }
+        }
+      },
+      {
+        "elapsedSeconds": 30.018,
+        "rssBytes": 297369600,
+        "positionMs": 29833,
+        "durationMs": 310021,
+        "native": {
+          "mpv-version": "mpv 0.36.0",
+          "cache-on-disk": "yes",
+          "demuxer-max-bytes": 33554432,
+          "demuxer-max-back-bytes": 33554432,
+          "hr-seek-framedrop": "no",
+          "video-sync": "audio",
+          "hwdec-current": "videotoolbox",
+          "video-codec": "hevc ((null))",
+          "container-fps": 60.000004,
+          "video-params/w": 3840,
+          "video-params/h": 2160,
+          "video-pts": null,
+          "playback-time": 29.833,
+          "seeking": "no",
+          "paused-for-cache": "no",
+          "frame-drop-count": 854,
+          "decoder-frame-drop-count": 0,
+          "mistimed-frame-count": null,
+          "vo-delayed-frame-count": 0,
+          "avsync": 0.000007,
+          "demuxer-cache-duration": 8.099333,
+          "demuxer-cache-state": {
+            "cache-end": 38.2,
+            "reader-pts": 30.100667,
+            "cache-duration": 8.099333,
+            "eof": false,
+            "underrun": false,
+            "idle": true,
+            "total-bytes": 66021168,
+            "fw-bytes": 33635392,
+            "raw-input-rate": 4154355,
+            "debug-low-level-seeks": 1,
+            "debug-byte-level-seeks": 2,
+            "debug-ts-last": 38.2,
+            "bof-cached": false,
+            "eof-cached": false,
+            "seekable-ranges": [
+              {
+                "start": 22.0,
+                "end": 37.983
+              }
+            ]
+          }
+        }
+      },
+      {
+        "elapsedSeconds": 40.023,
+        "rssBytes": 297287680,
+        "positionMs": 39850,
+        "durationMs": 310021,
+        "native": {
+          "mpv-version": "mpv 0.36.0",
+          "cache-on-disk": "yes",
+          "demuxer-max-bytes": 33554432,
+          "demuxer-max-back-bytes": 33554432,
+          "hr-seek-framedrop": "no",
+          "video-sync": "audio",
+          "hwdec-current": "videotoolbox",
+          "video-codec": "hevc ((null))",
+          "container-fps": 60.000004,
+          "video-params/w": 3840,
+          "video-params/h": 2160,
+          "video-pts": null,
+          "playback-time": 39.883,
+          "seeking": "no",
+          "paused-for-cache": "no",
+          "frame-drop-count": 1130,
+          "decoder-frame-drop-count": 0,
+          "mistimed-frame-count": null,
+          "vo-delayed-frame-count": 0,
+          "avsync": 0.000004,
+          "demuxer-cache-duration": 8.093333,
+          "demuxer-cache-state": {
+            "cache-end": 48.2,
+            "reader-pts": 40.106667,
+            "cache-duration": 8.093333,
+            "eof": false,
+            "underrun": false,
+            "idle": true,
+            "total-bytes": 66186192,
+            "fw-bytes": 33665360,
+            "raw-input-rate": 3991023,
+            "debug-low-level-seeks": 1,
+            "debug-byte-level-seeks": 2,
+            "debug-ts-last": 48.2,
+            "bof-cached": false,
+            "eof-cached": false,
+            "seekable-ranges": [
+              {
+                "start": 32.0,
+                "end": 47.983
+              }
+            ]
+          }
+        }
+      },
+      {
+        "elapsedSeconds": 50.034,
+        "rssBytes": 297517056,
+        "positionMs": 49900,
+        "durationMs": 310021,
+        "native": {
+          "mpv-version": "mpv 0.36.0",
+          "cache-on-disk": "yes",
+          "demuxer-max-bytes": 33554432,
+          "demuxer-max-back-bytes": 33554432,
+          "hr-seek-framedrop": "no",
+          "video-sync": "audio",
+          "hwdec-current": "videotoolbox",
+          "video-codec": "hevc ((null))",
+          "container-fps": 60.000004,
+          "video-params/w": 3840,
+          "video-params/h": 2160,
+          "video-pts": null,
+          "playback-time": 49.9,
+          "seeking": "no",
+          "paused-for-cache": "no",
+          "frame-drop-count": 1404,
+          "decoder-frame-drop-count": 0,
+          "mistimed-frame-count": null,
+          "vo-delayed-frame-count": 0,
+          "avsync": 0.000004,
+          "demuxer-cache-duration": 8.088333,
+          "demuxer-cache-state": {
+            "cache-end": 58.2,
+            "reader-pts": 50.111667,
+            "cache-duration": 8.088333,
+            "eof": false,
+            "underrun": false,
+            "idle": true,
+            "total-bytes": 66329744,
+            "fw-bytes": 33578960,
+            "raw-input-rate": 3955284,
+            "debug-low-level-seeks": 1,
+            "debug-byte-level-seeks": 2,
+            "debug-ts-last": 58.183,
+            "bof-cached": false,
+            "eof-cached": false,
+            "seekable-ranges": [
+              {
+                "start": 42.0,
+                "end": 57.983
+              }
+            ]
+          }
+        }
+      },
+      {
+        "elapsedSeconds": 60.039,
+        "rssBytes": 297435136,
+        "positionMs": 59916,
+        "durationMs": 310021,
+        "native": {
+          "mpv-version": "mpv 0.36.0",
+          "cache-on-disk": "yes",
+          "demuxer-max-bytes": 33554432,
+          "demuxer-max-back-bytes": 33554432,
+          "hr-seek-framedrop": "no",
+          "video-sync": "audio",
+          "hwdec-current": "videotoolbox",
+          "video-codec": "hevc ((null))",
+          "container-fps": 60.000004,
+          "video-params/w": 3840,
+          "video-params/h": 2160,
+          "video-pts": null,
+          "playback-time": 59.917,
+          "seeking": "no",
+          "paused-for-cache": "no",
+          "frame-drop-count": 1679,
+          "decoder-frame-drop-count": 0,
+          "mistimed-frame-count": null,
+          "vo-delayed-frame-count": 0,
+          "avsync": 0.000006,
+          "demuxer-cache-duration": 8.150333,
+          "demuxer-cache-state": {
+            "cache-end": 68.267,
+            "reader-pts": 60.116667,
+            "cache-duration": 8.150333,
+            "eof": false,
+            "underrun": false,
+            "idle": true,
+            "total-bytes": 66330992,
+            "fw-bytes": 33588512,
+            "raw-input-rate": 4042329,
+            "debug-low-level-seeks": 1,
+            "debug-byte-level-seeks": 2,
+            "debug-ts-last": 68.267,
+            "bof-cached": false,
+            "eof-cached": false,
+            "seekable-ranges": [
+              {
+                "start": 52.0,
+                "end": 67.983
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "errors": [],
+    "scope": "Installed Release diagnostic video surface; not full library UI",
+    "elapsedSeconds": 60.066,
+    "observedLoops": 0,
+    "finalExactSeekPassed": true
+  },
+  "database": true,
+  "verifiedCopyMove": true,
+  "ffprobe": true,
+  "thumbnail": true,
+  "nativePlayback": true,
+  "volume": 0.0,
+  "nativeMinimizeRestore": true
+}

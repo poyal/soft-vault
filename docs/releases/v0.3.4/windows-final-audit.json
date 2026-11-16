@@ -1,0 +1,174 @@
+{
+  "status": "PASS_WITH_DOCUMENTED_LIMITS",
+  "platform": "windows",
+  "version": "0.3.4",
+  "sourceCommit": "cf271e6089d7088c07d4b4e630d8bdc2adc7e39f",
+  "sourceSHA256": "78fdd5ce37816e86d8f710667c4dcd3526bf587880a3ea4daf1c03fc132cbae8",
+  "macFunctionalChecksBeforeDiagnosticAddition": false,
+  "functionalSourceSHA256": "78fdd5ce37816e86d8f710667c4dcd3526bf587880a3ea4daf1c03fc132cbae8",
+  "diagnosticOnlyDifferences": [],
+  "verifiedAtUTC": "2026-11-16T00:20:21.414584Z",
+  "pubspecLockSHA256": "db8d9a4c009d183fe1b82606a93cd13baa74500ba02ae6ded35c5a00e7b04a92",
+  "fixtureSHA256": "b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254",
+  "soakFixtureSHA256": "e8d766afcc4994dab001553dba8045bdb74f07f1f75e0606bf8f3160226fef25",
+  "analyze": "PASS",
+  "suites": [
+    {
+      "suite": "unit",
+      "passed": 119,
+      "skipped": 2,
+      "logSHA256": "9400199951fe8d1c8b42818016c717a0170df4fff7d8d9df9b7c528fb107670e"
+    },
+    {
+      "suite": "library-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "30d064ba3b64eff2f8870a25f6714c1563ee63362d10584bf850b23559ed348c"
+    },
+    {
+      "suite": "catalog-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "9a09f9f7126453e90bd41683a8781efda9742f15394bf81fc67820503ef22c86"
+    },
+    {
+      "suite": "playback-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "3d85749fca5106d34d103814f1bb40063d01304bfedeb4a4eea2c9a545467444"
+    },
+    {
+      "suite": "app-playback-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "4961caa1616362588ccf637db01e89565f1e3c6b9749684fbeb280d55a051c03"
+    },
+    {
+      "suite": "extended-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "b40c7831fa05f30bacdb33279abd78a27fbd51950b03aa5527bd2cc08a17c158"
+    },
+    {
+      "suite": "design-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "83964850de3178b39c69d1b5b8c684c366a89dd192811c6f20f04fde865a6385"
+    },
+    {
+      "suite": "codec-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "f3ab1e53f57c657ee7364154ddd6bf794f7ae283d55f0c995322782a036b50f6"
+    },
+    {
+      "suite": "privacy-e2e",
+      "passed": 3,
+      "skipped": 0,
+      "logSHA256": "6a7548dbaa95b223e5a6d9e4c9191b45244dfcb6131a7a33966a11793f93e740"
+    },
+    {
+      "suite": "stress",
+      "passed": 9,
+      "skipped": 0,
+      "logSHA256": "6b9643cb8aebd78c6b0746e64e917f7540176ea22be842654656db2e35050bcf"
+    },
+    {
+      "suite": "performance",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "f0da05bda3873da95e041bfa157a1f5ed3c8eb05df3e78028cc146b4da696ac5"
+    },
+    {
+      "suite": "seek-e2e",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "3f7ecf839f391b4bc17b1cae95a77923747e78013ed8c1d58d94a968ab7cdd97"
+    },
+    {
+      "suite": "https-images",
+      "passed": 1,
+      "skipped": 0,
+      "logSHA256": "4129c351e3f54d85e4971b85ef5488565f06343b6274b2250ca002b207edc912"
+    },
+    {
+      "suite": "ui-scenarios",
+      "passed": 19,
+      "skipped": 0,
+      "logSHA256": "e92be206a9c787675a983a781cdf97446aaa2a6a3f6356e610aeebf0e6eed528"
+    },
+    {
+      "suite": "native-stress",
+      "passed": 3,
+      "skipped": 0,
+      "logSHA256": "762d3c022f48f8050d9fcad4ff07e9f818464005092bd705231387d247ee13ed"
+    },
+    {
+      "suite": "native-profile",
+      "passed": 4,
+      "skipped": 0,
+      "logSHA256": "b8b82ef474c5f06611e09bf7a758d950dfc23b311e6bc35bf422f6d7820b689f"
+    },
+    {
+      "suite": "native-ui-profile",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "2033018b3801105aed3b512d12de4ccb57d40de55a563891ce8fd62daf6b40a0"
+    },
+    {
+      "suite": "library_filter_flow_test",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "fc71589ace0f47e4fd22809e6597c430d413e603a905ac8ad98833a9bf824bc9"
+    },
+    {
+      "suite": "playback_history_flow_test",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "53365fdc70d975becd2721bdbf311f48aca99077766f927b2d25c0a207079dde"
+    },
+    {
+      "suite": "settings_native_review_test",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "100e46eac26991bffe45eccfe93562c243ba09e8fe440fd85faaddc045b6447c"
+    },
+    {
+      "suite": "resize_profile_test",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "8dac1a7f9f93571aa146e8eb620d322f7ad30ecbf5341d82ae9b6258464374dc"
+    },
+    {
+      "suite": "metadata_exchange_flow_test",
+      "passed": 2,
+      "skipped": 0,
+      "logSHA256": "c35a5e37352aca0e91fa3bc6dc7fb25e78fdbb9ee5cdee5afdef63686673597e"
+    }
+  ],
+  "shutdownChecks": 18,
+  "updaterHelperChecks": 5,
+  "isolatedPackageDiagnostics": "PASS",
+  "installerDiagnostics": "PASS",
+  "internalZipSHA256": "c3c1277b006b999819c4439d896fb0e545dc52f09fa5912b21b00b0e5bc91f3d",
+  "installedSoak": {
+    "passed": true,
+    "seconds": 1800.905,
+    "loops": 4,
+    "samples": 174,
+    "startRssBytes": 1046020096,
+    "endRssBytes": 1059745792,
+    "peakRssBytes": 1064013824,
+    "rssAt15Minutes": 1061462016,
+    "rssAt25Minutes": 1056616448,
+    "finalExactSeekPassed": true,
+    "reportSHA256": "47f3d6c8d7639fa135a87b04ca3910d4782bca0bc668c60b7927cb471cc50007",
+    "qualityScope": "Progress, EOF looping, memory and final seek; renderer drops are reported separately and are not certified as zero"
+  },
+  "asset": {
+    "name": "SoftVault-0.3.4-Windows-x64-Setup.exe",
+    "size": 89115578,
+    "sha256": "70cce97660f94b9500314aebfe1bbb7e05ec7bd407c954b3319cb3ef33002dce"
+  },
+  "automaticUpdatePublication": "Pending central signing and public download verification"
+}

@@ -1,0 +1,30 @@
+﻿{
+    "os":  "Microsoft Windows 11 Home",
+    "version":  "10.0.26300",
+    "cpu":  [
+                "Intel(R) Core(TM) i7-8700B CPU @ 3.20GHz"
+            ],
+    "gpu":  [
+                {
+                    "Name":  "Intel(R) UHD Graphics 630",
+                    "DriverVersion":  "31.0.101.2140"
+                }
+            ],
+    "memoryKiB":  66951340,
+    "flutter":  {
+                    "frameworkVersion":  "3.47.9",
+                    "channel":  "stable",
+                    "repositoryUrl":  "https://github.com/flutter/flutter.git",
+                    "frameworkRevision":  "c197ca5199e9ee5661e865596c9c07294dfab51c",
+                    "frameworkCommitDate":  "2026-10-29 10:10:20 -0400",
+                    "engineRevision":  "89c39edfdfae2949f6806e4a315c0c08522238b7",
+                    "engineCommitDate":  "2026-10-27 19:51:20.000Z",
+                    "engineContentHash":  "9e025265bef30b838c0c1b68cad19decf97048f2",
+                    "engineBuildDate":  "2026-10-28 05:22:45.983",
+                    "dartSdkVersion":  "3.13.7",
+                    "devToolsVersion":  "2.60.0",
+                    "flutterVersion":  "3.47.9"
+                },
+    "lockSHA256":  "db8d9a4c009d183fe1b82606a93cd13baa74500ba02ae6ded35c5a00e7b04a92",
+    "fixtureSHA256":  "b670602fa00934ca27c4351bb0efe7ea7a07fae57284e44226025eeed7c51254"
+}

@@ -1,0 +1,21 @@
+{
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t27.2.1\nBuildVersion:\t\t26B131",
+  "architecture": "arm64",
+  "cpu": "Apple M4",
+  "memoryBytes": 17179869184,
+  "xcode": "Xcode 27.2\nBuild version 27B52",
+  "flutter": {
+    "frameworkVersion": "3.47.9",
+    "channel": "[user-branch]",
+    "repositoryUrl": "https://github.com/flutter/flutter.git",
+    "frameworkRevision": "c197ca5199e9ee5661e865596c9c07294dfab51c",
+    "frameworkCommitDate": "2026-10-29 10:10:20 -0400",
+    "engineRevision": "89c39edfdfae2949f6806e4a315c0c08522238b7",
+    "engineCommitDate": "2026-10-27 19:51:20.000Z",
+    "engineContentHash": "9e025265bef30b838c0c1b68cad19decf97048f2",
+    "engineBuildDate": "2026-10-28 05:22:45.983",
+    "dartSdkVersion": "3.13.7",
+    "devToolsVersion": "2.60.0",
+    "flutterVersion": "3.47.9"
+  }
+}
