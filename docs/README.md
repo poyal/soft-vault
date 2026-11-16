@@ -19,7 +19,7 @@ Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사
 
 ## 현재 확인된 범위
 
-- `0.3.4`는 반복 탐색·재생바 드래그 반응과 재생 중 백그라운드 작업을 개선한 후보이다. [검증 기록](releases/v0.3.4/VERIFICATION.md), [변경 안내](releases/v0.3.4/README.md)에 양쪽 설치본 검증과 4K60 렌더 드롭 비교의 범위·제한을 기록한다.
+- `0.3.4`는 반복 탐색·재생바 드래그 반응과 재생 중 백그라운드 작업을 개선했다. Windows·Mac 설치·30분 재생·업데이트 서명 검증 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.3.4)했으며, 공개 파일 8개의 재다운로드 크기·해시가 일치한다. [검증 기록](releases/v0.3.4/VERIFICATION.md), [변경 안내](releases/v0.3.4/README.md)에 구버전에서도 재현된 4K60 진단 화면의 렌더 드롭과 검증 제한을 기록한다.
 
 - `0.3.3`은 HTTPS 배우 이미지 가져오기 오류를 수정했다. 중단된 동일 후보 검증을 재개해 양쪽 실제 HTTPS 회귀·설치·업데이트 서명 검증 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.3.3)했다. 공개 파일 8개의 크기·해시가 일치한다. [검증 기록](releases/v0.3.3/VERIFICATION.md), [변경 안내](releases/v0.3.3/README.md)를 참고한다.
 
