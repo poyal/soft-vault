@@ -40,6 +40,12 @@ void main() {
         await tester.pumpAndSettle();
         final home = tester.state(find.byType(VaultHome)) as dynamic;
         final currentId = (await library.items()).single['id'];
+        // The initial selection arrives from SQLite after the first frame.
+        final deadline = Stopwatch()..start();
+        while (home.current == null &&
+            deadline.elapsed < const Duration(seconds: 10)) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
         expect(home.current?['id'], currentId);
         expect(home.player.state.playing, isFalse);
         await tester.tap(find.text('sample').last);
