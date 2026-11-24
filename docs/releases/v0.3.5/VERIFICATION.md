@@ -1,5 +1,7 @@
 # Soft Vault 0.3.5 배포 검증
 
+2026년 11월 24일 10시 24분(한국 시간)에 GitHub 최신 정식 버전으로 공개했습니다. 공개 직후 로그인 없이 받은 배포 파일 8개 모두 초안에서 검증한 파일과 크기 및 SHA-256이 일치했습니다. [공개 릴리즈](https://github.com/poyal/soft-vault/releases/tag/v0.3.5) · [파일별 재다운로드 결과](publication-verification.json)
+
 제품 소스 커밋은 `5f6925b864adc01f88f06c23d01bcf724f8fa3cf`입니다. 최종 후보 `1c38f573f2dc50b27ddf339131b21718e346de59`는 카탈로그 통합 테스트가 SQLite의 첫 선택 결과를 기다리도록 수정했습니다. 배포 실행 파일에 포함되는 소스는 두 커밋에서 같습니다.
 
 | 항목 | 조건 |
