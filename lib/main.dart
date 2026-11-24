@@ -6,6 +6,7 @@ import 'app_updater.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:async';
+import 'dart:ui' show AppExitResponse;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:file_selector/file_selector.dart';
@@ -263,11 +264,13 @@ class VaultHome extends StatefulWidget {
   final Library library;
   final PrivacyLock? privacy;
   final VoidCallback? lockNow;
+  final ValueChanged<String>? onCloseStage;
   const VaultHome({
     super.key,
     required this.library,
     this.privacy,
     this.lockNow,
+    this.onCloseStage,
   });
   @override
   State<VaultHome> createState() => _VaultHomeState();
@@ -308,7 +311,10 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   bool enrichmentCancelled = false, enrichmentPaused = false;
   int enrichmentDone = 0, enrichmentTotal = 0;
   Future<void>? playerDisposal;
+  AppLifecycleListener? appExitListener;
+  Future<bool>? closePreparation;
   Future<void> mediaOpenTail = Future.value();
+  Future<void> progressWriteTail = Future.value();
   bool closing = false;
   String view = 'files', sort = 'recent';
   String? typeFilter;
@@ -412,32 +418,70 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   @override
   void onWindowClose() async {
     if (closing) return;
+    if (await prepareClose()) {
+      try {
+        await closeAppWindow();
+      } catch (e) {
+        await restoreAfterCloseError(e);
+      }
+    }
+  }
+
+  Future<bool> prepareClose() => closePreparation ??= releaseForClose();
+
+  Future<bool> releaseForClose() async {
     update(() => closing = true);
     enrichmentCancelled = true;
+    final mark = widget.onCloseStage;
+    if (mark != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => mark('shield_frame'));
+    }
     try {
       // Keep the engine's event loop alive until video textures are released.
       poll?.cancel();
       debounce?.cancel();
       progressTimer?.cancel();
-      for (final watcher in watchers) {
-        await watcher.cancel();
-      }
-      for (final event in playerEvents) {
-        await event.cancel();
-      }
-      await stopEnrichment();
-      if (playerDisposal == null) {
-        await player.pause();
-        await persistProgress();
-      }
+      backgroundResume?.cancel();
+      // Capture the confirmed position before cancel clears the seek state.
+      // Start silencing immediately, independently of disk and watcher work.
+      await Future.wait<void>([
+        if (playerDisposal == null) ...[
+          playback.silence().then((_) async {
+            mark?.call('muted');
+            await player.pause();
+            mark?.call('paused');
+          }),
+          persistProgress(
+            onClose: true,
+          ).then((_) => mark?.call('resume_saved')),
+        ],
+        // The OS window can disappear while the engine still owns the video
+        // texture. Keep the process alive until all writes and releases finish.
+        if (Platform.isWindows)
+          windowManager.hide().then((_) => mark?.call('window_hidden')),
+        seeks.suspend(),
+        mediaOpenTail,
+        stopEnrichment().then((_) => mark?.call('enrichment_stopped')),
+        for (final watcher in watchers) watcher.cancel(),
+        for (final event in playerEvents) event.cancel(),
+      ]);
       await disposePlayer();
-      await closeAppWindow();
+      mark?.call('player_released');
+      return true;
     } catch (e) {
-      update(() {
-        error = '종료를 마무리하지 못했습니다: $e';
-        closing = false;
-      });
+      await restoreAfterCloseError(e);
+      return false;
     }
+  }
+
+  Future<void> restoreAfterCloseError(Object failure) async {
+    await windowManager.show();
+    if (playerDisposal == null) seeks.resume();
+    closePreparation = null;
+    update(() {
+      error = '종료를 마무리하지 못했습니다: $failure';
+      closing = false;
+    });
   }
 
   Future<void> disposePlayer() => playerDisposal ??= (() async {
@@ -448,6 +492,15 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
   @override
   void initState() {
     super.initState();
+    if (Platform.isMacOS) {
+      // Cmd+Q and Dock Quit ask the application to terminate without closing
+      // its window first. Join the same save and release as the close button.
+      appExitListener = AppLifecycleListener(
+        onExitRequested: () async => await prepareClose()
+            ? AppExitResponse.exit
+            : AppExitResponse.cancel,
+      );
+    }
     video = VideoController(player);
     seeks.addListener(seekActivityChanged);
     windowManager.addListener(this);
@@ -459,6 +512,7 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
 
   @override
   void dispose() {
+    appExitListener?.dispose();
     enrichmentCancelled = true;
     backgroundResume?.cancel();
     seeks.removeListener(seekActivityChanged);

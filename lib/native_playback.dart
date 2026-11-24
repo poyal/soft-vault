@@ -91,8 +91,17 @@ class NativePlayback implements PlaybackPort, SeekPort {
               Duration.microsecondsPerSecond *
               _seekRate
         : 0.0;
-    return pts >= target - frame - .002 &&
-        pts <= target + advanced + frame + .002;
+    final earliest = target - frame - .002;
+    final latest = target + advanced + frame + .002;
+    // media_kit publishes position separately from mpv's decoder restart.
+    // The next relative input starts at this public clock, so both clocks
+    // must have reached the destination before releasing the pending target.
+    final published =
+        player.state.position.inMicroseconds / Duration.microsecondsPerSecond;
+    return pts >= earliest &&
+        pts <= latest &&
+        published >= earliest &&
+        published <= latest;
   }
 
   @override

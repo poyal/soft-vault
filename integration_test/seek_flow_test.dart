@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as p;
+import 'package:soft_vault/advanced_catalog.dart';
 import 'package:soft_vault/file_list.dart';
 import 'package:soft_vault/main.dart';
 import 'package:soft_vault/seek_controller.dart';
@@ -27,8 +28,26 @@ void main() {
         play(0);
         await app.until(() => home.playbackMediaId == rows[0]['id']);
         await app.player.pause();
+        if (!seeks.enabled || app.player.state.duration <= Duration.zero) {
+          debugPrint(
+            'Waiting for the first seek: enabled=${seeks.enabled}, '
+            'duration=${app.player.state.duration.inMilliseconds}',
+          );
+        }
+        await home.mediaOpenTail;
+        await app.until(
+          () => seeks.enabled && app.player.state.duration > Duration.zero,
+        );
         await seeks.seekTo(const Duration(seconds: 10));
         expect(seeks.busy, isFalse);
+        final initialClock = app.player.state.position.inMilliseconds;
+        if ((initialClock - 10000).abs() > 80) {
+          final NativePlayback backend = home.nativePlayback;
+          fail(
+            'After a ready seek, published=$initialClock, '
+            'native=${await backend.native.getProperty('playback-time')}',
+          );
+        }
         await app.player.setVolume(37);
         await tester.sendKeyDownEvent(
           LogicalKeyboardKey.arrowRight,
@@ -41,12 +60,18 @@ void main() {
           );
           await tester.pump(const Duration(milliseconds: 20));
         }
+        final heldTarget = seeks.displayPosition.inMilliseconds;
         await tester.sendKeyUpEvent(
           LogicalKeyboardKey.arrowRight,
           physicalKey: PhysicalKeyboardKey.arrowRight,
         );
         await app.until(() => !seeks.busy);
-        expect(app.player.state.position.inMilliseconds, closeTo(30000, 80));
+        expect(heldTarget, closeTo(30000, 80), reason: 'start $initialClock');
+        expect(
+          app.player.state.position.inMilliseconds,
+          closeTo(30000, 80),
+          reason: 'start $initialClock, held target $heldTarget',
+        );
         expect(app.player.state.volume, 37);
         expect(app.player.state.playing, isFalse);
         await app.settle(5);
@@ -66,8 +91,16 @@ void main() {
           app.player.state.position.inMilliseconds,
           closeTo(intended.inMilliseconds, 80),
         );
+        expect(seeks.undoPosition.inMilliseconds, closeTo(30000, 80));
         await seeks.undo();
-        expect(app.player.state.position.inMilliseconds, closeTo(30000, 80));
+        final afterUndo = app.player.state.position.inMilliseconds;
+        if ((afterUndo - 30000).abs() > 80) {
+          final NativePlayback backend = home.nativePlayback;
+          fail(
+            'After undo, published=$afterUndo, '
+            'native=${await backend.native.getProperty('playback-time')}',
+          );
+        }
         expect(app.player.state.playing, isFalse);
 
         seeks.seekTo(const Duration(seconds: 45));
@@ -116,6 +149,20 @@ void main() {
         }
         expect((await app.library.items()).length, rows.length + 1);
         expect(home.error, isNull);
+
+        // Close during a real seek, using the last observed player timestamp
+        // as an independent expectation for the durable resume point.
+        await seeks.seekTo(const Duration(seconds: 12));
+        await app.until(
+          () => (app.player.state.position.inMilliseconds - 12000).abs() < 80,
+        );
+        final beforeSeek = app.player.state.position.inMilliseconds;
+        final inFlight = seeks.seekTo(const Duration(seconds: 40));
+        expect(seeks.busy, isTrue);
+        expect(await home.prepareClose(), isTrue);
+        await inFlight;
+        final saved = await app.library.mediaById(rows[1]['id'] as int);
+        expect(saved['resume_ms'], closeTo(beforeSeek, 80));
         expect(tester.takeException(), isNull);
       } finally {
         await app.close();

@@ -401,6 +401,7 @@ extension _HomeFeatures on _VaultHomeState {
     // persistence can otherwise reorder rapid requests before Playback sees them.
     final next = mediaOpenTail.then(
       (_) => guard(() async {
+        if (closing) return;
         await persistProgress();
         await seeks.suspend();
         seekKeys.clear();
@@ -412,6 +413,7 @@ extension _HomeFeatures on _VaultHomeState {
               !await File(item['path'] as String).exists())
             throw FileSystemException('오프라인 파일입니다.', item['path'] as String);
           if (item['type'] != 'video') throw StateError('영상 파일만 재생할 수 있습니다.');
+          if (closing) return;
           playbackMediaId = null;
           playbackSession = null;
           playbackCompleted = false;
@@ -421,6 +423,7 @@ extension _HomeFeatures on _VaultHomeState {
                   ? Duration.zero
                   : Duration(milliseconds: item['resume_ms'] as int));
           await playback.open(item['path'] as String, start: resume);
+          if (closing) return;
           playbackMediaId = item['id'] as int;
           playbackRating = item['rating'] as int?;
           playbackSession = newPlaybackSession(playbackMediaId!, resume);
@@ -433,7 +436,7 @@ extension _HomeFeatures on _VaultHomeState {
           });
         } finally {
           openingMedia = false;
-          seeks.resume();
+          if (!closing) seeks.resume();
           resumeBackgroundWork();
         }
       }),

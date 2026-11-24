@@ -22,7 +22,7 @@ Future<void> main(List<String> args) async {
           fixture,
           mode,
           state,
-        ], workingDirectory: p.dirname(exe));
+        ], workingDirectory: Directory.current.path);
         final output = process.stdout.transform(utf8.decoder).join(),
             error = process.stderr.transform(utf8.decoder).join();
         var timedOut = false;
@@ -80,7 +80,13 @@ Future<void> main(List<String> args) async {
           final expected = jsonDecode(
             await File('${dir.path}/expected.json').readAsString(),
           );
-          final position = expected['positionMs'] as int;
+          final handlerFile = File('${dir.path}/expected-at-handler.json');
+          final handled = mode == 'application' && await handlerFile.exists()
+              ? jsonDecode(await handlerFile.readAsString())
+              : expected;
+          final position = handled['positionMs'] as int;
+          result['requestPositionMs'] = expected['positionMs'];
+          result['expectedPositionMs'] = position;
           result['savedPositionMs'] = saved;
           result['positionPreserved'] = state == 'idle'
               ? saved == 0

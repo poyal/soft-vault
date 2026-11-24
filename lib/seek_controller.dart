@@ -23,6 +23,7 @@ class SeekController extends ChangeNotifier {
 
   Duration? _target, _settledTarget;
   Duration _undo = Duration.zero;
+  Duration _confirmed = Duration.zero;
   Timer? _previewTimer, _finishTimer;
   _SeekRequest? _pending, _sending;
   Future<void>? _worker;
@@ -37,13 +38,18 @@ class SeekController extends ChangeNotifier {
   bool get dragging => _dragging;
   bool get keyboardActive => _keys;
   Duration get undoPosition => _undo;
+  Duration get resumePosition => busy ? _confirmed : port.position;
 
   Duration _clamp(Duration value) => Duration(
     microseconds: value.inMicroseconds.clamp(0, port.duration.inMicroseconds),
   );
 
   void _begin() {
-    if (!busy) _undo = port.position;
+    if (!busy) {
+      _confirmed = _undo = port.position;
+      // Playback may have advanced since the last gesture completed.
+      _settledTarget = null;
+    }
   }
 
   void beginDrag() {
@@ -132,6 +138,17 @@ class SeekController extends ChangeNotifier {
   }
 
   Future<void> _submit(Duration target, {required bool exact}) {
+    final sending = _sending;
+    if (exact &&
+        sending != null &&
+        sending.exact &&
+        sending.generation == _generation &&
+        sending.target == target) {
+      // The user returned to the in-flight destination. Drop the intervening
+      // request and let the existing exact decode finish.
+      _pending = null;
+      return _worker ?? Future.value();
+    }
     _pending = _SeekRequest(target, exact, _generation);
     return _worker ??= _run();
   }
@@ -156,6 +173,7 @@ class SeekController extends ChangeNotifier {
               final settled = await port.settled(request.target);
               if (request.generation != _generation || _pending != null) break;
               if (settled) {
+                _confirmed = request.target;
                 _settledTarget = request.target;
                 if (!_dragging && !_keys && _target == request.target) {
                   _target = null;

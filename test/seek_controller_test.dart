@@ -21,6 +21,77 @@ void main() {
   tearDown(() => seeks.dispose());
 
   testWidgets(
+    'clicking the same timestamp again rewinds after playback advances',
+    (tester) async {
+      await seeks.seekTo(const Duration(seconds: 20));
+      port.position = const Duration(seconds: 27);
+      seeks.beginDrag();
+      seeks.preview(const Duration(seconds: 20));
+      await seeks.finish();
+      expect(port.position, const Duration(seconds: 20));
+      expect(port.commands, hasLength(2));
+    },
+  );
+
+  testWidgets('returning to an in-flight exact target reuses its decode', (
+    tester,
+  ) async {
+    final gate = port.commandGate = Completer<void>();
+    final seeking = seeks.seekTo(const Duration(seconds: 35));
+    seeks.seekTo(const Duration(seconds: 40));
+    seeks.seekTo(const Duration(seconds: 35));
+    gate.complete();
+    await seeking;
+    expect(port.commands, [(target: const Duration(seconds: 35), exact: true)]);
+    expect(seeks.busy, isFalse);
+  });
+
+  testWidgets('rapid key releases keep only the newest queued exact seek', (
+    tester,
+  ) async {
+    final gate = port.commandGate = Completer<void>();
+    for (var i = 0; i < 10; i++) {
+      seeks.relative(const Duration(seconds: 5));
+      unawaited(seeks.finish());
+      await tester.pump(const Duration(milliseconds: 8));
+    }
+    expect(seeks.resumePosition, const Duration(seconds: 10));
+    gate.complete();
+    await tester.pump();
+    expect(port.commands.first, (
+      target: const Duration(seconds: 15),
+      exact: true,
+    ));
+    expect(port.commands.last, (
+      target: const Duration(seconds: 60),
+      exact: true,
+    ));
+    expect(port.commands.where((command) => command.exact), hasLength(2));
+    expect(port.commands, hasLength(2));
+    expect(seeks.busy, isFalse);
+  });
+
+  testWidgets(
+    'a second slider click preserves the confirmed position until it settles',
+    (tester) async {
+      await seeks.seekTo(const Duration(seconds: 20));
+      final gate = port.commandGate = Completer<void>();
+      seeks.beginDrag();
+      seeks.preview(const Duration(seconds: 90));
+      unawaited(seeks.finish());
+      expect(seeks.resumePosition.inSeconds, 20);
+      gate.complete();
+      await tester.pump();
+      expect(port.commands.last, (
+        target: const Duration(seconds: 90),
+        exact: true,
+      ));
+      expect(port.commands.where((command) => command.exact), hasLength(2));
+      expect(seeks.resumePosition.inSeconds, 90);
+    },
+  );
+
+  testWidgets(
     'opening another file suspends input until the new media is ready',
     (tester) async {
       final gate = port.commandGate = Completer<void>();

@@ -1,18 +1,23 @@
 part of 'main.dart';
 
 extension _ExtendedFeatures on _VaultHomeState {
-  Future<void> persistProgress({bool completed = false}) async {
-    if (seeks.busy) return;
+  Future<void> persistProgress({bool completed = false, bool onClose = false}) {
+    if (!onClose && (closing || seeks.busy)) return progressWriteTail;
     final id = playbackMediaId;
-    final position = player.state.position, duration = player.state.duration;
-    if (id == null || duration <= Duration.zero) return;
-    await playbackSession?.pending;
-    await widget.library.saveResume(
-      id,
-      position,
-      duration,
-      completed: completed,
-    );
+    final position = seeks.resumePosition, duration = player.state.duration;
+    if (id == null || duration <= Duration.zero) return progressWriteTail;
+    final sessionWrite = playbackSession?.pending;
+    final write = progressWriteTail.then((_) async {
+      await sessionWrite;
+      await widget.library.saveResume(
+        id,
+        position,
+        duration,
+        completed: completed,
+      );
+    });
+    progressWriteTail = write.then<void>((_) {}, onError: (Object _) {});
+    return write;
   }
 
   Future<void> showScenes() async {

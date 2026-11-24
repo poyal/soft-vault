@@ -12,6 +12,8 @@
 
 ## 현재 실행 가능한 검사
 
+연속 구간 이동 직후 같은 영상 프레임이 얼마나 오래 유지되는지, 재생 중 종료와 이어보기 저장, Dart·C++ 및 OS별 출력 차이는 [연속 구간 이동과 종료 검증](verification/2026-11-23-playback-recovery.md)에 기록했습니다.
+
 영상 탐색·디코딩 검사는 실제 데스크톱 앱을 profile로 실행한다. 합성 자료는 사용자의 라이브러리와 분리하며 생성 시 FFmpeg/ffprobe 정보와 SHA-256을 기록한다.
 
 자료 생성기는 Windows의 `.tools/ffmpeg/extracted/ffmpeg-9.0.2-essentials_build/bin`과 NVIDIA NVENC를 사용한다. 생성한 동일 파일을 다른 장비로 복사하고 해시를 비교한다. 다른 인코더로 다시 만든 파일은 별도 자료 집합으로 취급한다.
