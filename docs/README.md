@@ -1,6 +1,6 @@
 # Soft Vault 문서 안내
 
-Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사용자 결정은 [계획서](../plan.md), 설치와 기본 사용법은 [루트 README](../README.md)를 기준으로 한다. 마지막 갱신일은 2026-11-16이다.
+Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사용자 결정은 [계획서](../plan.md), 설치와 기본 사용법은 [루트 README](../README.md)를 기준으로 한다. 마지막 갱신일은 2026-11-24이다.
 
 ## 작업별 입구
 
@@ -18,6 +18,8 @@ Soft Vault의 구현·검증·배포 절차를 정리한다. 요구사항과 사
 | 새 후보 기록 만들기 | [검증 기록 템플릿](templates/verification.md), [사용자 릴리즈 노트 템플릿](templates/release-notes.md) |
 
 ## 현재 확인된 범위
+
+- `0.3.5`는 재생 중 같은 지점을 다시 선택하는 동작과 연속 이동 중 종료할 때의 이어보기 위치 보존을 개선했다. [변경 안내](releases/v0.3.5/README.md) · [설치·배포 검증](releases/v0.3.5/VERIFICATION.md) · [플레이어·언어·OS별 비교 측정](verification/2026-11-23-playback-recovery.md)
 
 - `0.3.4`는 반복 탐색·재생바 드래그 반응과 재생 중 백그라운드 작업을 개선했다. Windows·Mac 설치·30분 재생·업데이트 서명 검증 후 [정식 공개](https://github.com/poyal/soft-vault/releases/tag/v0.3.4)했으며, 공개 파일 8개의 재다운로드 크기·해시가 일치한다. [검증 기록](releases/v0.3.4/VERIFICATION.md), [변경 안내](releases/v0.3.4/README.md)에 구버전에서도 재현된 4K60 진단 화면의 렌더 드롭과 검증 제한을 기록한다.
 
