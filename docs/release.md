@@ -4,6 +4,8 @@ Windows x64 설치 EXE와 Apple Silicon Mac DMG를 배포한다. 내부 ZIP은 �
 
 ## 1. 후보와 출처
 
+`0.3.6`은 macOS의 반복 종료 요청을 수정한 패치입니다. [변경 안내](releases/v0.3.6/README.md) · [검증 기록](releases/v0.3.6/VERIFICATION.md)
+
 `0.3.5`는 Windows x64와 Apple Silicon Mac에서 탐색·종료 회귀, 설치 파일 및 기존 공개키를 이용한 업데이트 검증을 마쳤다. [검증 기록](releases/v0.3.5/VERIFICATION.md)과 [변경 안내](releases/v0.3.5/README.md)를 참고한다.
 
 `0.3.4`는 양쪽 설치·30분 재생·업데이트 서명 검증 후 정식 공개했다. [최종 기록](releases/v0.3.4/VERIFICATION.md)에 구버전과의 렌더 드롭 비교 및 제한, 공개 파일 8개의 재다운로드 검증을 기록한다.
