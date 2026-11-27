@@ -1,0 +1,55 @@
+{
+  "verifiedAtUTC": "2026-11-27T06:57:23.3884026Z",
+  "url": "https://github.com/poyal/soft-vault/releases/tag/v0.3.6",
+  "unauthenticated": true,
+  "assets": [
+    {
+      "name": "SoftVault-0.3.6-Windows-x64-Setup.exe",
+      "size": 89099885,
+      "sha256": "c3676653f93d03f0f0ca94f4940a9a3b6fb841d0e34be3f76a870d11d763c60b",
+      "passed": true
+    },
+    {
+      "name": "SoftVault-0.3.6-Windows-x64-Setup.exe.sha256",
+      "size": 105,
+      "sha256": "a1b685c2f4c2a6e31efa3866803d88367b81b58c3fa72d6bbfd41ec8d9e9ed23",
+      "passed": true
+    },
+    {
+      "name": "SoftVault-0.3.6-macOS-arm64.dmg",
+      "size": 94997740,
+      "sha256": "350df92bc4103b01b208737e560ff83d5214b37a68ae1336eada54a5fc6b8019",
+      "passed": true
+    },
+    {
+      "name": "SoftVault-0.3.6-macOS-arm64.dmg.sha256",
+      "size": 98,
+      "sha256": "1ae06c632ad8635fb6deed45593703d2ac1e788f21b38306020dbdc0e0989f6b",
+      "passed": true
+    },
+    {
+      "name": "SoftVault-Windows.svupdate",
+      "size": 120384262,
+      "sha256": "7713b7a3b5462c1e8c25e5b8e515e6a38ddac7247332b246ef5ee8d4cafe9b4d",
+      "passed": true
+    },
+    {
+      "name": "SoftVault-macOS-arm64.svupdate",
+      "size": 86728718,
+      "sha256": "8e954eec432a7f243fecee89524e6a42c337f1c5ac6e5505e57e64834437c8df",
+      "passed": true
+    },
+    {
+      "name": "update.json",
+      "size": 446,
+      "sha256": "a7af2ff22fd463f7e398b27d3634d367b9730ab665738126f24967f7bf8869ed",
+      "passed": true
+    },
+    {
+      "name": "update.json.sig",
+      "size": 88,
+      "sha256": "7828433b5e3e84d7fde7b585abbf8512288522938ec5797816c1d063c25d00c3",
+      "passed": true
+    }
+  ]
+}

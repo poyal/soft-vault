@@ -1,5 +1,7 @@
 # Soft Vault 0.3.6 배포 검증
 
+2026년 11월 27일 15시 57분(한국 시간)에 최신 정식 릴리즈로 공개했습니다. 초안에서 내려받은 파일 8개와 공개 후 로그인 없이 다시 내려받은 파일 8개가 모두 검증 원본과 크기 및 SHA-256이 일치했습니다. [GitHub 릴리즈](https://github.com/poyal/soft-vault/releases/tag/v0.3.6) · [파일별 공개 다운로드 검증 결과](publication-verification.json)
+
 제품 소스는 `9983d8db2054e5ecbf8340537dfb36964596a4f2`입니다. Windows x64와 Apple Silicon Mac의 빌드 전 소스 지문은 `08e86c892dfa43aa2f710acfbd2ddc2932cc8a462ef6be713316d2042c3c7c52`로 일치했습니다.
 
 ## 수정한 문제
