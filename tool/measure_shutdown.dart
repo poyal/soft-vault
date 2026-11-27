@@ -81,9 +81,24 @@ Future<void> main(List<String> args) async {
             await File('${dir.path}/expected.json').readAsString(),
           );
           final handlerFile = File('${dir.path}/expected-at-handler.json');
-          final handled = mode == 'application' && await handlerFile.exists()
+          final applicationQuit =
+              mode == 'application' || mode == 'repeated-application';
+          final observedQuit = applicationQuit && await handlerFile.exists();
+          final handled = observedQuit
               ? jsonDecode(await handlerFile.readAsString())
               : expected;
+          if (applicationQuit) {
+            final phases = trace.map((event) => event['phase']);
+            result['quitCompleted'] =
+                observedQuit &&
+                phases
+                        .where((name) => name == 'application_exit_requested')
+                        .length ==
+                    1 &&
+                phases.contains('player_released') &&
+                (mode != 'repeated-application' ||
+                    phases.contains('repeat_quit_requested'));
+          }
           final position = handled['positionMs'] as int;
           result['requestPositionMs'] = expected['positionMs'];
           result['expectedPositionMs'] = position;
@@ -105,7 +120,8 @@ Future<void> main(List<String> args) async {
         r['exitCode'] != 0 ||
         r['timeout'] == true ||
         r['withinCloseBudget'] != true ||
-        r['positionPreserved'] != true,
+        r['positionPreserved'] != true ||
+        r['quitCompleted'] == false,
   )) {
     exitCode = 1;
   }

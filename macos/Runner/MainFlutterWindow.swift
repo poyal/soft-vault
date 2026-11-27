@@ -11,7 +11,17 @@ class MainFlutterWindow: NSWindow {
     RegisterGeneratedPlugins(registry: flutterViewController)
 
     let channel = FlutterMethodChannel(name: "soft_vault/window", binaryMessenger: flutterViewController.engine.binaryMessenger)
+    let platform = FlutterMethodChannel(
+      name: "flutter/platform",
+      binaryMessenger: flutterViewController.engine.binaryMessenger,
+      codec: FlutterJSONMethodCodec.sharedInstance()
+    )
     channel.setMethodCallHandler { call, result in
+      if call.method == "enableExitRequests", let application = NSApp as? SoftVaultApplication {
+        application.exitChannel = platform
+        result(nil)
+        return
+      }
       guard let path = call.arguments as? String else { result(FlutterMethodNotImplemented); return }
       let url = URL(fileURLWithPath: path)
       switch call.method {

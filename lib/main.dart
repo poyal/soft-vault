@@ -500,6 +500,11 @@ class _VaultHomeState extends State<VaultHome> with WindowListener {
             ? AppExitResponse.exit
             : AppExitResponse.cancel,
       );
+      unawaited(
+        const OptionalMethodChannel(
+          'soft_vault/window',
+        ).invokeMethod<void>('enableExitRequests'),
+      );
     }
     video = VideoController(player);
     seeks.addListener(seekActivityChanged);

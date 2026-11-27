@@ -10,11 +10,13 @@ import 'package:soft_vault/main.dart';
 import 'package:soft_vault/library.dart';
 
 Future<void> main(List<String> args) async {
+  // Finder and session restoration can launch the probe without a test run.
+  if (Platform.isMacOS && args.isEmpty) exit(0);
   if (args.length != 4 ||
       ![
         'normal',
         'repeated',
-        if (Platform.isMacOS) 'application',
+        if (Platform.isMacOS) ...['application', 'repeated-application'],
       ].contains(args[2]) ||
       ![
         'idle',
@@ -23,10 +25,12 @@ Future<void> main(List<String> args) async {
         'seeking',
         'extracting',
       ].contains(args[3])) {
-    throw ArgumentError(
-      'Expected scratch-directory, video, normal|repeated|application (macOS), '
+    stderr.writeln(
+      'Expected scratch-directory, video, normal|repeated or '
+      'application|repeated-application (macOS), '
       'and idle|playing|paused|seeking|extracting.',
     );
+    exit(64);
   }
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
@@ -59,14 +63,24 @@ Future<void> main(List<String> args) async {
     );
   }
 
-  if (mode == 'application') {
+  final quitApplication =
+      mode == 'application' || mode == 'repeated-application';
+  if (quitApplication) {
     // AppKit delivers termination asynchronously. A pending seek can settle
     // between the request and Flutter receiving it. Observe that boundary
     // before VaultHome registers its own application exit listener.
+    var repeatSent = false;
     AppLifecycleListener(
       onExitRequested: () async {
-        writeExpected('expected-at-handler.json');
         mark('application_exit_requested');
+        if (mode == 'repeated-application' && !repeatSent) {
+          // Deliver the next Quit while the first decision is still pending.
+          repeatSent = true;
+          mark('repeat_quit_requested');
+          unawaited(windowManager.destroy());
+          await Future<void>.delayed(const Duration(milliseconds: 30));
+        }
+        writeExpected('expected-at-handler.json');
         return AppExitResponse.exit;
       },
     );
@@ -126,7 +140,7 @@ Future<void> main(List<String> args) async {
       }
       writeExpected('expected.json');
       mark('close_requested');
-      if (mode == 'application') {
+      if (quitApplication) {
         unawaited(windowManager.destroy());
       } else {
         home.onWindowClose();
